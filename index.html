@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carpool Planner & Car Registration Dashboard</title>
+    <meta name="description" content="Coordinate group travel carpools. Register drivers, cars, and passengers, and assign them easily using our interactive dashboard.">
+    <!-- Google Fonts: Outfit (headings) and Inter (body) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome for high-quality SVG icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Main stylesheet -->
+    <link rel="stylesheet" href="styles.css?v=2">
+</head>
+<body>
+    <!-- Top Decorative Glow -->
+    <div class="glow-bg"></div>
+
+    <div class="app-container">
+        <!-- HEADER -->
+        <header class="app-header">
+            <div class="header-main">
+                <div class="logo-area">
+                    <span class="logo-icon"><i class="fa-solid fa-car-side"></i></span>
+                    <div>
+                        <h1 data-i18n="appName">RideShare Planner</h1>
+                        <p class="subtitle" data-i18n="appSubtitle">Interactive Carpool & Travel Coordinator</p>
+                    </div>
+                </div>
+                <div class="actions-group">
+                    <button id="btn-lang" class="btn btn-secondary" title="Switch Language / 切換語言">
+                        <i class="fa-solid fa-language"></i> <span data-i18n="btnLang">繁中 / EN</span>
+                    </button>
+                    <button id="btn-demo" class="btn btn-secondary" title="Populate with realistic mock data">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i> <span data-i18n="btnDemo">Load Demo Data</span>
+                    </button>
+                    <button id="btn-import-trigger" class="btn btn-secondary" title="Load data from a saved JSON file">
+                        <i class="fa-solid fa-file-import"></i> <span data-i18n="btnImport">Import JSON</span>
+                    </button>
+                    <input type="file" id="file-import" accept=".json" style="position: absolute; width: 0; height: 0; opacity: 0; overflow: hidden; pointer-events: none;">
+                    <div class="dropdown">
+                        <button id="btn-export-dropdown" class="btn btn-secondary">
+                            <i class="fa-solid fa-download"></i> <span data-i18n="btnExport">Export</span> <i class="fa-solid fa-chevron-down"></i>
+                        </button>
+                        <div class="dropdown-content">
+                            <a href="#" id="btn-export-csv"><i class="fa-solid fa-file-csv"></i> <span data-i18n="btnExportCsv">Save CSV (Sheets)</span></a>
+                            <a href="#" id="btn-export-json"><i class="fa-solid fa-file-code"></i> <span data-i18n="btnExportJson">Save JSON</span></a>
+                            <a href="#" id="btn-print"><i class="fa-solid fa-print"></i> <span data-i18n="btnPrint">Print Matching Chart</span></a>
+                        </div>
+                    </div>
+                    <button id="btn-reset" class="btn btn-danger" title="Clear all registrations">
+                        <i class="fa-solid fa-trash-can"></i> <span data-i18n="btnReset">Reset</span>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- STATS SECTION -->
+        <section class="stats-panel" aria-label="Trip Statistics">
+            <div class="stat-card">
+                <div class="stat-info">
+                    <span class="stat-value" id="stat-total">0</span>
+                    <span class="stat-label" data-i18n="statTotal">Total Travelers</span>
+                </div>
+                <div class="stat-icon bg-blue"><i class="fa-solid fa-users"></i></div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-info">
+                    <span class="stat-value" id="stat-drivers">0</span>
+                    <span class="stat-label" data-i18n="statDrivers">Drivers (Cars)</span>
+                </div>
+                <div class="stat-icon bg-purple"><i class="fa-solid fa-steering-wheel"></i><i class="fa-solid fa-id-card"></i></div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-info">
+                    <span class="stat-value" id="stat-seats">0</span>
+                    <span class="stat-label" data-i18n="statSeats">Total Seats Open</span>
+                </div>
+                <div class="stat-icon bg-emerald"><i class="fa-solid fa-chair"></i></div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-info">
+                    <span class="stat-value" id="stat-unassigned">0</span>
+                    <span class="stat-label" data-i18n="statUnassigned">Unassigned Passengers</span>
+                </div>
+                <div class="stat-icon bg-orange"><i class="fa-solid fa-user-clock"></i></div>
+            </div>
+
+            <div class="stat-card progress-card">
+                <div class="stat-info">
+                    <span class="stat-value" id="stat-match-pct">0%</span>
+                    <span class="stat-label" data-i18n="statMatchPct">Match Rate</span>
+                </div>
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill" id="stat-progress-fill" style="width: 0%"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- MAIN LAYOUT Grid -->
+        <main class="dashboard-grid">
+            
+            <!-- LEFT COLUMN: Registration & Unassigned list -->
+            <div class="dashboard-sidebar">
+                
+                <!-- Registration Form -->
+                <section class="card glass-card form-section" aria-labelledby="form-title">
+                    <h2 id="form-title" class="section-title"><i class="fa-solid fa-user-plus"></i> <span data-i18n="formTitleAdd">Register Participant</span></h2>
+                    <form id="registration-form" novalidate>
+                        
+                        <div class="form-group">
+                            <label for="reg-name" data-i18n="lblFullName">Full Name</label>
+                            <div class="input-wrapper">
+                                <i class="fa-solid fa-user input-icon"></i>
+                                <input type="text" id="reg-name" placeholder="e.g. Alex Chen" data-i18n-placeholder="phFullName" required autocomplete="off">
+                            </div>
+                            <span class="error-msg" id="err-name" data-i18n="errName">Please enter a name</span>
+                        </div>
+
+                        <div class="form-group">
+                            <label data-i18n="lblRole">Role</label>
+                            <div class="role-selector">
+                                <label class="role-option">
+                                    <input type="radio" name="reg-role" value="passenger" checked>
+                                    <span class="role-box">
+                                        <i class="fa-solid fa-user-tag"></i>
+                                        <strong data-i18n="rolePassenger">Passenger</strong>
+                                        <small data-i18n="rolePassengerSub">Needs a ride</small>
+                                    </span>
+                                </label>
+                                <label class="role-option">
+                                    <input type="radio" name="reg-role" value="driver">
+                                    <span class="role-box">
+                                        <i class="fa-solid fa-car"></i>
+                                        <strong data-i18n="roleDriver">Driver</strong>
+                                        <small data-i18n="roleDriverSub">Has a car</small>
+                                    </span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Passenger Conditional Fields -->
+                        <div id="fields-passenger" class="conditional-fields">
+                            <div class="form-group">
+                                <label for="reg-luggage" data-i18n="lblLuggage">Luggage Size</label>
+                                <div class="input-wrapper">
+                                    <i class="fa-solid fa-suitcase input-icon"></i>
+                                    <select id="reg-luggage">
+                                        <option value="small" data-i18n="luggageSmall">Small (Backpack)</option>
+                                        <option value="medium" selected data-i18n="luggageMedium">Medium (Carry-on)</option>
+                                        <option value="large" data-i18n="luggageLarge">Large (Duffle/Suitcase)</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Driver Conditional Fields -->
+                        <div id="fields-driver" class="conditional-fields hidden">
+                            <div class="form-group">
+                                <label for="reg-car-model" data-i18n="lblCarModel">Car Model / Description</label>
+                                <div class="input-wrapper">
+                                    <i class="fa-solid fa-car-side input-icon"></i>
+                                    <input type="text" id="reg-car-model" placeholder="e.g. Blue Honda Civic" data-i18n-placeholder="phCarModel">
+                                </div>
+                                <span class="error-msg" id="err-car-model" data-i18n="errCarModel">Please describe the car</span>
+                            </div>
+                            <div class="grid-2col">
+                                <div class="form-group">
+                                    <label for="reg-car-seats" data-i18n="lblCarSeats">Carpool Seats Available</label>
+                                    <div class="input-wrapper">
+                                        <i class="fa-solid fa-circle-nodes input-icon"></i>
+                                        <input type="number" id="reg-car-seats" min="0" max="9" value="4" placeholder="0 if solo" data-i18n-placeholder="phCarSeats">
+                                    </div>
+                                    <span class="error-msg" id="err-car-seats" data-i18n="errCarSeats">Must be 0 - 9</span>
+                                </div>
+                                <div class="form-group">
+                                    <label for="reg-car-family" data-i18n="lblCarFamily">Family Riding Along</label>
+                                    <div class="input-wrapper">
+                                        <i class="fa-solid fa-people-roof input-icon"></i>
+                                        <input type="number" id="reg-car-family" min="0" max="9" value="0" placeholder="0 if none" data-i18n-placeholder="phCarFamily">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group" style="margin-top: 1.25rem;">
+                                <label for="reg-car-plate" data-i18n="lblCarPlate">License Plate</label>
+                                <div class="input-wrapper">
+                                    <i class="fa-solid fa-id-card input-icon"></i>
+                                    <input type="text" id="reg-car-plate" placeholder="e.g. 7XYZ123" data-i18n-placeholder="phCarPlate" autocomplete="off">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="reg-group" data-i18n="lblGroup">Company / Group Name</label>
+                            <div class="input-wrapper">
+                                <i class="fa-solid fa-building input-icon"></i>
+                                <input type="text" id="reg-group" placeholder="e.g. Google, DeepMind" data-i18n-placeholder="phGroup" autocomplete="off">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="reg-notes" data-i18n="lblNotes">Special Notes / Preferences</label>
+                            <div class="input-wrapper">
+                                <i class="fa-solid fa-comment-dots input-icon"></i>
+                                <input type="text" id="reg-notes" placeholder="e.g. Staying near downtown, leaving 8am" data-i18n-placeholder="phNotes">
+                            </div>
+                        </div>
+
+                        <div class="form-actions-row">
+                            <button type="submit" id="btn-form-submit" class="btn btn-primary btn-block">
+                                <i class="fa-solid fa-plus"></i> <span data-i18n="btnAddToList">Add to List</span>
+                            </button>
+                            <button type="button" id="btn-form-cancel" class="btn btn-secondary hidden" style="margin-left: 10px;" data-i18n="btnCancel">
+                                Cancel
+                            </button>
+                        </div>
+                    </form>
+                </section>
+
+                <!-- Unassigned Passengers List -->
+                <section class="card glass-card unassigned-section" aria-labelledby="unassigned-title">
+                    <div class="section-header">
+                        <h2 id="unassigned-title" class="section-title">
+                            <i class="fa-solid fa-people-arrows"></i> <span data-i18n="unassignedTitle">Unassigned Passengers</span>
+                        </h2>
+                        <span class="count-badge" id="badge-unassigned">0</span>
+                    </div>
+                    <p class="section-desc" data-i18n="unassignedDesc">Drag passengers to a car on the right, or click assignment buttons.</p>
+                    
+                    <div class="unassigned-list-container" id="unassigned-list">
+                        <!-- Filled dynamically -->
+                        <div class="empty-state">
+                            <i class="fa-solid fa-user-check"></i>
+                            <p data-i18n="noUnassigned">No unassigned passengers</p>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- RIGHT COLUMN: Active Cars / Carpools Board -->
+            <div class="dashboard-board">
+                <section class="card glass-card board-section" aria-labelledby="board-title">
+                    <div class="board-header">
+                        <div>
+                            <h2 id="board-title" class="section-title"><i class="fa-solid fa-square-parking"></i> <span data-i18n="boardTitle">Carpool Board</span></h2>
+                            <p class="board-desc" data-i18n="boardDesc">Drag passengers onto cars or click the car seat grid to assign.</p>
+                        </div>
+                        <div class="board-controls">
+                            <!-- Toggle layout options or summary -->
+                            <span class="seats-legend"><span class="legend-dot filled"></span> <span data-i18n="legendFilled">Filled Seat</span></span>
+                            <span class="seats-legend"><span class="legend-dot empty"></span> <span data-i18n="legendEmpty">Empty Seat</span></span>
+                        </div>
+                    </div>
+
+                    <div id="cars-grid" class="cars-grid-container">
+                        <!-- Filled dynamically -->
+                        <div class="empty-state-large">
+                            <i class="fa-solid fa-car-rear animate-float"></i>
+                            <h3 data-i18n="noActiveVehicles">No Active Vehicles Registered</h3>
+                            <p data-i18n="noActiveVehiclesDesc">Add a participant with the **Driver** role to set up your first carpool vehicle, or load the **Demo Data** above to test it out instantly.</p>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- PRINT VIEW OVERLAY -->
+    <div id="print-layout" class="print-only">
+        <div class="print-header">
+            <h2 data-i18n="printTitle">RideShare Planner - Final Carpool Match Chart</h2>
+            <p id="print-date-container">Generated on: <span id="print-date"></span></p>
+        </div>
+        <div id="print-content"></div>
+    </div>
+
+    <!-- Firebase SDK (Compatibility version) -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>
+
+    <!-- MAIN APP SCRIPT -->
+    <script src="app.js?v=2"></script>
+</body>
+</html>

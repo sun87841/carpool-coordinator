@@ -1031,10 +1031,6 @@ input.invalid + .error-msg,
     .dropdown button {
         width: 100%;
     }
-    
-    #btn-reset {
-        grid-column: span 2;
-    }
 }
 
 /* ==========================================================================

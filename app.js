@@ -43,6 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
             appSubtitle: "Interactive Carpool & Travel Coordinator",
             btnDemo: "Load Demo Data",
             btnImport: "Import JSON",
+            btnShareLink: "Copy Share Link",
             btnExport: "Export",
             btnExportCsv: "Save CSV (Sheets)",
             btnExportJson: "Save JSON",
@@ -136,6 +137,7 @@ document.addEventListener('DOMContentLoaded', () => {
             appSubtitle: "互動式共乘與車輛安排儀表板",
             btnDemo: "載入示範數據",
             btnImport: "匯入 JSON 檔",
+            btnShareLink: "複製分享連結",
             btnExport: "匯出檔案",
             btnExportCsv: "儲存 CSV (試算表)",
             btnExportJson: "儲存 JSON 檔",
@@ -229,6 +231,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // DOM ELEMENTS - Header & Actions
     const btnLang = document.getElementById('btn-lang');
     const btnDemo = document.getElementById('btn-demo');
+    const btnShareLink = document.getElementById('btn-share-link');
     const btnImportTrigger = document.getElementById('btn-import-trigger');
     const fileImport = document.getElementById('file-import');
     const btnExportCsv = document.getElementById('btn-export-csv');
@@ -310,6 +313,25 @@ document.addEventListener('DOMContentLoaded', () => {
             currentLang = 'zh';
         } else {
             currentLang = 'en';
+        }
+
+        // Parse data query parameter ?data=...
+        const dataParam = urlParams.get('data');
+        if (dataParam) {
+            try {
+                const decodedJson = decodeURIComponent(escape(atob(dataParam)));
+                const importedState = JSON.parse(decodedJson);
+                if (importedState && Array.isArray(importedState.participants)) {
+                    state = importedState;
+                    localStorage.setItem('rideShareState', JSON.stringify(state));
+                    // Clean URL parameter so it doesn't stay in address bar
+                    urlParams.delete('data');
+                    const cleanURL = window.location.pathname + (urlParams.toString() ? '?' + urlParams.toString() : '');
+                    window.history.replaceState({}, '', cleanURL);
+                }
+            } catch (e) {
+                console.error("Failed to parse data parameter from URL:", e);
+            }
         }
 
         loadState();
@@ -441,6 +463,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
         if (btnDemo) btnDemo.addEventListener('click', loadDemoData);
+        if (btnShareLink) btnShareLink.addEventListener('click', copyShareableLink);
         if (btnImportTrigger && fileImport) {
             btnImportTrigger.addEventListener('click', () => {
                 fileImport.click();
@@ -1204,6 +1227,35 @@ document.addEventListener('DOMContentLoaded', () => {
     function cleanCSV(str) {
         if (!str) return '';
         return str.replace(/"/g, '""');
+    }
+
+    function getShareableLink() {
+        try {
+            const jsonStr = JSON.stringify(state);
+            const base64Str = btoa(unescape(encodeURIComponent(jsonStr)));
+            const url = new URL(window.location.href);
+            url.searchParams.set('data', base64Str);
+            return url.toString();
+        } catch (e) {
+            console.error("Failed to generate shareable link:", e);
+            return window.location.href;
+        }
+    }
+
+    function copyShareableLink() {
+        const link = getShareableLink();
+        navigator.clipboard.writeText(link).then(() => {
+            alert(currentLang === 'zh' ? '分享連結已複製到剪貼簿！您可以將它傳送到手機打開。' : 'Shareable link copied to clipboard! Send it to your phone to open.');
+        }).catch(err => {
+            console.error("Failed to copy link:", err);
+            const tempInput = document.createElement('input');
+            tempInput.value = link;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempInput);
+            alert(currentLang === 'zh' ? '分享連結已複製！您可以將它傳送到手機。' : 'Shareable link copied!');
+        });
     }
 
     // RUN THE APPLICATION

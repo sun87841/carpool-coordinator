@@ -387,6 +387,8 @@ body {
     left: 14px;
     color: var(--text-muted);
     font-size: 0.9rem;
+    z-index: 2;
+    pointer-events: none;
 }
 
 input[type="text"],
@@ -424,7 +426,11 @@ select {
 }
 
 .input-wrapper select {
-    padding-left: 2.5rem;
+    text-indent: 1.5rem; /* Force text indent on iOS Safari selects to clear the absolute icon */
+}
+
+select option {
+    text-indent: 0; /* Reset indentation inside the dropdown selection list */
 }
 
 input[type="text"]:focus,

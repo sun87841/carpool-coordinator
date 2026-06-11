@@ -1051,6 +1051,7 @@ input.invalid + .error-msg,
         display: flex;
         flex-direction: column;
         gap: 1.5rem;
+        align-items: stretch;
     }
     
     /* Fallback in case the old HTML wrappers are still cached in the browser */

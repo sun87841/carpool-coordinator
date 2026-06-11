@@ -1029,8 +1029,25 @@ input.invalid + .error-msg,
 }
 
 @media (max-width: 768px) {
+    .dashboard-grid {
+        display: flex;
+        flex-direction: column;
+    }
+    
     .dashboard-sidebar {
-        grid-template-columns: 1fr;
+        display: contents;
+    }
+    
+    .form-section {
+        order: 1;
+    }
+    
+    .dashboard-board {
+        order: 2;
+    }
+    
+    .unassigned-section {
+        order: 3;
     }
     
     .header-main {

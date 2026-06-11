@@ -1009,17 +1009,23 @@ input.invalid + .error-msg,
     }
     
     .actions-group {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.5rem;
         width: 100%;
-        justify-content: space-between;
     }
     
     .actions-group button, 
     .actions-group .dropdown {
-        flex-grow: 1;
+        width: 100%;
     }
     
     .dropdown button {
         width: 100%;
+    }
+    
+    #btn-reset {
+        grid-column: span 2;
     }
 }
 

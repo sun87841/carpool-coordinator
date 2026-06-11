@@ -1015,6 +1015,14 @@ input.invalid + .error-msg,
         width: 100%;
     }
     
+    .actions-group .btn {
+        padding: 0.5rem 0.4rem;
+        font-size: 0.8rem;
+        white-space: nowrap;
+        height: 38px;
+        box-sizing: border-box;
+    }
+    
     .actions-group button, 
     .actions-group .dropdown {
         width: 100%;

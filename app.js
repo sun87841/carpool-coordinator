@@ -132,7 +132,7 @@ document.addEventListener('DOMContentLoaded', () => {
             lblDriverName: "Driver"
         },
         zh: {
-            appName: "共乘路徑規劃器",
+            appName: "福彌寺交通乘車登記",
             appSubtitle: "互動式共乘與車輛安排儀表板",
             btnDemo: "載入示範數據",
             btnImport: "匯入 JSON 檔",
@@ -213,7 +213,7 @@ document.addEventListener('DOMContentLoaded', () => {
             allAssignedAlert: "所有乘客都已經分配到車輛了！請先註冊新乘客。",
             csvHeader: "司機姓名,司機團體,車款描述,車牌號碼,座位容量,隨行家屬人數,乘客姓名,乘客團體,乘客行李大小,乘客備註",
             csvUnassigned: "未分配乘客名單",
-            printTitle: "共乘路徑規劃器 - 最終配對圖表",
+            printTitle: "福彌寺交通乘車登記 - 最終配對圖表",
             printGenerated: "產生日期的: {date}",
             printNoDrivers: "無註冊司機。",
             printFamilyRidingAlong: "隨行家屬: {count} 位家屬一同搭乘",

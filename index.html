@@ -150,14 +150,20 @@
                         <!-- Passenger Conditional Fields -->
                         <div id="fields-passenger" class="conditional-fields">
                             <div class="form-group">
-                                <label for="reg-luggage" data-i18n="lblLuggage">Luggage Size</label>
+                                <label for="reg-food-bringing" data-i18n="lblFood">Bringing Food?</label>
                                 <div class="input-wrapper">
-                                    <i class="fa-solid fa-suitcase input-icon"></i>
-                                    <select id="reg-luggage">
-                                        <option value="small" data-i18n="luggageSmall">Small (Backpack)</option>
-                                        <option value="medium" selected data-i18n="luggageMedium">Medium (Carry-on)</option>
-                                        <option value="large" data-i18n="luggageLarge">Large (Duffle/Suitcase)</option>
+                                    <i class="fa-solid fa-utensils input-icon"></i>
+                                    <select id="reg-food-bringing">
+                                        <option value="no" data-i18n="foodNo">No</option>
+                                        <option value="yes" data-i18n="foodYes">Yes</option>
                                     </select>
+                                </div>
+                            </div>
+                            <div id="food-details-group" class="form-group hidden">
+                                <label for="reg-food-details" data-i18n="lblFoodDetails">What food are you bringing?</label>
+                                <div class="input-wrapper">
+                                    <i class="fa-solid fa-carrot input-icon"></i>
+                                    <input type="text" id="reg-food-details" placeholder="e.g. Fried rice, cookies" data-i18n-placeholder="phFoodDetails" autocomplete="off">
                                 </div>
                             </div>
                         </div>

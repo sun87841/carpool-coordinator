@@ -12,7 +12,7 @@
     <!-- FontAwesome for high-quality SVG icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Main stylesheet -->
-    <link rel="stylesheet" href="styles.css?v=8">
+    <link rel="stylesheet" href="styles.css?v=9">
 </head>
 <body>
     <!-- Top Decorative Glow -->
@@ -232,47 +232,48 @@
                     </form>
                 </section>
 
-                <!-- Unassigned Passengers List -->
-                <section class="card glass-card unassigned-section" aria-labelledby="unassigned-title">
-                    <div class="section-header">
-                        <h2 id="unassigned-title" class="section-title">
-                            <i class="fa-solid fa-people-arrows"></i> <span data-i18n="unassignedTitle">Unassigned Passengers</span>
-                        </h2>
-                        <span class="count-badge" id="badge-unassigned">0</span>
-                    </div>
-                    <p class="section-desc" data-i18n="unassignedDesc">Drag passengers to a car on the right, or click assignment buttons.</p>
-                    
-                    <div class="unassigned-list-container" id="unassigned-list">
-                        <!-- Filled dynamically -->
-                        <div class="empty-state">
-                            <i class="fa-solid fa-user-check"></i>
-                            <p data-i18n="noUnassigned">No unassigned passengers</p>
-                        </div>
-                    </div>
-                </section>
             <!-- RIGHT COLUMN: Active Cars / Carpools Board -->
-                <section class="card glass-card board-section" aria-labelledby="board-title">
-                    <div class="board-header">
-                        <div>
-                            <h2 id="board-title" class="section-title"><i class="fa-solid fa-square-parking"></i> <span data-i18n="boardTitle">Carpool Board</span></h2>
-                            <p class="board-desc" data-i18n="boardDesc">Drag passengers onto cars or click the car seat grid to assign.</p>
-                        </div>
-                        <div class="board-controls">
-                            <!-- Toggle layout options or summary -->
-                            <span class="seats-legend"><span class="legend-dot filled"></span> <span data-i18n="legendFilled">Filled Seat</span></span>
-                            <span class="seats-legend"><span class="legend-dot empty"></span> <span data-i18n="legendEmpty">Empty Seat</span></span>
-                        </div>
+            <section class="card glass-card board-section" aria-labelledby="board-title">
+                <div class="board-header">
+                    <div>
+                        <h2 id="board-title" class="section-title"><i class="fa-solid fa-square-parking"></i> <span data-i18n="boardTitle">Carpool Board</span></h2>
+                        <p class="board-desc" data-i18n="boardDesc">Drag passengers onto cars or click the car seat grid to assign.</p>
                     </div>
+                    <div class="board-controls">
+                        <!-- Toggle layout options or summary -->
+                        <span class="seats-legend"><span class="legend-dot filled"></span> <span data-i18n="legendFilled">Filled Seat</span></span>
+                        <span class="seats-legend"><span class="legend-dot empty"></span> <span data-i18n="legendEmpty">Empty Seat</span></span>
+                    </div>
+                </div>
 
-                    <div id="cars-grid" class="cars-grid-container">
-                        <!-- Filled dynamically -->
-                        <div class="empty-state-large">
-                            <i class="fa-solid fa-car-rear animate-float"></i>
-                            <h3 data-i18n="noActiveVehicles">No Active Vehicles Registered</h3>
-                            <p data-i18n="noActiveVehiclesDesc">Add a participant with the **Driver** role to set up your first carpool vehicle, or load the **Demo Data** above to test it out instantly.</p>
-                        </div>
+                <div id="cars-grid" class="cars-grid-container">
+                    <!-- Filled dynamically -->
+                    <div class="empty-state-large">
+                        <i class="fa-solid fa-car-rear animate-float"></i>
+                        <h3 data-i18n="noActiveVehicles">No Active Vehicles Registered</h3>
+                        <p data-i18n="noActiveVehiclesDesc">Add a participant with the **Driver** role to set up your first carpool vehicle, or load the **Demo Data** above to test it out instantly.</p>
                     </div>
-                </section>
+                </div>
+            </section>
+
+            <!-- Unassigned Passengers List -->
+            <section class="card glass-card unassigned-section" aria-labelledby="unassigned-title">
+                <div class="section-header">
+                    <h2 id="unassigned-title" class="section-title">
+                        <i class="fa-solid fa-people-arrows"></i> <span data-i18n="unassignedTitle">Unassigned Passengers</span>
+                    </h2>
+                    <span class="count-badge" id="badge-unassigned">0</span>
+                </div>
+                <p class="section-desc" data-i18n="unassignedDesc">Drag passengers to a car on the right, or click assignment buttons.</p>
+                
+                <div class="unassigned-list-container" id="unassigned-list">
+                    <!-- Filled dynamically -->
+                    <div class="empty-state">
+                        <i class="fa-solid fa-user-check"></i>
+                        <p data-i18n="noUnassigned">No unassigned passengers</p>
+                    </div>
+                </div>
+            </section>
         </main>
     </div>
 
@@ -290,6 +291,6 @@
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>
 
     <!-- MAIN APP SCRIPT -->
-    <script src="app.js?v=8"></script>
+    <script src="app.js?v=9"></script>
 </body>
 </html>

@@ -122,7 +122,7 @@ document.addEventListener('DOMContentLoaded', () => {
             editPassengerDetails: "Edit passenger details",
             removePassengerFromCar: "Remove passenger from this car",
             allAssignedAlert: "All passengers are already assigned to cars! Register new passengers first.",
-            csvHeader: "Driver Name,Driver Group,Car Model,License Plate,Seats Capacity,Family Members,Passenger Name,Passenger Group,Bringing Food,Food Details,Passenger Notes",
+            csvHeader: "Driver Name,Driver Group,Driver Bringing Food,Driver Food Details,Car Model,License Plate,Seats Capacity,Family Members,Passenger Name,Passenger Group,Passenger Bringing Food,Passenger Food Details,Passenger Notes",
             csvUnassigned: "UNASSIGNED PASSENGERS",
             printTitle: "RideShare Planner - Final Carpool Match Chart",
             printGenerated: "Generated on: {date}",
@@ -219,7 +219,7 @@ document.addEventListener('DOMContentLoaded', () => {
             editPassengerDetails: "編輯乘客資料",
             removePassengerFromCar: "將乘客從此車輛移出",
             allAssignedAlert: "所有乘客都已經分配到車輛了！請先註冊新乘客。",
-            csvHeader: "司機姓名,司機團體,車款描述,車牌號碼,座位容量,隨行家屬人數,乘客姓名,乘客團體,是否攜帶食物,攜帶食物詳情,乘客備註",
+            csvHeader: "司機姓名,司機團體,司機是否攜帶食物,司機攜帶食物詳情,車款描述,車牌號碼,座位容量,隨行家屬人數,乘客姓名,乘客團體,乘客是否攜帶食物,乘客攜帶食物詳情,乘客備註",
             csvUnassigned: "未分配乘客名單",
             printTitle: "福彌寺交通乘車登記 - 最終配對圖表",
             printGenerated: "產生日期的: {date}",
@@ -290,11 +290,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // DEMO DATA CONSTANTS
     const DEMO_PARTICIPANTS = [
         // Drivers
-        { id: 1, name: 'Sarah Connor', role: 'driver', carModel: 'Black Tesla Model Y', capacity: 4, notes: 'Driving route A, leaving at 8:00 AM', group: 'TechCorp', licensePlate: 'TR-101', familyCount: 0 },
-        { id: 2, name: 'Bob Marley', role: 'driver', carModel: 'Yellow VW Microbus', capacity: 7, notes: 'Scenic route, lots of space for gear', group: 'Reggae Records', licensePlate: 'JAM-MIN', familyCount: 2 },
-        { id: 3, name: 'Bruce Wayne', role: 'driver', carModel: 'Black Lamborghini Urus', capacity: 3, notes: 'Fast driving, luggage space is tight', group: 'Wayne Enterprises', licensePlate: 'BAT-1', familyCount: 0 },
-        { id: 4, name: 'Peter Parker', role: 'driver', carModel: 'Red Vespa Scooter', capacity: 1, notes: 'Only room for one backpack and one passenger!', group: 'Daily Bugle', licensePlate: 'SPIDY-1', familyCount: 0 },
-        { id: 15, name: 'Wanda Maximoff', role: 'driver', carModel: 'Red Audi A4 Sedan', capacity: 0, notes: 'Driving solo, meeting at the destination', group: 'Avengers', licensePlate: 'HEX-001', familyCount: 1 },
+        { id: 1, name: 'Sarah Connor', role: 'driver', carModel: 'Black Tesla Model Y', capacity: 4, notes: 'Driving route A, leaving at 8:00 AM', group: 'TechCorp', licensePlate: 'TR-101', familyCount: 0, foodBringing: 'yes', foodDetails: 'Sandwiches' },
+        { id: 2, name: 'Bob Marley', role: 'driver', carModel: 'Yellow VW Microbus', capacity: 7, notes: 'Scenic route, lots of space for gear', group: 'Reggae Records', licensePlate: 'JAM-MIN', familyCount: 2, foodBringing: 'yes', foodDetails: 'Fruit platter' },
+        { id: 3, name: 'Bruce Wayne', role: 'driver', carModel: 'Black Lamborghini Urus', capacity: 3, notes: 'Fast driving, luggage space is tight', group: 'Wayne Enterprises', licensePlate: 'BAT-1', familyCount: 0, foodBringing: 'no', foodDetails: '' },
+        { id: 4, name: 'Peter Parker', role: 'driver', carModel: 'Red Vespa Scooter', capacity: 1, notes: 'Only room for one backpack and one passenger!', group: 'Daily Bugle', licensePlate: 'SPIDY-1', familyCount: 0, foodBringing: 'yes', foodDetails: 'Pizza' },
+        { id: 15, name: 'Wanda Maximoff', role: 'driver', carModel: 'Red Audi A4 Sedan', capacity: 0, notes: 'Driving solo, meeting at the destination', group: 'Avengers', licensePlate: 'HEX-001', familyCount: 1, foodBringing: 'no', foodDetails: '' },
         
         // Passengers
         { id: 5, name: 'Harry Potter', role: 'passenger', foodBringing: 'yes', foodDetails: 'Pumpkin Juice', notes: 'Bringing a cage with a pet owl', assignedCarId: 1, group: 'Hogwarts' },
@@ -557,6 +557,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const roleValue = document.querySelector('input[name="reg-role"]:checked').value;
         const groupValue = regGroup.value.trim();
         const notesValue = regNotes.value.trim();
+        const foodBringingValue = regFoodBringing.value;
+        const foodDetailsValue = regFoodBringing.value === 'yes' ? regFoodDetails.value.trim() : '';
 
         if (!nameValue) {
             regName.classList.add('invalid');
@@ -568,7 +570,9 @@ document.addEventListener('DOMContentLoaded', () => {
             name: nameValue,
             role: roleValue,
             notes: notesValue,
-            group: groupValue
+            group: groupValue,
+            foodBringing: foodBringingValue,
+            foodDetails: foodDetailsValue
         };
 
         if (roleValue === 'driver') {
@@ -591,8 +595,6 @@ document.addEventListener('DOMContentLoaded', () => {
             newParticipant.familyCount = carFamilyValue;
             newParticipant.licensePlate = carPlateValue;
         } else {
-            newParticipant.foodBringing = regFoodBringing.value;
-            newParticipant.foodDetails = regFoodBringing.value === 'yes' ? regFoodDetails.value.trim() : '';
             newParticipant.assignedCarId = null; // Unassigned initially
         }
 
@@ -605,7 +607,9 @@ document.addEventListener('DOMContentLoaded', () => {
                             ...p,
                             name: nameValue,
                             notes: notesValue,
-                            group: groupValue
+                            group: groupValue,
+                            foodBringing: foodBringingValue,
+                            foodDetails: foodDetailsValue
                         };
                         if (roleValue === 'driver') {
                             updated.role = 'driver';
@@ -613,12 +617,8 @@ document.addEventListener('DOMContentLoaded', () => {
                             updated.capacity = parseInt(regCarSeats.value, 10);
                             updated.familyCount = parseInt(regCarFamily.value, 10) || 0;
                             updated.licensePlate = regCarPlate.value.trim();
-                            delete updated.foodBringing;
-                            delete updated.foodDetails;
                         } else {
                             updated.role = 'passenger';
-                            updated.foodBringing = regFoodBringing.value;
-                            updated.foodDetails = regFoodBringing.value === 'yes' ? regFoodDetails.value.trim() : '';
                             delete updated.carModel;
                             delete updated.capacity;
                             delete updated.familyCount;
@@ -912,7 +912,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="driver-info">
                         <div class="driver-avatar">${escapeHTML(initials)}</div>
                         <div class="driver-text">
-                            <span class="driver-name">${escapeHTML(d.name)} ${d.group ? `<span style="font-size: 0.75rem; color: var(--accent-blue); font-weight: 500; margin-left: 4px;">(${escapeHTML(d.group)})</span>` : ''}</span>
+                            <span class="driver-name">${escapeHTML(d.name)} ${d.group ? `<span style="font-size: 0.75rem; color: var(--accent-blue); font-weight: 500; margin-left: 4px;">(${escapeHTML(d.group)})</span>` : ''} ${d.foodBringing === 'yes' ? `<span class="badge-tag" style="background-color: rgba(16, 185, 129, 0.08); color: var(--accent-emerald); border: 1px solid rgba(16, 185, 129, 0.2); padding: 0.15rem 0.5rem; border-radius: 4px; font-size: 0.7rem; font-weight: 600; display: inline-flex; align-items: center; gap: 4px; vertical-align: middle; margin-left: 6px; text-transform: none;" title="${TRANSLATIONS[currentLang].foodTitle}: ${escapeHTML(d.foodDetails)}"><i class="fa-solid fa-utensils"></i> ${escapeHTML(d.foodDetails)}</span>` : ''}</span>
                             <span class="car-description">${escapeHTML(d.carModel)} ${d.licensePlate ? `• [${escapeHTML(d.licensePlate)}]` : ''}</span>
                         </div>
                     </div>
@@ -1070,10 +1070,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const assigned = passengers.filter(p => p.assignedCarId === d.id);
             if (assigned.length === 0) {
                 // Driver with no passengers
-                csvLines.push(`"${cleanCSV(d.name)}","${cleanCSV(d.group || '')}","${cleanCSV(d.carModel)}","${cleanCSV(d.licensePlate || '')}",${d.capacity},${d.familyCount || 0},"","","","",""`);
+                csvLines.push(`"${cleanCSV(d.name)}","${cleanCSV(d.group || '')}","${cleanCSV(d.foodBringing || 'no')}","${cleanCSV(d.foodDetails || '')}","${cleanCSV(d.carModel)}","${cleanCSV(d.licensePlate || '')}",${d.capacity},${d.familyCount || 0},"","","","",""`);
             } else {
                 assigned.forEach(ap => {
-                    csvLines.push(`"${cleanCSV(d.name)}","${cleanCSV(d.group || '')}","${cleanCSV(d.carModel)}","${cleanCSV(d.licensePlate || '')}",${d.capacity},${d.familyCount || 0},"${cleanCSV(ap.name)}","${cleanCSV(ap.group || '')}","${cleanCSV(ap.foodBringing || 'no')}","${cleanCSV(ap.foodDetails || '')}","${cleanCSV(ap.notes || '')}"`);
+                    csvLines.push(`"${cleanCSV(d.name)}","${cleanCSV(d.group || '')}","${cleanCSV(d.foodBringing || 'no')}","${cleanCSV(d.foodDetails || '')}","${cleanCSV(d.carModel)}","${cleanCSV(d.licensePlate || '')}",${d.capacity},${d.familyCount || 0},"${cleanCSV(ap.name)}","${cleanCSV(ap.group || '')}","${cleanCSV(ap.foodBringing || 'no')}","${cleanCSV(ap.foodDetails || '')}","${cleanCSV(ap.notes || '')}"`);
                 });
             }
         });
@@ -1081,10 +1081,10 @@ document.addEventListener('DOMContentLoaded', () => {
         // Add unassigned passengers at the bottom
         const unassigned = passengers.filter(p => p.assignedCarId === null);
         if (unassigned.length > 0) {
-            csvLines.push(',,,,,,,,,,'); // spacer
-            csvLines.push(`${TRANSLATIONS[currentLang].csvUnassigned},,,,,,,,,,`);
+            csvLines.push(',,,,,,,,,,,,'); // spacer
+            csvLines.push(`${TRANSLATIONS[currentLang].csvUnassigned},,,,,,,,,,,,`);
             unassigned.forEach(p => {
-                csvLines.push(`"","","","","",0,"${cleanCSV(p.name)}","${cleanCSV(p.group || '')}","${cleanCSV(p.foodBringing || 'no')}","${cleanCSV(p.foodDetails || '')}","${cleanCSV(p.notes || '')}"`);
+                csvLines.push(`"","","","","","","",0,"${cleanCSV(p.name)}","${cleanCSV(p.group || '')}","${cleanCSV(p.foodBringing || 'no')}","${cleanCSV(p.foodDetails || '')}","${cleanCSV(p.notes || '')}"`);
             });
         }
 
@@ -1157,7 +1157,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 printContent.innerHTML += `
                     <div class="print-car-group">
                         <div class="print-car-title">
-                            <span>${TRANSLATIONS[currentLang].lblDriverName}: ${escapeHTML(d.name)} ${d.group ? `(${escapeHTML(d.group)})` : ''} — (${escapeHTML(d.carModel)})${d.licensePlate ? ` [${TRANSLATIONS[currentLang].lblCarPlate}: ${escapeHTML(d.licensePlate)}]` : ''}</span>
+                            <span>${TRANSLATIONS[currentLang].lblDriverName}: ${escapeHTML(d.name)} ${d.group ? `(${escapeHTML(d.group)})` : ''}${d.foodBringing === 'yes' ? ` (${TRANSLATIONS[currentLang].foodTitle}: ${escapeHTML(d.foodDetails)})` : ''} — (${escapeHTML(d.carModel)})${d.licensePlate ? ` [${TRANSLATIONS[currentLang].lblCarPlate}: ${escapeHTML(d.licensePlate)}]` : ''}</span>
                             <span>${occupiedText}${printFamilyText}</span>
                         </div>
                         ${d.notes ? `<p style="margin-bottom: 8px; font-size: 10pt;"><strong>${TRANSLATIONS[currentLang].printRouteDetails.replace('{notes}', escapeHTML(d.notes))}</strong></p>` : ''}
@@ -1217,14 +1217,16 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             fieldsPassenger.classList.remove('hidden');
             fieldsDriver.classList.add('hidden');
-            regFoodBringing.value = p.foodBringing || 'no';
-            if (p.foodBringing === 'yes') {
-                foodDetailsGroup.classList.remove('hidden');
-                regFoodDetails.value = p.foodDetails || '';
-            } else {
-                foodDetailsGroup.classList.add('hidden');
-                regFoodDetails.value = '';
-            }
+        }
+
+        // Populate common food fields (for both driver & passenger)
+        regFoodBringing.value = p.foodBringing || 'no';
+        if (p.foodBringing === 'yes') {
+            foodDetailsGroup.classList.remove('hidden');
+            regFoodDetails.value = p.foodDetails || '';
+        } else {
+            foodDetailsGroup.classList.add('hidden');
+            regFoodDetails.value = '';
         }
 
         // Update Form Title and buttons

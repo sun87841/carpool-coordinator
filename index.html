@@ -12,7 +12,7 @@
     <!-- FontAwesome for high-quality SVG icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Main stylesheet -->
-    <link rel="stylesheet" href="styles.css?v=3">
+    <link rel="stylesheet" href="styles.css?v=4">
 </head>
 <body>
     <!-- Top Decorative Glow -->
@@ -147,25 +147,27 @@
                             </div>
                         </div>
 
+                        <!-- Common Food Fields -->
+                        <div class="form-group">
+                            <label for="reg-food-bringing" data-i18n="lblFood">Bringing Food?</label>
+                            <div class="input-wrapper">
+                                <i class="fa-solid fa-utensils input-icon"></i>
+                                <select id="reg-food-bringing">
+                                    <option value="no" data-i18n="foodNo">No</option>
+                                    <option value="yes" data-i18n="foodYes">Yes</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div id="food-details-group" class="form-group hidden">
+                            <label for="reg-food-details" data-i18n="lblFoodDetails">What food are you bringing?</label>
+                            <div class="input-wrapper">
+                                <i class="fa-solid fa-carrot input-icon"></i>
+                                <input type="text" id="reg-food-details" placeholder="e.g. Fried rice, cookies" data-i18n-placeholder="phFoodDetails" autocomplete="off">
+                            </div>
+                        </div>
+
                         <!-- Passenger Conditional Fields -->
                         <div id="fields-passenger" class="conditional-fields">
-                            <div class="form-group">
-                                <label for="reg-food-bringing" data-i18n="lblFood">Bringing Food?</label>
-                                <div class="input-wrapper">
-                                    <i class="fa-solid fa-utensils input-icon"></i>
-                                    <select id="reg-food-bringing">
-                                        <option value="no" data-i18n="foodNo">No</option>
-                                        <option value="yes" data-i18n="foodYes">Yes</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div id="food-details-group" class="form-group hidden">
-                                <label for="reg-food-details" data-i18n="lblFoodDetails">What food are you bringing?</label>
-                                <div class="input-wrapper">
-                                    <i class="fa-solid fa-carrot input-icon"></i>
-                                    <input type="text" id="reg-food-details" placeholder="e.g. Fried rice, cookies" data-i18n-placeholder="phFoodDetails" autocomplete="off">
-                                </div>
-                            </div>
                         </div>
 
                         <!-- Driver Conditional Fields -->
@@ -294,6 +296,6 @@
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>
 
     <!-- MAIN APP SCRIPT -->
-    <script src="app.js?v=3"></script>
+    <script src="app.js?v=4"></script>
 </body>
 </html>

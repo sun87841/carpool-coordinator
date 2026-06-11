@@ -1053,9 +1053,26 @@ input.invalid + .error-msg,
         gap: 1.5rem;
     }
     
-    .form-section,
-    .unassigned-section,
+    /* Fallback in case the old HTML wrappers are still cached in the browser */
+    .dashboard-sidebar,
+    .dashboard-board {
+        display: contents;
+    }
+    
+    .form-section {
+        order: 1 !important;
+        grid-column: auto;
+        grid-row: auto;
+    }
+    
     .board-section {
+        order: 2 !important;
+        grid-column: auto;
+        grid-row: auto;
+    }
+    
+    .unassigned-section {
+        order: 3 !important;
         grid-column: auto;
         grid-row: auto;
     }

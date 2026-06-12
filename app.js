@@ -122,7 +122,7 @@ document.addEventListener('DOMContentLoaded', () => {
             editPassengerDetails: "Edit passenger details",
             removePassengerFromCar: "Remove passenger from this car",
             allAssignedAlert: "All passengers are already assigned to cars! Register new passengers first.",
-            csvHeader: "Driver Name,Driver Group,Driver Bringing Food,Driver Food Details,Car Model,License Plate,Seats Capacity,Family Members,Passenger Name,Passenger Group,Passenger Bringing Food,Passenger Food Details,Passenger Notes",
+            csvHeader: "Driver Name,Driver Group,Driver Meeting Location,Driver Bringing Food,Driver Food Details,Car Model,License Plate,Seats Capacity,Family Members,Passenger Name,Passenger Group,Passenger Meeting Location,Passenger Bringing Food,Passenger Food Details,Passenger Notes",
             csvUnassigned: "UNASSIGNED PASSENGERS",
             printTitle: "RideShare Planner - Final Carpool Match Chart",
             printGenerated: "Generated on: {date}",
@@ -138,7 +138,13 @@ document.addEventListener('DOMContentLoaded', () => {
             foodSummaryDesc: "A consolidated registry of who is bringing what food.",
             noFoodSummary: "No food items registered yet.",
             roleDriverLabel: "Driver",
-            rolePassengerLabel: "Passenger"
+            rolePassengerLabel: "Passenger",
+            lblMeetLocation: "Meeting Location",
+            meetLocationJianCheng: "Jian Cheng Jr. High",
+            meetLocationQiDu: "Qidu Station",
+            meetLocationSelf: "Self-departure",
+            meetSummaryTitle: "Meeting Locations Summary",
+            meetSummaryDesc: "Count of travelers at each waiting category."
         },
         zh: {
             appName: "福彌寺交通乘車登記",
@@ -224,7 +230,7 @@ document.addEventListener('DOMContentLoaded', () => {
             editPassengerDetails: "編輯乘客資料",
             removePassengerFromCar: "將乘客從此車輛移出",
             allAssignedAlert: "所有乘客都已經分配到車輛了！請先註冊新乘客。",
-            csvHeader: "司機姓名,司機團體,司機是否攜帶食物,司機攜帶食物詳情,車款描述,車牌號碼,座位容量,隨行家屬人數,乘客姓名,乘客團體,乘客是否攜帶食物,乘客攜帶食物詳情,乘客備註",
+            csvHeader: "司機姓名,司機團體,司機集合地點,司機是否攜帶食物,司機攜帶食物詳情,車款描述,車牌號碼,座位容量,隨行家屬人數,乘客姓名,乘客團體,乘客集合地點,乘客是否攜帶食物,乘客攜帶食物詳情,乘客備註",
             csvUnassigned: "未分配乘客名單",
             printTitle: "福彌寺交通乘車登記 - 最終配對圖表",
             printGenerated: "產生日期的: {date}",
@@ -240,7 +246,13 @@ document.addEventListener('DOMContentLoaded', () => {
             foodSummaryDesc: "整合所有司機與乘客已登記攜帶的食物清單。",
             noFoodSummary: "目前尚無登記攜帶食物。",
             roleDriverLabel: "司機",
-            rolePassengerLabel: "乘客"
+            rolePassengerLabel: "乘客",
+            lblMeetLocation: "集合地點",
+            meetLocationJianCheng: "建成國中",
+            meetLocationQiDu: "七堵車站",
+            meetLocationSelf: "自行出發",
+            meetSummaryTitle: "集合地點總覽",
+            meetSummaryDesc: "各等待類別的乘車/出發人數與名單。"
         }
     };
 
@@ -273,6 +285,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const regFoodBringing = document.getElementById('reg-food-bringing');
     const foodDetailsGroup = document.getElementById('food-details-group');
     const regFoodDetails = document.getElementById('reg-food-details');
+    const regMeetLocation = document.getElementById('reg-meet-location');
     const regCarModel = document.getElementById('reg-car-model');
     const regCarSeats = document.getElementById('reg-car-seats');
     const regCarFamily = document.getElementById('reg-car-family');
@@ -300,23 +313,23 @@ document.addEventListener('DOMContentLoaded', () => {
     // DEMO DATA CONSTANTS
     const DEMO_PARTICIPANTS = [
         // Drivers
-        { id: 1, name: 'Sarah Connor', role: 'driver', carModel: 'Black Tesla Model Y', capacity: 4, notes: 'Driving route A, leaving at 8:00 AM', group: 'TechCorp', licensePlate: 'TR-101', familyCount: 0, foodBringing: 'yes', foodDetails: 'Sandwiches' },
-        { id: 2, name: 'Bob Marley', role: 'driver', carModel: 'Yellow VW Microbus', capacity: 7, notes: 'Scenic route, lots of space for gear', group: 'Reggae Records', licensePlate: 'JAM-MIN', familyCount: 2, foodBringing: 'yes', foodDetails: 'Fruit platter' },
-        { id: 3, name: 'Bruce Wayne', role: 'driver', carModel: 'Black Lamborghini Urus', capacity: 3, notes: 'Fast driving, luggage space is tight', group: 'Wayne Enterprises', licensePlate: 'BAT-1', familyCount: 0, foodBringing: 'no', foodDetails: '' },
-        { id: 4, name: 'Peter Parker', role: 'driver', carModel: 'Red Vespa Scooter', capacity: 1, notes: 'Only room for one backpack and one passenger!', group: 'Daily Bugle', licensePlate: 'SPIDY-1', familyCount: 0, foodBringing: 'yes', foodDetails: 'Pizza' },
-        { id: 15, name: 'Wanda Maximoff', role: 'driver', carModel: 'Red Audi A4 Sedan', capacity: 0, notes: 'Driving solo, meeting at the destination', group: 'Avengers', licensePlate: 'HEX-001', familyCount: 1, foodBringing: 'no', foodDetails: '' },
+        { id: 1, name: 'Sarah Connor', role: 'driver', carModel: 'Black Tesla Model Y', capacity: 4, notes: 'Driving route A, leaving at 8:00 AM', group: 'TechCorp', licensePlate: 'TR-101', familyCount: 0, foodBringing: 'yes', foodDetails: 'Sandwiches', meetLocation: 'JianCheng' },
+        { id: 2, name: 'Bob Marley', role: 'driver', carModel: 'Yellow VW Microbus', capacity: 7, notes: 'Scenic route, lots of space for gear', group: 'Reggae Records', licensePlate: 'JAM-MIN', familyCount: 2, foodBringing: 'yes', foodDetails: 'Fruit platter', meetLocation: 'QiDu' },
+        { id: 3, name: 'Bruce Wayne', role: 'driver', carModel: 'Black Lamborghini Urus', capacity: 3, notes: 'Fast driving, luggage space is tight', group: 'Wayne Enterprises', licensePlate: 'BAT-1', familyCount: 0, foodBringing: 'no', foodDetails: '', meetLocation: 'Self' },
+        { id: 4, name: 'Peter Parker', role: 'driver', carModel: 'Red Vespa Scooter', capacity: 1, notes: 'Only room for one backpack and one passenger!', group: 'Daily Bugle', licensePlate: 'SPIDY-1', familyCount: 0, foodBringing: 'yes', foodDetails: 'Pizza', meetLocation: 'JianCheng' },
+        { id: 15, name: 'Wanda Maximoff', role: 'driver', carModel: 'Red Audi A4 Sedan', capacity: 0, notes: 'Driving solo, meeting at the destination', group: 'Avengers', licensePlate: 'HEX-001', familyCount: 1, foodBringing: 'no', foodDetails: '', meetLocation: 'Self' },
         
         // Passengers
-        { id: 5, name: 'Harry Potter', role: 'passenger', foodBringing: 'yes', foodDetails: 'Pumpkin Juice', notes: 'Bringing a cage with a pet owl', assignedCarId: 1, group: 'Hogwarts' },
-        { id: 6, name: 'Hermione Granger', role: 'passenger', foodBringing: 'no', foodDetails: '', notes: 'Heavy bag full of thick textbooks', assignedCarId: 1, group: 'Hogwarts' },
-        { id: 7, name: 'Ron Weasley', role: 'passenger', foodBringing: 'yes', foodDetails: 'Chocolate Frogs', notes: 'Prone to car sickness, front seat preferred', assignedCarId: 2, group: 'Hogwarts' },
-        { id: 8, name: 'Tony Stark', role: 'passenger', foodBringing: 'no', foodDetails: '', notes: 'Needs room for high-tech laptop setup', assignedCarId: 3, group: 'Stark Industries' },
-        { id: 9, name: 'Steve Rogers', role: 'passenger', foodBringing: 'yes', foodDetails: 'Apple Pie', notes: 'Bringing shield, needs legroom', assignedCarId: 2, group: 'S.H.I.E.L.D.' },
-        { id: 10, name: 'Natasha Romanoff', role: 'passenger', foodBringing: 'no', foodDetails: '', notes: 'Travels extremely light', assignedCarId: 3, group: 'S.H.I.E.L.D.' },
-        { id: 11, name: 'Diana Prince', role: 'passenger', foodBringing: 'yes', foodDetails: 'Greek Salad', notes: 'Heading to the convention center', assignedCarId: 2, group: 'Museum Corp' },
-        { id: 12, name: 'Clark Kent', role: 'passenger', foodBringing: 'yes', foodDetails: 'Sandwiches', notes: 'Wearing glasses, very polite passenger', assignedCarId: null, group: 'Daily Bugle' },
-        { id: 13, name: 'Bruce Banner', role: 'passenger', foodBringing: 'no', foodDetails: '', notes: 'Enjoys quiet carpools, plays classical music', assignedCarId: null, group: 'Stark Industries' },
-        { id: 14, name: 'Selina Kyle', role: 'passenger', foodBringing: 'no', foodDetails: '', notes: 'Needs a pickup near downtown core', assignedCarId: null, group: 'Cat Burglar Co.' }
+        { id: 5, name: 'Harry Potter', role: 'passenger', foodBringing: 'yes', foodDetails: 'Pumpkin Juice', notes: 'Bringing a cage with a pet owl', assignedCarId: 1, group: 'Hogwarts', meetLocation: 'JianCheng' },
+        { id: 6, name: 'Hermione Granger', role: 'passenger', foodBringing: 'no', foodDetails: '', notes: 'Heavy bag full of thick textbooks', assignedCarId: 1, group: 'Hogwarts', meetLocation: 'JianCheng' },
+        { id: 7, name: 'Ron Weasley', role: 'passenger', foodBringing: 'yes', foodDetails: 'Chocolate Frogs', notes: 'Prone to car sickness, front seat preferred', assignedCarId: 2, group: 'Hogwarts', meetLocation: 'QiDu' },
+        { id: 8, name: 'Tony Stark', role: 'passenger', foodBringing: 'no', foodDetails: '', notes: 'Needs room for high-tech laptop setup', assignedCarId: 3, group: 'Stark Industries', meetLocation: 'Self' },
+        { id: 9, name: 'Steve Rogers', role: 'passenger', foodBringing: 'yes', foodDetails: 'Apple Pie', notes: 'Bringing shield, needs legroom', assignedCarId: 2, group: 'S.H.I.E.L.D.', meetLocation: 'QiDu' },
+        { id: 10, name: 'Natasha Romanoff', role: 'passenger', foodBringing: 'no', foodDetails: '', notes: 'Travels extremely light', assignedCarId: 3, group: 'S.H.I.E.L.D.', meetLocation: 'Self' },
+        { id: 11, name: 'Diana Prince', role: 'passenger', foodBringing: 'yes', foodDetails: 'Greek Salad', notes: 'Heading to the convention center', assignedCarId: 2, group: 'Museum Corp', meetLocation: 'QiDu' },
+        { id: 12, name: 'Clark Kent', role: 'passenger', foodBringing: 'yes', foodDetails: 'Sandwiches', notes: 'Wearing glasses, very polite passenger', assignedCarId: null, group: 'Daily Bugle', meetLocation: 'JianCheng' },
+        { id: 13, name: 'Bruce Banner', role: 'passenger', foodBringing: 'no', foodDetails: '', notes: 'Enjoys quiet carpools, plays classical music', assignedCarId: null, group: 'Stark Industries', meetLocation: 'Self' },
+        { id: 14, name: 'Selina Kyle', role: 'passenger', foodBringing: 'no', foodDetails: '', notes: 'Needs a pickup near downtown core', assignedCarId: null, group: 'Cat Burglar Co.', meetLocation: 'QiDu' }
     ];
 
     // ==========================================================================
@@ -569,6 +582,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const notesValue = regNotes.value.trim();
         const foodBringingValue = regFoodBringing.value;
         const foodDetailsValue = regFoodBringing.value === 'yes' ? regFoodDetails.value.trim() : '';
+        const meetLocationValue = regMeetLocation.value;
 
         if (!nameValue) {
             regName.classList.add('invalid');
@@ -582,7 +596,8 @@ document.addEventListener('DOMContentLoaded', () => {
             notes: notesValue,
             group: groupValue,
             foodBringing: foodBringingValue,
-            foodDetails: foodDetailsValue
+            foodDetails: foodDetailsValue,
+            meetLocation: meetLocationValue
         };
 
         if (roleValue === 'driver') {
@@ -619,7 +634,8 @@ document.addEventListener('DOMContentLoaded', () => {
                             notes: notesValue,
                             group: groupValue,
                             foodBringing: foodBringingValue,
-                            foodDetails: foodDetailsValue
+                            foodDetails: foodDetailsValue,
+                            meetLocation: meetLocationValue
                         };
                         if (roleValue === 'driver') {
                             updated.role = 'driver';
@@ -655,6 +671,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 regCarFamily.value = '0';
                 regCarPlate.value = '';
                 regNotes.value = '';
+                regMeetLocation.value = 'JianCheng';
             }
         }
     }
@@ -764,6 +781,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // 4. Render Food Summary
         renderFoodSummary(state.participants);
+
+        // 5. Render Meeting Locations Summary
+        renderMeetSummary(state.participants);
     }
 
     function getFoodBadgeHTML(p) {
@@ -777,6 +797,39 @@ document.addEventListener('DOMContentLoaded', () => {
             const text = TRANSLATIONS[currentLang].badgeNoFood;
             return `<span class="badge-tag" style="background-color: rgba(255, 255, 255, 0.02); color: var(--text-muted); border: 1px solid var(--border-color); padding: 0.15rem 0.5rem; border-radius: 4px; font-size: 0.75rem; font-weight: 500; display: inline-flex; align-items: center; gap: 4px;" title="${title}"><i class="fa-solid fa-circle-xmark"></i> ${text}</span>`;
         }
+    }
+
+    function getMeetLocationBadgeHTML(p) {
+        const locationVal = p.meetLocation || 'JianCheng';
+        let locationName = '';
+        if (locationVal === 'JianCheng') {
+            locationName = TRANSLATIONS[currentLang].meetLocationJianCheng;
+        } else if (locationVal === 'QiDu') {
+            locationName = TRANSLATIONS[currentLang].meetLocationQiDu;
+        } else if (locationVal === 'Self') {
+            locationName = TRANSLATIONS[currentLang].meetLocationSelf;
+        }
+
+        let colorTheme = {
+            bg: 'rgba(37, 99, 235, 0.08)',
+            text: 'var(--accent-blue)',
+            border: 'rgba(37, 99, 235, 0.2)'
+        };
+        if (locationVal === 'QiDu') {
+            colorTheme = {
+                bg: 'rgba(124, 58, 237, 0.08)',
+                text: 'var(--accent-purple)',
+                border: 'rgba(124, 58, 237, 0.2)'
+            };
+        } else if (locationVal === 'Self') {
+            colorTheme = {
+                bg: 'rgba(234, 88, 12, 0.08)',
+                text: 'var(--accent-orange)',
+                border: 'rgba(234, 88, 12, 0.2)'
+            };
+        }
+
+        return `<span class="badge-tag" style="background-color: ${colorTheme.bg}; color: ${colorTheme.text}; border: 1px solid ${colorTheme.border}; padding: 0.15rem 0.5rem; border-radius: 4px; font-size: 0.75rem; font-weight: 500; display: inline-flex; align-items: center; gap: 4px;" title="${TRANSLATIONS[currentLang].lblMeetLocation}"><i class="fa-solid fa-location-dot"></i> ${locationName}</span>`;
     }
 
     function getFoodText(p) {
@@ -832,6 +885,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <span class="passenger-name">${escapeHTML(p.name)}</span>
                     </div>
                     <div class="passenger-meta" style="margin-top: 0.15rem; margin-bottom: 0.15rem;">
+                        ${getMeetLocationBadgeHTML(p)}
                         ${getFoodBadgeHTML(p)}
                         ${p.group ? `<span class="badge-tag badge-group" title="${TRANSLATIONS[currentLang].groupTitle}"><i class="fa-solid fa-building"></i> ${escapeHTML(p.group)}</span>` : ''}
                     </div>
@@ -907,6 +961,69 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    function renderMeetSummary(participants) {
+        const meetSummaryContainer = document.getElementById('meet-summary-container');
+        if (!meetSummaryContainer) return;
+
+        const groups = {
+            JianCheng: { nameEn: 'Jian Cheng Jr. High', nameZh: '建成國中', icon: 'fa-school', class: 'blue', members: [], count: 0 },
+            QiDu: { nameEn: 'Qidu Station', nameZh: '七堵車站', icon: 'fa-train-subway', class: 'purple', members: [], count: 0 },
+            Self: { nameEn: 'Self-departure', nameZh: '自行出發', icon: 'fa-street-view', class: 'orange', members: [], count: 0 }
+        };
+
+        participants.forEach(p => {
+            const loc = p.meetLocation || 'JianCheng';
+            if (groups[loc]) {
+                const roleText = p.role === 'driver' ? TRANSLATIONS[currentLang].roleDriverLabel : TRANSLATIONS[currentLang].rolePassengerLabel;
+                let displayName = `${escapeHTML(p.name)} (${roleText})`;
+                let pCount = 1;
+                
+                if (p.role === 'driver' && p.familyCount > 0) {
+                    displayName += ` + ${p.familyCount} ${TRANSLATIONS[currentLang].familyRiding}`;
+                    pCount += p.familyCount;
+                }
+                
+                groups[loc].members.push(displayName);
+                groups[loc].count += pCount;
+            }
+        });
+
+        meetSummaryContainer.innerHTML = '';
+
+        const locs = ['JianCheng', 'QiDu', 'Self'];
+        locs.forEach(key => {
+            const group = groups[key];
+            const groupTitle = currentLang === 'zh' ? group.nameZh : group.nameEn;
+            
+            const groupEl = document.createElement('div');
+            groupEl.className = `meet-location-group border-${group.class}`;
+            
+            let membersHTML = '';
+            if (group.members.length === 0) {
+                membersHTML = `<p class="no-members-text">${currentLang === 'zh' ? '無人在此地點集合' : 'No travelers at this location'}</p>`;
+            } else {
+                membersHTML = `
+                    <ul class="meet-members-list">
+                        ${group.members.map(m => `<li><i class="fa-solid fa-circle-user"></i> <span>${m}</span></li>`).join('')}
+                    </ul>
+                `;
+            }
+
+            groupEl.innerHTML = `
+                <div class="meet-location-group-header bg-${group.class}">
+                    <span class="meet-location-group-title">
+                        <i class="fa-solid ${group.icon}"></i> ${groupTitle}
+                    </span>
+                    <span class="meet-location-group-count count-badge">${group.count}</span>
+                </div>
+                <div class="meet-location-group-members">
+                    ${membersHTML}
+                </div>
+            `;
+            meetSummaryContainer.appendChild(groupEl);
+        });
+    }
+
     function renderCarsGrid(drivers, passengers) {
         carsGrid.innerHTML = '';
 
@@ -967,7 +1084,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="driver-info">
                         <div class="driver-avatar">${escapeHTML(initials)}</div>
                         <div class="driver-text">
-                            <span class="driver-name">${escapeHTML(d.name)} ${d.group ? `<span style="font-size: 0.75rem; color: var(--accent-blue); font-weight: 500; margin-left: 4px;">(${escapeHTML(d.group)})</span>` : ''} ${d.foodBringing === 'yes' ? `<span class="badge-tag" style="background-color: rgba(16, 185, 129, 0.08); color: var(--accent-emerald); border: 1px solid rgba(16, 185, 129, 0.2); padding: 0.15rem 0.5rem; border-radius: 4px; font-size: 0.7rem; font-weight: 600; display: inline-flex; align-items: center; gap: 4px; vertical-align: middle; margin-left: 6px; text-transform: none;" title="${TRANSLATIONS[currentLang].foodTitle}: ${escapeHTML(d.foodDetails)}"><i class="fa-solid fa-utensils"></i> ${escapeHTML(d.foodDetails)}</span>` : ''}</span>
+                            <span class="driver-name">${escapeHTML(d.name)} ${d.group ? `<span style="font-size: 0.75rem; color: var(--accent-blue); font-weight: 500; margin-left: 4px;">(${escapeHTML(d.group)})</span>` : ''} ${getMeetLocationBadgeHTML(d)} ${d.foodBringing === 'yes' ? `<span class="badge-tag" style="background-color: rgba(16, 185, 129, 0.08); color: var(--accent-emerald); border: 1px solid rgba(16, 185, 129, 0.2); padding: 0.15rem 0.5rem; border-radius: 4px; font-size: 0.75rem; font-weight: 500; display: inline-flex; align-items: center; gap: 4px; vertical-align: middle; margin-left: 6px; text-transform: none;" title="${TRANSLATIONS[currentLang].foodTitle}: ${escapeHTML(d.foodDetails)}"><i class="fa-solid fa-utensils"></i> ${escapeHTML(d.foodDetails)}</span>` : ''}</span>
                             <span class="car-description">${escapeHTML(d.carModel)} ${d.licensePlate ? `• [${escapeHTML(d.licensePlate)}]` : ''}</span>
                         </div>
                     </div>
@@ -985,7 +1102,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
                 
                 ${d.notes ? `<div style="font-size: 0.8rem; color: var(--text-secondary); background: rgba(255,255,255,0.02); padding: 5px 8px; border-radius: 4px; border-left: 3px solid var(--accent-purple); font-style: italic;">${TRANSLATIONS[currentLang].routeNotes.replace('{notes}', escapeHTML(d.notes))}</div>` : ''}
-
+ 
                 <div class="car-seats-visual">
                     ${d.capacity === 0 
                         ? `<span style="font-size: 0.8rem; color: var(--text-muted); font-style: italic;"><i class="fa-solid fa-user-slash"></i> ${
@@ -996,12 +1113,12 @@ document.addEventListener('DOMContentLoaded', () => {
                         : `<span style="font-size: 0.75rem; color: var(--text-secondary); margin-right: 5px;">${TRANSLATIONS[currentLang].visualCapacity}</span> ${seatsDotsHTML}`
                     }
                 </div>
-
+ 
                 <div class="car-passengers">
                     <!-- Assigned Passenger Items -->
                 </div>
             `;
-
+ 
             // Append assigned passenger cards
             const passengerListContainer = carCard.querySelector('.car-passengers');
             
@@ -1018,7 +1135,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                 `;
             }
-
+ 
             if (assignedPassengers.length === 0) {
                 passengerListContainer.innerHTML = familyHTML || `<p style="font-size: 0.8rem; color: var(--text-muted); text-align: center; padding: 10px; font-style: italic;">${TRANSLATIONS[currentLang].noPassengersAssigned}</p>`;
             } else {
@@ -1028,20 +1145,21 @@ document.addEventListener('DOMContentLoaded', () => {
                     item.className = 'assigned-passenger-item';
                     item.setAttribute('draggable', 'true');
                     item.dataset.id = ap.id;
-
+ 
                     item.addEventListener('dragstart', (e) => {
                         e.dataTransfer.setData('text/plain', ap.id);
                         item.classList.add('dragging');
                     });
-
+ 
                     item.addEventListener('dragend', () => {
                         item.classList.remove('dragging');
                     });
-
+ 
                     item.innerHTML = `
                         <div class="assigned-passenger-info">
                             <span class="bullet-dot"></span>
                             <span class="assigned-passenger-name">${escapeHTML(ap.name)}</span>
+                            ${getMeetLocationBadgeHTML(ap)}
                             ${ap.group ? `<span style="font-size: 0.7rem; color: var(--accent-blue); margin-left: 5px; font-weight: 600;">(${escapeHTML(ap.group)})</span>` : ''}
                             ${ap.foodBringing === 'yes' ? `<span style="font-size: 0.7rem; color: var(--accent-emerald); font-weight: 600; margin-left: 5px;" title="${escapeHTML(ap.foodDetails)}"><i class="fa-solid fa-utensils"></i> (${escapeHTML(ap.foodDetails)})</span>` : ''}
                             ${ap.notes ? `<span class="assigned-passenger-notes" title="${escapeHTML(ap.notes)}">(${escapeHTML(ap.notes)})</span>` : ''}
@@ -1123,12 +1241,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
         drivers.forEach(d => {
             const assigned = passengers.filter(p => p.assignedCarId === d.id);
+            const dLoc = d.meetLocation ? TRANSLATIONS[currentLang][`meetLocation${d.meetLocation}`] || d.meetLocation : '';
             if (assigned.length === 0) {
                 // Driver with no passengers
-                csvLines.push(`"${cleanCSV(d.name)}","${cleanCSV(d.group || '')}","${cleanCSV(d.foodBringing || 'no')}","${cleanCSV(d.foodDetails || '')}","${cleanCSV(d.carModel)}","${cleanCSV(d.licensePlate || '')}",${d.capacity},${d.familyCount || 0},"","","","",""`);
+                csvLines.push(`"${cleanCSV(d.name)}","${cleanCSV(d.group || '')}","${cleanCSV(dLoc)}","${cleanCSV(d.foodBringing || 'no')}","${cleanCSV(d.foodDetails || '')}","${cleanCSV(d.carModel)}","${cleanCSV(d.licensePlate || '')}",${d.capacity},${d.familyCount || 0},"","","","","",""`);
             } else {
                 assigned.forEach(ap => {
-                    csvLines.push(`"${cleanCSV(d.name)}","${cleanCSV(d.group || '')}","${cleanCSV(d.foodBringing || 'no')}","${cleanCSV(d.foodDetails || '')}","${cleanCSV(d.carModel)}","${cleanCSV(d.licensePlate || '')}",${d.capacity},${d.familyCount || 0},"${cleanCSV(ap.name)}","${cleanCSV(ap.group || '')}","${cleanCSV(ap.foodBringing || 'no')}","${cleanCSV(ap.foodDetails || '')}","${cleanCSV(ap.notes || '')}"`);
+                    const apLoc = ap.meetLocation ? TRANSLATIONS[currentLang][`meetLocation${ap.meetLocation}`] || ap.meetLocation : '';
+                    csvLines.push(`"${cleanCSV(d.name)}","${cleanCSV(d.group || '')}","${cleanCSV(dLoc)}","${cleanCSV(d.foodBringing || 'no')}","${cleanCSV(d.foodDetails || '')}","${cleanCSV(d.carModel)}","${cleanCSV(d.licensePlate || '')}",${d.capacity},${d.familyCount || 0},"${cleanCSV(ap.name)}","${cleanCSV(ap.group || '')}","${cleanCSV(apLoc)}","${cleanCSV(ap.foodBringing || 'no')}","${cleanCSV(ap.foodDetails || '')}","${cleanCSV(ap.notes || '')}"`);
                 });
             }
         });
@@ -1136,10 +1256,11 @@ document.addEventListener('DOMContentLoaded', () => {
         // Add unassigned passengers at the bottom
         const unassigned = passengers.filter(p => p.assignedCarId === null);
         if (unassigned.length > 0) {
-            csvLines.push(',,,,,,,,,,,,'); // spacer
-            csvLines.push(`${TRANSLATIONS[currentLang].csvUnassigned},,,,,,,,,,,,`);
+            csvLines.push(',,,,,,,,,,,,,,'); // spacer
+            csvLines.push(`${TRANSLATIONS[currentLang].csvUnassigned},,,,,,,,,,,,,,`);
             unassigned.forEach(p => {
-                csvLines.push(`"","","","","","","",0,"${cleanCSV(p.name)}","${cleanCSV(p.group || '')}","${cleanCSV(p.foodBringing || 'no')}","${cleanCSV(p.foodDetails || '')}","${cleanCSV(p.notes || '')}"`);
+                const pLoc = p.meetLocation ? TRANSLATIONS[currentLang][`meetLocation${p.meetLocation}`] || p.meetLocation : '';
+                csvLines.push(`"","","","","","","",0,0,"${cleanCSV(p.name)}","${cleanCSV(p.group || '')}","${cleanCSV(pLoc)}","${cleanCSV(p.foodBringing || 'no')}","${cleanCSV(p.foodDetails || '')}","${cleanCSV(p.notes || '')}"`);
             });
         }
 
@@ -1193,14 +1314,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 } else {
                     passengersHTML = `
                         <ol class="print-passenger-list">
-                            ${assigned.map(ap => `
+                            ${assigned.map(ap => {
+                                const apLoc = ap.meetLocation ? TRANSLATIONS[currentLang][`meetLocation${ap.meetLocation}`] || ap.meetLocation : '';
+                                return `
                                 <li class="print-passenger-item">
                                     <strong>${escapeHTML(ap.name)}</strong> 
                                     ${ap.group ? `(${escapeHTML(ap.group)})` : ''}
+                                    [📍${escapeHTML(apLoc)}]
                                     ${ap.notes ? `— <em>Notes: ${escapeHTML(ap.notes)}</em>` : ''} 
                                     (${TRANSLATIONS[currentLang].foodTitle}: ${getFoodText(ap)})
                                 </li>
-                            `).join('')}
+                                `;
+                            }).join('')}
                             ${printFamilyHTML ? `<li class="print-passenger-item" style="list-style-type: square; color: #555;"><strong>${TRANSLATIONS[currentLang].familyRiding}:</strong> ${TRANSLATIONS[currentLang].familyPeopleCount.replace('{count}', d.familyCount)}</li>` : ''}
                         </ol>
                     `;
@@ -1208,11 +1333,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 const occupiedText = d.capacity === 0 ? TRANSLATIONS[currentLang].printSeatsOccupiedSolo : TRANSLATIONS[currentLang].printSeatsOccupied.replace('{occupied}', assigned.length).replace('{capacity}', d.capacity);
                 const printFamilyText = d.familyCount > 0 ? TRANSLATIONS[currentLang].printSeatsOccupiedFamily.replace('{count}', d.familyCount) : '';
+                const dLoc = d.meetLocation ? TRANSLATIONS[currentLang][`meetLocation${d.meetLocation}`] || d.meetLocation : '';
 
                 printContent.innerHTML += `
                     <div class="print-car-group">
                         <div class="print-car-title">
-                            <span>${TRANSLATIONS[currentLang].lblDriverName}: ${escapeHTML(d.name)} ${d.group ? `(${escapeHTML(d.group)})` : ''}${d.foodBringing === 'yes' ? ` (${TRANSLATIONS[currentLang].foodTitle}: ${escapeHTML(d.foodDetails)})` : ''} — (${escapeHTML(d.carModel)})${d.licensePlate ? ` [${TRANSLATIONS[currentLang].lblCarPlate}: ${escapeHTML(d.licensePlate)}]` : ''}</span>
+                            <span>${TRANSLATIONS[currentLang].lblDriverName}: ${escapeHTML(d.name)} ${d.group ? `(${escapeHTML(d.group)})` : ''} [📍${escapeHTML(dLoc)}]${d.foodBringing === 'yes' ? ` (${TRANSLATIONS[currentLang].foodTitle}: ${escapeHTML(d.foodDetails)})` : ''} — (${escapeHTML(d.carModel)})${d.licensePlate ? ` [${TRANSLATIONS[currentLang].lblCarPlate}: ${escapeHTML(d.licensePlate)}]` : ''}</span>
                             <span>${occupiedText}${printFamilyText}</span>
                         </div>
                         ${d.notes ? `<p style="margin-bottom: 8px; font-size: 10pt;"><strong>${TRANSLATIONS[currentLang].printRouteDetails.replace('{notes}', escapeHTML(d.notes))}</strong></p>` : ''}
@@ -1227,14 +1353,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="print-unassigned">
                     <h3>${TRANSLATIONS[currentLang].unassignedTitle} (${unassigned.length})</h3>
                     <ul style="list-style-type: square; margin-left: 20px;">
-                        ${unassigned.map(up => `
+                        ${unassigned.map(up => {
+                            const upLoc = up.meetLocation ? TRANSLATIONS[currentLang][`meetLocation${up.meetLocation}`] || up.meetLocation : '';
+                            return `
                             <li>
                                 <strong>${escapeHTML(up.name)}</strong> 
                                 ${up.group ? `(${escapeHTML(up.group)})` : ''}
+                                [📍${escapeHTML(upLoc)}]
                                 (${TRANSLATIONS[currentLang].foodTitle}: ${getFoodText(up)}) 
                                 ${up.notes ? `— <em>Notes: ${escapeHTML(up.notes)}</em>` : ''}
                             </li>
-                        `).join('')}
+                            `;
+                        }).join('')}
                     </ul>
                 </div>
             `;
@@ -1284,6 +1414,9 @@ document.addEventListener('DOMContentLoaded', () => {
             regFoodDetails.value = '';
         }
 
+        // Populate meeting location
+        regMeetLocation.value = p.meetLocation || 'JianCheng';
+
         // Update Form Title and buttons
         formTitle.innerHTML = `<i class="fa-solid fa-pen-to-square"></i> Edit Participant`;
         btnFormSubmit.innerHTML = `<i class="fa-solid fa-check"></i> Save Changes`;
@@ -1307,6 +1440,7 @@ document.addEventListener('DOMContentLoaded', () => {
         regFoodBringing.value = 'no';
         regFoodDetails.value = '';
         foodDetailsGroup.classList.add('hidden');
+        regMeetLocation.value = 'JianCheng';
 
         // Reset title and submit button
         formTitle.innerHTML = `<i class="fa-solid fa-user-plus"></i> Register Participant`;

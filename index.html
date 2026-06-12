@@ -12,7 +12,7 @@
     <!-- FontAwesome for high-quality SVG icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Main stylesheet -->
-    <link rel="stylesheet" href="styles.css?v=13">
+    <link rel="stylesheet" href="styles.css?v=14">
 </head>
 <body>
     <!-- Top Decorative Glow -->
@@ -206,6 +206,18 @@
                         </div>
 
                         <div class="form-group">
+                            <label for="reg-meet-location" data-i18n="lblMeetLocation">Meeting Location</label>
+                            <div class="input-wrapper">
+                                <i class="fa-solid fa-location-dot input-icon"></i>
+                                <select id="reg-meet-location">
+                                    <option value="JianCheng" data-i18n="meetLocationJianCheng">建成國中</option>
+                                    <option value="QiDu" data-i18n="meetLocationQiDu">七堵車站</option>
+                                    <option value="Self" data-i18n="meetLocationSelf">自行出發</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
                             <label for="reg-group" data-i18n="lblGroup">Company / Group Name</label>
                             <div class="input-wrapper">
                                 <i class="fa-solid fa-building input-icon"></i>
@@ -289,6 +301,20 @@
                     <!-- Filled dynamically -->
                 </div>
             </section>
+
+            <!-- Meeting Locations Summary Section -->
+            <section class="card glass-card meet-summary-section" aria-labelledby="meet-summary-title">
+                <div class="section-header">
+                    <h2 id="meet-summary-title" class="section-title">
+                        <i class="fa-solid fa-map-location-dot"></i> <span data-i18n="meetSummaryTitle">Meeting Locations Summary</span>
+                    </h2>
+                </div>
+                <p class="section-desc" data-i18n="meetSummaryDesc">Count of travelers at each waiting category.</p>
+                
+                <div class="meet-summary-container" id="meet-summary-container">
+                    <!-- Filled dynamically -->
+                </div>
+            </section>
         </main>
     </div>
 
@@ -306,6 +332,6 @@
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>
 
     <!-- MAIN APP SCRIPT -->
-    <script src="app.js?v=13"></script>
+    <script src="app.js?v=14"></script>
 </body>
 </html>

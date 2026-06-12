@@ -352,7 +352,7 @@ body {
 .dashboard-grid {
     display: grid;
     grid-template-columns: 380px 1fr;
-    grid-template-rows: auto auto auto;
+    grid-template-rows: auto auto auto auto;
     gap: 1.5rem;
     align-items: start;
 }
@@ -372,9 +372,14 @@ body {
     grid-row: 3;
 }
 
+.meet-summary-section {
+    grid-column: 1;
+    grid-row: 4;
+}
+
 .board-section {
     grid-column: 2;
-    grid-row: 1 / span 3;
+    grid-row: 1 / span 4;
 }
 
 /* FOOD REGISTRY SUMMARY */
@@ -456,6 +461,142 @@ body {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+/* MEETING LOCATIONS SUMMARY */
+.meet-summary-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-top: 1rem;
+    max-height: 400px;
+    overflow-y: auto;
+    padding-right: 4px;
+}
+
+/* Scrollbar styles for the meeting locations summary container */
+.meet-summary-container::-webkit-scrollbar {
+    width: 6px;
+}
+.meet-summary-container::-webkit-scrollbar-track {
+    background: transparent;
+}
+.meet-summary-container::-webkit-scrollbar-thumb {
+    background: rgba(100, 116, 139, 0.2);
+    border-radius: 3px;
+}
+.meet-summary-container::-webkit-scrollbar-thumb:hover {
+    background: rgba(100, 116, 139, 0.4);
+}
+
+.meet-location-group {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: transform var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.meet-location-group.border-blue {
+    border-color: rgba(37, 99, 235, 0.12);
+}
+.meet-location-group.border-purple {
+    border-color: rgba(124, 58, 237, 0.12);
+}
+.meet-location-group.border-orange {
+    border-color: rgba(234, 88, 12, 0.12);
+}
+
+.meet-location-group.border-blue:hover {
+    transform: translateX(4px);
+    background-color: rgba(37, 99, 235, 0.02);
+    border-color: rgba(37, 99, 235, 0.2);
+}
+.meet-location-group.border-purple:hover {
+    transform: translateX(4px);
+    background-color: rgba(124, 58, 237, 0.02);
+    border-color: rgba(124, 58, 237, 0.2);
+}
+.meet-location-group.border-orange:hover {
+    transform: translateX(4px);
+    background-color: rgba(234, 88, 12, 0.02);
+    border-color: rgba(234, 88, 12, 0.2);
+}
+
+.meet-location-group-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0.75rem;
+    font-weight: 600;
+    font-size: 0.8rem;
+    color: #ffffff;
+}
+
+.meet-location-group-header.bg-blue {
+    background: linear-gradient(135deg, rgba(37, 99, 235, 0.75), rgba(37, 99, 235, 0.55));
+}
+.meet-location-group-header.bg-purple {
+    background: linear-gradient(135deg, rgba(124, 58, 237, 0.75), rgba(124, 58, 237, 0.55));
+}
+.meet-location-group-header.bg-orange {
+    background: linear-gradient(135deg, rgba(234, 88, 12, 0.75), rgba(234, 88, 12, 0.55));
+}
+
+.meet-location-group-title {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.meet-location-group-count {
+    background: rgba(255, 255, 255, 0.2) !important;
+    color: #ffffff !important;
+    font-size: 0.75rem !important;
+    padding: 0.1rem 0.4rem !important;
+    height: 18px !important;
+    min-width: 18px !important;
+    border-radius: 9px !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.meet-location-group-members {
+    padding: 0.5rem 0.75rem;
+}
+
+.no-members-text {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-align: center;
+    padding: 0.5rem 0;
+    font-style: italic;
+}
+
+.meet-members-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.meet-members-list li {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.meet-members-list li i {
+    font-size: 0.65rem;
+    color: var(--text-muted);
 }
 
 /* FORM ELEMENTS */
@@ -1113,7 +1254,7 @@ input.invalid + .error-msg,
 @media (max-width: 1024px) {
     .dashboard-grid {
         grid-template-columns: 1fr 1fr;
-        grid-template-rows: auto auto auto;
+        grid-template-rows: auto auto auto auto;
     }
     
     .form-section {
@@ -1134,6 +1275,11 @@ input.invalid + .error-msg,
     .food-summary-section {
         grid-column: 1 / span 2;
         grid-row: 3;
+    }
+
+    .meet-summary-section {
+        grid-column: 1 / span 2;
+        grid-row: 4;
     }
 }
 
@@ -1171,6 +1317,12 @@ input.invalid + .error-msg,
     
     .food-summary-section {
         order: 4 !important;
+        grid-column: auto;
+        grid-row: auto;
+    }
+    
+    .meet-summary-section {
+        order: 5 !important;
         grid-column: auto;
         grid-row: auto;
     }

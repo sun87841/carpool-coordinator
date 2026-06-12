@@ -404,7 +404,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.warn("Firestore snapshot listener failed, using offline local sync:", err);
             });
         } else {
-            // Zero-signup cloud sync fallback using Puter.js
+            // Zero-signup cloud sync fallback using KVdb.io
             syncPull();
             setInterval(syncPull, 4000);
         }
@@ -447,7 +447,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.error("Failed to save state to Cloud Firestore:", err);
             });
         } else {
-            // Write to Puter.js if Firebase is not active
+            // Write to KVdb.io if Firebase is not active
             syncPush();
         }
     }
@@ -1526,26 +1526,33 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ==========================================================================
-    // CLOUD SYNCHRONIZATION (Zero-Signup Puter.js Fallback)
+    // CLOUD SYNCHRONIZATION (Zero-Signup KVdb.io Fallback)
     // ==========================================================================
-    const PUTER_SYNC_KEY = "carpool_sync_30f775b4_4a28";
+    const KVDB_SYNC_URL = "https://kvdb.io/VKcWgy3XPcfvBE9V82TQBC/active_trip";
     let isSyncing = false;
 
     function syncPush() {
-        if (isFirebaseReady || isSyncing || typeof puter === 'undefined') return;
+        if (isFirebaseReady || isSyncing) return;
         isSyncing = true;
-        puter.kv.set(PUTER_SYNC_KEY, JSON.stringify(state))
-        .catch(err => console.warn("Puter sync push failed:", err))
+        fetch(KVDB_SYNC_URL, {
+            method: 'POST',
+            body: JSON.stringify(state)
+        })
+        .catch(err => console.warn("KVdb sync push failed:", err))
         .finally(() => { isSyncing = false; });
     }
 
     function syncPull() {
-        if (isFirebaseReady || editingId !== null || typeof puter === 'undefined') return;
+        if (isFirebaseReady || editingId !== null || isSyncing) return;
         
-        puter.kv.get(PUTER_SYNC_KEY)
-        .then(remoteVal => {
-            if (!remoteVal) return;
-            const remoteState = JSON.parse(remoteVal);
+        fetch(KVDB_SYNC_URL)
+        .then(res => {
+            if (res.status === 404) return null;
+            if (!res.ok) throw new Error("HTTP error " + res.status);
+            return res.json();
+        })
+        .then(remoteState => {
+            if (!remoteState) return;
             if (remoteState && Array.isArray(remoteState.participants)) {
                 const localStr = JSON.stringify(state.participants);
                 const remoteStr = JSON.stringify(remoteState.participants);
@@ -1553,11 +1560,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     state = remoteState;
                     localStorage.setItem('rideShareState', JSON.stringify(state));
                     render();
-                    console.log("State synced from Puter remote database.");
+                    console.log("State synced from KVdb remote database.");
                 }
             }
         })
-        .catch(err => console.warn("Puter sync pull failed:", err));
+        .catch(err => console.warn("KVdb sync pull failed:", err));
     }
 
     // RUN THE APPLICATION

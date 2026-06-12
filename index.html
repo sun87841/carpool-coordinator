@@ -12,7 +12,7 @@
     <!-- FontAwesome for high-quality SVG icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Main stylesheet -->
-    <link rel="stylesheet" href="styles.css?v=18">
+    <link rel="stylesheet" href="styles.css?v=19">
 </head>
 <body>
     <!-- Top Decorative Glow -->
@@ -108,8 +108,8 @@
         <!-- MAIN LAYOUT Grid -->
         <main class="dashboard-grid">
             
-            <!-- LEFT COLUMN: Registration & Unassigned list -->
-                
+            <!-- LEFT COLUMN: Registration, Unassigned list & Food Summary -->
+            <div class="dashboard-col-left">
                 <!-- Registration Form -->
                 <section class="card glass-card form-section" aria-labelledby="form-title">
                     <h2 id="form-title" class="section-title"><i class="fa-solid fa-user-plus"></i> <span data-i18n="formTitleAdd">Register Participant</span></h2>
@@ -233,88 +233,92 @@
                             </div>
                         </div>
 
-                        <div class="form-actions-row">
+                        <div class="form-group-row" style="margin-top: 1.5rem;">
                             <button type="submit" id="btn-form-submit" class="btn btn-primary btn-block">
                                 <i class="fa-solid fa-plus"></i> <span data-i18n="btnAddToList">Add to List</span>
                             </button>
-                            <button type="button" id="btn-form-cancel" class="btn btn-secondary hidden" style="margin-left: 10px;" data-i18n="btnCancel">
+                            <button type="button" id="btn-form-cancel" class="btn btn-secondary hidden" style="margin-top: 10px;" data-i18n="btnCancel">
                                 Cancel
                             </button>
                         </div>
                     </form>
                 </section>
 
-            <!-- RIGHT COLUMN: Active Cars / Carpools Board -->
-            <section class="card glass-card board-section" aria-labelledby="board-title">
-                <div class="board-header">
-                    <div>
-                        <h2 id="board-title" class="section-title"><i class="fa-solid fa-square-parking"></i> <span data-i18n="boardTitle">Carpool Board</span></h2>
-                        <p class="board-desc" data-i18n="boardDesc">Drag passengers onto cars or click the car seat grid to assign.</p>
+                <!-- Unassigned Passengers List -->
+                <section class="card glass-card unassigned-section" aria-labelledby="unassigned-title">
+                    <div class="section-header">
+                        <h2 id="unassigned-title" class="section-title">
+                            <i class="fa-solid fa-people-arrows"></i> <span data-i18n="unassignedTitle">Unassigned Passengers</span>
+                        </h2>
+                        <span class="count-badge" id="badge-unassigned">0</span>
                     </div>
-                    <div class="board-controls">
-                        <!-- Toggle layout options or summary -->
-                        <span class="seats-legend"><span class="legend-dot filled"></span> <span data-i18n="legendFilled">Filled Seat</span></span>
-                        <span class="seats-legend"><span class="legend-dot empty"></span> <span data-i18n="legendEmpty">Empty Seat</span></span>
+                    <p class="section-desc" data-i18n="unassignedDesc">Drag passengers to a car on the right, or click assignment buttons.</p>
+                    
+                    <div class="unassigned-list-container" id="unassigned-list">
+                        <!-- Filled dynamically -->
+                        <div class="empty-state">
+                            <i class="fa-solid fa-user-check"></i>
+                            <p data-i18n="noUnassigned">No unassigned passengers</p>
+                        </div>
                     </div>
-                </div>
+                </section>
 
-                <div id="cars-grid" class="cars-grid-container">
-                    <!-- Filled dynamically -->
-                    <div class="empty-state-large">
-                        <i class="fa-solid fa-car-rear animate-float"></i>
-                        <h3 data-i18n="noActiveVehicles">No Active Vehicles Registered</h3>
-                        <p data-i18n="noActiveVehiclesDesc">Add a participant with the **Driver** role to set up your first carpool vehicle, or load the **Demo Data** above to test it out instantly.</p>
+                <!-- Food Summary Section -->
+                <section class="card glass-card food-summary-section" aria-labelledby="food-summary-title">
+                    <div class="section-header">
+                        <h2 id="food-summary-title" class="section-title">
+                            <i class="fa-solid fa-basket-shopping"></i> <span data-i18n="foodSummaryTitle">Food Registry Summary</span>
+                        </h2>
+                        <span class="count-badge" id="badge-food-summary">0</span>
                     </div>
-                </div>
-            </section>
-
-            <!-- Unassigned Passengers List -->
-            <section class="card glass-card unassigned-section" aria-labelledby="unassigned-title">
-                <div class="section-header">
-                    <h2 id="unassigned-title" class="section-title">
-                        <i class="fa-solid fa-people-arrows"></i> <span data-i18n="unassignedTitle">Unassigned Passengers</span>
-                    </h2>
-                    <span class="count-badge" id="badge-unassigned">0</span>
-                </div>
-                <p class="section-desc" data-i18n="unassignedDesc">Drag passengers to a car on the right, or click assignment buttons.</p>
-                
-                <div class="unassigned-list-container" id="unassigned-list">
-                    <!-- Filled dynamically -->
-                    <div class="empty-state">
-                        <i class="fa-solid fa-user-check"></i>
-                        <p data-i18n="noUnassigned">No unassigned passengers</p>
+                    <p class="section-desc" data-i18n="foodSummaryDesc">List of all food items registered for this trip.</p>
+                    
+                    <div class="food-summary-list" id="food-summary-list">
+                        <!-- Filled dynamically -->
                     </div>
-                </div>
-            </section>
+                </section>
+            </div>
 
-            <!-- Food Summary Section -->
-            <section class="card glass-card food-summary-section" aria-labelledby="food-summary-title">
-                <div class="section-header">
-                    <h2 id="food-summary-title" class="section-title">
-                        <i class="fa-solid fa-basket-shopping"></i> <span data-i18n="foodSummaryTitle">Food Registry Summary</span>
-                    </h2>
-                    <span class="count-badge" id="badge-food-summary">0</span>
-                </div>
-                <p class="section-desc" data-i18n="foodSummaryDesc">List of all food items registered for this trip.</p>
-                
-                <div class="food-summary-list" id="food-summary-list">
-                    <!-- Filled dynamically -->
-                </div>
-            </section>
+            <!-- RIGHT COLUMN: Active Cars / Carpools Board & Meeting Locations Summary -->
+            <div class="dashboard-col-right">
+                <!-- Carpool Board Section -->
+                <section class="card glass-card board-section" aria-labelledby="board-title">
+                    <div class="board-header">
+                        <div>
+                            <h2 id="board-title" class="section-title"><i class="fa-solid fa-square-parking"></i> <span data-i18n="boardTitle">Carpool Board</span></h2>
+                            <p class="board-desc" data-i18n="boardDesc">Drag passengers onto cars or click the car seat grid to assign.</p>
+                        </div>
+                        <div class="board-controls">
+                            <!-- Toggle layout options or summary -->
+                            <span class="seats-legend"><span class="legend-dot filled"></span> <span data-i18n="legendFilled">Filled Seat</span></span>
+                            <span class="seats-legend"><span class="legend-dot empty"></span> <span data-i18n="legendEmpty">Empty Seat</span></span>
+                        </div>
+                    </div>
 
-            <!-- Meeting Locations Summary Section -->
-            <section class="card glass-card meet-summary-section" aria-labelledby="meet-summary-title">
-                <div class="section-header">
-                    <h2 id="meet-summary-title" class="section-title">
-                        <i class="fa-solid fa-map-location-dot"></i> <span data-i18n="meetSummaryTitle">Meeting Locations Summary</span>
-                    </h2>
-                </div>
-                <p class="section-desc" data-i18n="meetSummaryDesc">Count of travelers at each waiting category.</p>
-                
-                <div class="meet-summary-container" id="meet-summary-container">
-                    <!-- Filled dynamically -->
-                </div>
-            </section>
+                    <div id="cars-grid" class="cars-grid-container">
+                        <!-- Filled dynamically -->
+                        <div class="empty-state-large">
+                            <i class="fa-solid fa-car-rear animate-float"></i>
+                            <h3 data-i18n="noActiveVehicles">No Active Vehicles Registered</h3>
+                            <p data-i18n="noActiveVehiclesDesc">Add a participant with the **Driver** role to set up your first carpool vehicle, or load the **Demo Data** above to test it out instantly.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Meeting Locations Summary Section -->
+                <section class="card glass-card meet-summary-section" aria-labelledby="meet-summary-title">
+                    <div class="section-header">
+                        <h2 id="meet-summary-title" class="section-title">
+                            <i class="fa-solid fa-map-location-dot"></i> <span data-i18n="meetSummaryTitle">Meeting Locations Summary</span>
+                        </h2>
+                    </div>
+                    <p class="section-desc" data-i18n="meetSummaryDesc">Count of travelers at each waiting category.</p>
+                    
+                    <div class="meet-summary-container" id="meet-summary-container">
+                        <!-- Filled dynamically -->
+                    </div>
+                </section>
+            </div>
         </main>
     </div>
 
@@ -332,6 +336,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>
 
     <!-- MAIN APP SCRIPT -->
-    <script src="app.js?v=18"></script>
+    <script src="app.js?v=19"></script>
+
 </body>
 </html>

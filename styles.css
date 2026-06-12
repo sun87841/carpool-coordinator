@@ -350,27 +350,19 @@ body {
 
 /* MAIN DASHBOARD LAYOUT */
 .dashboard-grid {
-    display: block;
-    overflow: flow-root;
+    display: grid;
+    grid-template-columns: 380px 1fr;
+    gap: 1.5rem;
+    align-items: start;
 }
 
-.form-section,
-.unassigned-section,
-.food-summary-section {
-    float: left;
-    clear: left;
-    width: 380px;
-    margin-right: 1.5rem;
-    margin-bottom: 1.5rem;
+.dashboard-col-left,
+.dashboard-col-right {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
 }
 
-.board-section,
-.meet-summary-section {
-    float: right;
-    clear: right;
-    width: calc(100% - 380px - 1.5rem);
-    margin-bottom: 1.5rem;
-}
 
 /* FOOD REGISTRY SUMMARY */
 .food-summary-list {
@@ -1243,7 +1235,13 @@ input.invalid + .error-msg,
    Responsive Breakpoints
    ========================================================================== */
 @media (max-width: 1024px) {
+    .dashboard-col-left,
+    .dashboard-col-right {
+        display: contents;
+    }
+
     .dashboard-grid {
+        display: grid;
         grid-template-columns: 1fr 1fr;
         grid-template-rows: auto auto auto auto;
     }
@@ -1275,6 +1273,11 @@ input.invalid + .error-msg,
 }
 
 @media (max-width: 768px) {
+    .dashboard-col-left,
+    .dashboard-col-right {
+        display: contents;
+    }
+
     .dashboard-grid {
         display: flex;
         flex-direction: column;

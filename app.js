@@ -214,7 +214,7 @@ document.addEventListener('DOMContentLoaded', () => {
             routeNotes: "路線: {notes}",
             drivingSoloFamily: "獨自駕駛，隨行家屬 {count} 人",
             drivingSoloNoPassengers: "獨自駕駛 (不載客)",
-            visualCapacity: "座位視覺化:",
+            visualCapacity: "車位數量與乘客:",
             emptySeatClick: "空座位 (點擊直接分配)",
             seatFilled: "座位已佔用",
             overCapacity: "人數已超載！",

@@ -311,7 +311,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const printDate = document.getElementById('print-date');
 
     // DEMO DATA CONSTANTS
-    const DEMO_PARTICIPANTS = [
+    const DEMO_PARTICIPANTS_EN = [
         // Drivers
         { id: 1, name: 'Sarah Connor', role: 'driver', carModel: 'Black Tesla Model Y', capacity: 4, notes: 'Driving route A, leaving at 8:00 AM', group: 'TechCorp', licensePlate: 'TR-101', familyCount: 0, foodBringing: 'yes', foodDetails: 'Sandwiches', meetLocation: 'JianCheng' },
         { id: 2, name: 'Bob Marley', role: 'driver', carModel: 'Yellow VW Microbus', capacity: 7, notes: 'Scenic route, lots of space for gear', group: 'Reggae Records', licensePlate: 'JAM-MIN', familyCount: 2, foodBringing: 'yes', foodDetails: 'Fruit platter', meetLocation: 'QiDu' },
@@ -330,6 +330,27 @@ document.addEventListener('DOMContentLoaded', () => {
         { id: 12, name: 'Clark Kent', role: 'passenger', foodBringing: 'yes', foodDetails: 'Sandwiches', notes: 'Wearing glasses, very polite passenger', assignedCarId: null, group: 'Daily Bugle', meetLocation: 'JianCheng' },
         { id: 13, name: 'Bruce Banner', role: 'passenger', foodBringing: 'no', foodDetails: '', notes: 'Enjoys quiet carpools, plays classical music', assignedCarId: null, group: 'Stark Industries', meetLocation: 'Self' },
         { id: 14, name: 'Selina Kyle', role: 'passenger', foodBringing: 'no', foodDetails: '', notes: 'Needs a pickup near downtown core', assignedCarId: null, group: 'Cat Burglar Co.', meetLocation: 'QiDu' }
+    ];
+
+    const DEMO_PARTICIPANTS_ZH = [
+        // 司機
+        { id: 1, name: '馮老師', role: 'driver', carModel: '白色 Mazda', capacity: 3, notes: '開車走路線 A，預計早上 8:00 出發', group: '上師', licensePlate: 'MAZ-101', familyCount: 0, foodBringing: 'yes', foodDetails: '炒麵', meetLocation: 'JianCheng' },
+        { id: 2, name: '吳上師', role: 'driver', carModel: '黑色 Lexus', capacity: 0, notes: '路途寬敞，可放大量行李', group: '上師', licensePlate: 'LEX-202', familyCount: 4, foodBringing: 'yes', foodDetails: '水果盤', meetLocation: 'JianCheng' },
+        { id: 3, name: '施維尼', role: 'driver', carModel: '白色 Camry', capacity: 3, notes: '快速路線，行李空間有限', group: '社交', licensePlate: 'AUH-6852', familyCount: 0, foodBringing: 'no', foodDetails: '', meetLocation: 'JianCheng' },
+        { id: 4, name: '溫宜慧', role: 'driver', carModel: '灰色 SUV', capacity: 0, notes: '獨自駕駛隨行家屬，位置充足', group: '科大', licensePlate: 'RFH-2368', familyCount: 4, foodBringing: 'yes', foodDetails: '飲料', meetLocation: 'JianCheng' },
+        { id: 15, name: '吳宜慧', role: 'driver', carModel: '銀色轎車', capacity: 5, notes: '直接在目的地會合', group: '科大', licensePlate: 'CAV-8288', familyCount: 0, foodBringing: 'no', foodDetails: '', meetLocation: 'JianCheng' },
+
+        // 乘客
+        { id: 5, name: '王澤生', role: 'passenger', foodBringing: 'yes', foodDetails: '綠豆湯', notes: '攜帶隨身折疊椅', assignedCarId: null, group: '科大', meetLocation: 'JianCheng' },
+        { id: 6, name: '王培展', role: 'passenger', foodBringing: 'yes', foodDetails: '滷味', notes: '行李包含一個大提箱', assignedCarId: null, group: '科大', meetLocation: 'JianCheng' },
+        { id: 7, name: 'Ruby', role: 'passenger', foodBringing: 'yes', foodDetails: '壽司', notes: '容易暈車，希望能坐前排', assignedCarId: null, group: '社交', meetLocation: 'JianCheng' },
+        { id: 8, name: '徐錦奇', role: 'passenger', foodBringing: 'no', foodDetails: '', notes: '需要放置筆電包的空間', assignedCarId: null, group: '社交', meetLocation: 'JianCheng' },
+        { id: 9, name: '張三', role: 'passenger', foodBringing: 'yes', foodDetails: '紅豆湯', notes: '攜帶環保餐具', assignedCarId: null, group: '社交', meetLocation: 'QiDu' },
+        { id: 10, name: '李四', role: 'passenger', foodBringing: 'no', foodDetails: '', notes: '輕裝便旅', assignedCarId: null, group: '科大', meetLocation: 'QiDu' },
+        { id: 11, name: '王五', role: 'passenger', foodBringing: 'yes', foodDetails: '麵包', notes: '自行開車前往會合點', assignedCarId: null, group: '科大', meetLocation: 'Self' },
+        { id: 12, name: '趙六', role: 'passenger', foodBringing: 'no', foodDetails: '', notes: '帶瓶裝水', assignedCarId: null, group: '社交', meetLocation: 'Self' },
+        { id: 13, name: '錢七', role: 'passenger', foodBringing: 'yes', foodDetails: '餅乾', notes: '安靜的乘客', assignedCarId: null, group: '科大', meetLocation: 'QiDu' },
+        { id: 14, name: '孫八', role: 'passenger', foodBringing: 'no', foodDetails: '', notes: '在火車站附近上車', assignedCarId: null, group: '社交', meetLocation: 'QiDu' }
     ];
 
     // ==========================================================================
@@ -677,8 +698,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function loadDemoData() {
-        // Deep clone demo data
-        state.participants = JSON.parse(JSON.stringify(DEMO_PARTICIPANTS));
+        // Deep clone demo data depending on current language
+        const demoData = currentLang === 'zh' ? DEMO_PARTICIPANTS_ZH : DEMO_PARTICIPANTS_EN;
+        state.participants = JSON.parse(JSON.stringify(demoData));
         saveState();
         render();
     }

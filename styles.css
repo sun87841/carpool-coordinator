@@ -380,6 +380,9 @@ body {
 .board-section {
     grid-column: 2;
     grid-row: 1 / span 3;
+    align-self: stretch;
+    display: flex;
+    flex-direction: column;
 }
 
 /* FOOD REGISTRY SUMMARY */
@@ -1036,6 +1039,7 @@ input.invalid + .error-msg,
     grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
     gap: 1.25rem;
     min-height: 400px;
+    flex-grow: 1;
 }
 
 /* CAR GROUP CARD */

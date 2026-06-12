@@ -133,7 +133,12 @@ document.addEventListener('DOMContentLoaded', () => {
             printSeatsOccupiedSolo: "Seats Occupied: Solo",
             printSeatsOccupiedFamily: " (+ {count} Family)",
             printRouteDetails: "Route details: {notes}",
-            lblDriverName: "Driver"
+            lblDriverName: "Driver",
+            foodSummaryTitle: "Food Summary",
+            foodSummaryDesc: "A consolidated registry of who is bringing what food.",
+            noFoodSummary: "No food items registered yet.",
+            roleDriverLabel: "Driver",
+            rolePassengerLabel: "Passenger"
         },
         zh: {
             appName: "福彌寺交通乘車登記",
@@ -230,7 +235,12 @@ document.addEventListener('DOMContentLoaded', () => {
             printSeatsOccupiedSolo: "座位已佔用: 獨自駕駛",
             printSeatsOccupiedFamily: " (+ {count} 位家屬)",
             printRouteDetails: "路線詳情: {notes}",
-            lblDriverName: "司機"
+            lblDriverName: "司機",
+            foodSummaryTitle: "攜帶食物總覽",
+            foodSummaryDesc: "整合所有司機與乘客已登記攜帶的食物清單。",
+            noFoodSummary: "目前尚無登記攜帶食物。",
+            roleDriverLabel: "司機",
+            rolePassengerLabel: "乘客"
         }
     };
 
@@ -751,6 +761,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // 3. Render Cars/Carpools Grid
         renderCarsGrid(drivers, passengers);
+
+        // 4. Render Food Summary
+        renderFoodSummary(state.participants);
     }
 
     function getFoodBadgeHTML(p) {
@@ -849,6 +862,48 @@ document.addEventListener('DOMContentLoaded', () => {
             card.querySelector('[data-action="delete"]').addEventListener('click', () => deleteParticipant(p.id));
 
             unassignedList.appendChild(card);
+        });
+    }
+
+    function renderFoodSummary(participants) {
+        const foodSummaryList = document.getElementById('food-summary-list');
+        const badgeFoodSummary = document.getElementById('badge-food-summary');
+        
+        if (!foodSummaryList || !badgeFoodSummary) return;
+
+        const foodBringers = participants.filter(p => p.foodBringing === 'yes');
+        badgeFoodSummary.textContent = foodBringers.length;
+
+        foodSummaryList.innerHTML = '';
+
+        if (foodBringers.length === 0) {
+            foodSummaryList.innerHTML = `
+                <div class="empty-state">
+                    <i class="fa-solid fa-basket-shopping"></i>
+                    <p data-i18n="noFoodSummary">${TRANSLATIONS[currentLang].noFoodSummary}</p>
+                </div>
+            `;
+            return;
+        }
+
+        foodBringers.forEach(p => {
+            const foodName = p.foodDetails ? escapeHTML(p.foodDetails) : (currentLang === 'zh' ? '有' : 'Yes');
+            const roleText = p.role === 'driver' ? TRANSLATIONS[currentLang].roleDriverLabel : TRANSLATIONS[currentLang].rolePassengerLabel;
+            const groupText = p.group ? ` (${escapeHTML(p.group)})` : '';
+            const contributorText = `${escapeHTML(p.name)} [${roleText}${groupText}]`;
+
+            const row = document.createElement('div');
+            row.className = 'food-item-row';
+            row.innerHTML = `
+                <div class="food-item-icon">
+                    <i class="fa-solid fa-utensils"></i>
+                </div>
+                <div class="food-item-details">
+                    <span class="food-item-name">${foodName}</span>
+                    <span class="food-item-contributor">${contributorText}</span>
+                </div>
+            `;
+            foodSummaryList.appendChild(row);
         });
     }
 

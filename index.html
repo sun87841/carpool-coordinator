@@ -12,7 +12,7 @@
     <!-- FontAwesome for high-quality SVG icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Main stylesheet -->
-    <link rel="stylesheet" href="styles.css?v=11">
+    <link rel="stylesheet" href="styles.css?v=12">
 </head>
 <body>
     <!-- Top Decorative Glow -->
@@ -274,6 +274,21 @@
                     </div>
                 </div>
             </section>
+
+            <!-- Food Summary Section -->
+            <section class="card glass-card food-summary-section" aria-labelledby="food-summary-title">
+                <div class="section-header">
+                    <h2 id="food-summary-title" class="section-title">
+                        <i class="fa-solid fa-basket-shopping"></i> <span data-i18n="foodSummaryTitle">Food Registry Summary</span>
+                    </h2>
+                    <span class="count-badge" id="badge-food-summary">0</span>
+                </div>
+                <p class="section-desc" data-i18n="foodSummaryDesc">List of all food items registered for this trip.</p>
+                
+                <div class="food-summary-list" id="food-summary-list">
+                    <!-- Filled dynamically -->
+                </div>
+            </section>
         </main>
     </div>
 
@@ -291,6 +306,6 @@
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>
 
     <!-- MAIN APP SCRIPT -->
-    <script src="app.js?v=11"></script>
+    <script src="app.js?v=12"></script>
 </body>
 </html>

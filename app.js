@@ -404,7 +404,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.warn("Firestore snapshot listener failed, using offline local sync:", err);
             });
         } else {
-            // Zero-signup cloud sync fallback using JSONBlob
+            // Zero-signup cloud sync fallback using Puter.js
             syncPull();
             setInterval(syncPull, 4000);
         }
@@ -447,7 +447,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.error("Failed to save state to Cloud Firestore:", err);
             });
         } else {
-            // Write to JSONBlob if Firebase is not active
+            // Write to Puter.js if Firebase is not active
             syncPush();
         }
     }
@@ -1526,36 +1526,26 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ==========================================================================
-    // CLOUD SYNCHRONIZATION (Zero-Signup JSONBlob Fallback)
+    // CLOUD SYNCHRONIZATION (Zero-Signup Puter.js Fallback)
     // ==========================================================================
-    const JSON_BLOB_ID = "019ebb44-3a50-7c77-a0bf-837d04b065f3";
-    const JSON_BLOB_URL = `https://jsonblob.com/api/jsonBlob/${JSON_BLOB_ID}`;
+    const PUTER_SYNC_KEY = "carpool_sync_30f775b4_4a28";
     let isSyncing = false;
 
     function syncPush() {
-        if (isFirebaseReady || isSyncing) return;
+        if (isFirebaseReady || isSyncing || typeof puter === 'undefined') return;
         isSyncing = true;
-        fetch(JSON_BLOB_URL, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            },
-            body: JSON.stringify(state)
-        })
-        .catch(err => console.warn("JSONBlob sync push failed:", err))
+        puter.kv.set(PUTER_SYNC_KEY, JSON.stringify(state))
+        .catch(err => console.warn("Puter sync push failed:", err))
         .finally(() => { isSyncing = false; });
     }
 
     function syncPull() {
-        if (isFirebaseReady || editingId !== null) return;
+        if (isFirebaseReady || editingId !== null || typeof puter === 'undefined') return;
         
-        fetch(JSON_BLOB_URL)
-        .then(res => {
-            if (!res.ok) throw new Error("Status " + res.status);
-            return res.json();
-        })
-        .then(remoteState => {
+        puter.kv.get(PUTER_SYNC_KEY)
+        .then(remoteVal => {
+            if (!remoteVal) return;
+            const remoteState = JSON.parse(remoteVal);
             if (remoteState && Array.isArray(remoteState.participants)) {
                 const localStr = JSON.stringify(state.participants);
                 const remoteStr = JSON.stringify(remoteState.participants);
@@ -1563,11 +1553,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     state = remoteState;
                     localStorage.setItem('rideShareState', JSON.stringify(state));
                     render();
-                    console.log("State synced from remote cloud database.");
+                    console.log("State synced from Puter remote database.");
                 }
             }
         })
-        .catch(err => console.warn("JSONBlob sync pull failed:", err));
+        .catch(err => console.warn("Puter sync pull failed:", err));
     }
 
     // RUN THE APPLICATION

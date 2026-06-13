@@ -23,6 +23,8 @@
     --accent-emerald-glow: rgba(5, 150, 105, 0.15);
     --accent-orange: #ea580c;
     --accent-orange-glow: rgba(234, 88, 12, 0.15);
+    --accent-amber: #f59e0b;
+    --accent-amber-glow: rgba(245, 158, 11, 0.15);
     --accent-red: #dc2626;
     --accent-red-glow: rgba(220, 38, 38, 0.15);
     
@@ -668,7 +670,7 @@ select:focus {
 /* Segmented Custom Radio Controls */
 .role-selector {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(3, 1fr);
     gap: 0.75rem;
 }
 
@@ -1427,6 +1429,33 @@ input.invalid + .error-msg,
         font-size: 12pt;
         margin-bottom: 10px;
     }
+}
+
+/* TAXI CARPOOL CARDS */
+.taxi-card {
+    border-color: rgba(245, 158, 11, 0.2);
+    background-color: rgba(245, 158, 11, 0.015);
+}
+
+.taxi-card:hover {
+    border-color: rgba(245, 158, 11, 0.45);
+    background-color: rgba(245, 158, 11, 0.035);
+}
+
+.taxi-card.drag-over {
+    border-color: var(--accent-amber);
+    background-color: rgba(245, 158, 11, 0.08);
+    box-shadow: 0 0 15px rgba(245, 158, 11, 0.3);
+    transform: scale(1.02);
+}
+
+.taxi-card .driver-avatar {
+    background: linear-gradient(135deg, var(--accent-amber), #d97706);
+    color: #ffffff;
+}
+
+.taxi-board-section {
+    border-color: rgba(245, 158, 11, 0.15);
 }
 
 .hidden {

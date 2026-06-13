@@ -12,7 +12,7 @@
     <!-- FontAwesome for high-quality SVG icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Main stylesheet -->
-    <link rel="stylesheet" href="styles.css?v=21">
+    <link rel="stylesheet" href="styles.css?v=22">
 </head>
 <body>
     <!-- Top Decorative Glow -->
@@ -143,6 +143,14 @@
                                         <small data-i18n="roleDriverSub">Has a car</small>
                                     </span>
                                 </label>
+                                <label class="role-option">
+                                    <input type="radio" name="reg-role" value="taxi">
+                                    <span class="role-box">
+                                        <i class="fa-solid fa-taxi"></i>
+                                        <strong data-i18n="roleTaxi">Taxi Group</strong>
+                                        <small data-i18n="roleTaxiSub">Carpool by taxi</small>
+                                    </span>
+                                </label>
                             </div>
                         </div>
 
@@ -202,6 +210,18 @@
                                     <i class="fa-solid fa-id-card input-icon"></i>
                                     <input type="text" id="reg-car-plate" placeholder="e.g. 7XYZ123" data-i18n-placeholder="phCarPlate" autocomplete="off">
                                 </div>
+                            </div>
+                        </div>
+
+                        <!-- Taxi Conditional Fields -->
+                        <div id="fields-taxi" class="conditional-fields hidden">
+                            <div class="form-group">
+                                <label for="reg-taxi-seats" data-i18n="lblTaxiSeats">Taxi Seats Available</label>
+                                <div class="input-wrapper">
+                                    <i class="fa-solid fa-circle-nodes input-icon"></i>
+                                    <input type="number" id="reg-taxi-seats" min="1" max="9" value="4" placeholder="4" data-i18n-placeholder="phTaxiSeats">
+                                </div>
+                                <span class="error-msg" id="err-taxi-seats" data-i18n="errTaxiSeats">Must be 1 - 9</span>
                             </div>
                         </div>
 
@@ -305,6 +325,30 @@
                     </div>
                 </section>
 
+                <!-- Taxi Carpool Board Section -->
+                <section class="card glass-card taxi-board-section" aria-labelledby="taxi-board-title" style="margin-top: 1.5rem;">
+                    <div class="board-header">
+                        <div>
+                            <h2 id="taxi-board-title" class="section-title"><i class="fa-solid fa-taxi"></i> <span data-i18n="taxiBoardTitle">Taxi Carpool Board</span></h2>
+                            <p class="board-desc" data-i18n="taxiBoardDesc">Drag passengers onto taxi groups or click to assign.</p>
+                        </div>
+                        <div class="board-controls">
+                            <button id="btn-add-taxi" class="btn btn-secondary btn-sm" type="button" title="Create a new Taxi Group">
+                                <i class="fa-solid fa-circle-plus"></i> <span data-i18n="btnAddTaxi">Add Taxi Group</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="taxis-grid" class="cars-grid-container" style="min-height: auto;">
+                        <!-- Filled dynamically -->
+                        <div class="empty-state-large">
+                            <i class="fa-solid fa-taxi animate-float" style="color: var(--accent-amber); font-size: 3rem; margin-bottom: 1rem;"></i>
+                            <h3 data-i18n="noActiveTaxis">No Taxi Groups Created</h3>
+                            <p data-i18n="noActiveTaxisDesc">Click **Add Taxi Group** to set up a taxi carpool group.</p>
+                        </div>
+                    </div>
+                </section>
+
                 <!-- Meeting Locations Summary Section -->
                 <section class="card glass-card meet-summary-section" aria-labelledby="meet-summary-title">
                     <div class="section-header">
@@ -336,7 +380,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>
 
     <!-- MAIN APP SCRIPT -->
-    <script src="app.js?v=21"></script>
+    <script src="app.js?v=22"></script>
 
 </body>
 </html>

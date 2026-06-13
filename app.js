@@ -144,7 +144,22 @@ document.addEventListener('DOMContentLoaded', () => {
             meetLocationQiDu: "Qidu Station",
             meetLocationSelf: "Self-departure",
             meetSummaryTitle: "Meeting Locations Summary",
-            meetSummaryDesc: "Count of travelers at each waiting category."
+            meetSummaryDesc: "Count of travelers at each waiting category.",
+            roleTaxi: "Taxi Group",
+            roleTaxiSub: "Carpool by taxi",
+            taxiBoardTitle: "Taxi Carpool Board",
+            taxiBoardDesc: "Drag passengers onto taxi groups or click to assign.",
+            noActiveTaxis: "No Taxi Groups Created",
+            noActiveTaxisDesc: "Click **Add Taxi Group** to set up a taxi carpool group.",
+            btnAddTaxi: "Add Taxi Group",
+            taxiName: "Taxi",
+            editTaxiDetails: "Edit Taxi Details",
+            removeTaxi: "Remove Taxi Group",
+            taxiLabel: "Taxi",
+            lblTaxiSeats: "Taxi Seats Available",
+            phTaxiSeats: "4",
+            errTaxiSeats: "Must be 1 - 9",
+            roleTaxiLabel: "Taxi"
         },
         zh: {
             appName: "福彌寺交通乘車登記",
@@ -252,7 +267,22 @@ document.addEventListener('DOMContentLoaded', () => {
             meetLocationQiDu: "七堵車站",
             meetLocationSelf: "自行出發",
             meetSummaryTitle: "集合地點總覽",
-            meetSummaryDesc: "各等待類別的乘車/出發人數與名單。"
+            meetSummaryDesc: "各等待類別的乘車/出發人數與名單。",
+            roleTaxi: "計程車組",
+            roleTaxiSub: "共乘計程車",
+            taxiBoardTitle: "計程車共乘看板",
+            taxiBoardDesc: "將乘客拖曳到計程車組上，或點擊車位進行分配。",
+            noActiveTaxis: "尚未建立任何計程車組",
+            noActiveTaxisDesc: "點擊 **建立計程車組** 開始規劃計程車共乘。",
+            btnAddTaxi: "建立計程車組",
+            taxiName: "計程車",
+            editTaxiDetails: "編輯計程車資料",
+            removeTaxi: "移除此計程車組",
+            taxiLabel: "計程車",
+            lblTaxiSeats: "計程車乘座位數",
+            phTaxiSeats: "4",
+            errTaxiSeats: "必須介於 1 到 9 之間",
+            roleTaxiLabel: "計程車"
         }
     };
 
@@ -282,6 +312,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const regRoles = document.getElementsByName('reg-role');
     const fieldsPassenger = document.getElementById('fields-passenger');
     const fieldsDriver = document.getElementById('fields-driver');
+    const fieldsTaxi = document.getElementById('fields-taxi');
     const regFoodBringing = document.getElementById('reg-food-bringing');
     const foodDetailsGroup = document.getElementById('food-details-group');
     const regFoodDetails = document.getElementById('reg-food-details');
@@ -329,7 +360,8 @@ document.addEventListener('DOMContentLoaded', () => {
         { id: 11, name: 'Diana Prince', role: 'passenger', foodBringing: 'yes', foodDetails: 'Greek Salad', notes: 'Heading to the convention center', assignedCarId: 2, group: 'Museum Corp', meetLocation: 'QiDu' },
         { id: 12, name: 'Clark Kent', role: 'passenger', foodBringing: 'yes', foodDetails: 'Sandwiches', notes: 'Wearing glasses, very polite passenger', assignedCarId: null, group: 'Daily Bugle', meetLocation: 'JianCheng' },
         { id: 13, name: 'Bruce Banner', role: 'passenger', foodBringing: 'no', foodDetails: '', notes: 'Enjoys quiet carpools, plays classical music', assignedCarId: null, group: 'Stark Industries', meetLocation: 'Self' },
-        { id: 14, name: 'Selina Kyle', role: 'passenger', foodBringing: 'no', foodDetails: '', notes: 'Needs a pickup near downtown core', assignedCarId: null, group: 'Cat Burglar Co.', meetLocation: 'QiDu' }
+        { id: 14, name: 'Selina Kyle', role: 'passenger', foodBringing: 'no', foodDetails: '', notes: 'Needs a pickup near downtown core', assignedCarId: 16, group: 'Cat Burglar Co.', meetLocation: 'QiDu' },
+        { id: 16, name: 'Taxi #1', role: 'taxi', capacity: 4, notes: 'Fare split equally', group: '', licensePlate: '', familyCount: 0, foodBringing: 'no', foodDetails: '', meetLocation: 'QiDu' }
     ];
 
     const DEMO_PARTICIPANTS_ZH = [
@@ -350,7 +382,8 @@ document.addEventListener('DOMContentLoaded', () => {
         { id: 11, name: '王五', role: 'passenger', foodBringing: 'yes', foodDetails: '麵包', notes: '自行開車前往會合點', assignedCarId: null, group: '科大', meetLocation: 'Self' },
         { id: 12, name: '趙六', role: 'passenger', foodBringing: 'no', foodDetails: '', notes: '帶瓶裝水', assignedCarId: null, group: '社交', meetLocation: 'Self' },
         { id: 13, name: '錢七', role: 'passenger', foodBringing: 'yes', foodDetails: '餅乾', notes: '安靜的乘客', assignedCarId: null, group: '科大', meetLocation: 'QiDu' },
-        { id: 14, name: '孫八', role: 'passenger', foodBringing: 'no', foodDetails: '', notes: '在火車站附近上車', assignedCarId: null, group: '社交', meetLocation: 'QiDu' }
+        { id: 14, name: '孫八', role: 'passenger', foodBringing: 'no', foodDetails: '', notes: '在火車站附近上車', assignedCarId: 16, group: '社交', meetLocation: 'QiDu' },
+        { id: 16, name: '計程車 1', role: 'taxi', capacity: 4, notes: '車資平分', group: '', licensePlate: '', familyCount: 0, foodBringing: 'no', foodDetails: '', meetLocation: 'QiDu' }
     ];
 
     // ==========================================================================
@@ -495,9 +528,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (e.target.value === 'driver') {
                     fieldsPassenger.classList.add('hidden');
                     fieldsDriver.classList.remove('hidden');
+                    fieldsTaxi.classList.add('hidden');
+                } else if (e.target.value === 'taxi') {
+                    fieldsPassenger.classList.add('hidden');
+                    fieldsDriver.classList.add('hidden');
+                    fieldsTaxi.classList.remove('hidden');
                 } else {
                     fieldsPassenger.classList.remove('hidden');
                     fieldsDriver.classList.add('hidden');
+                    fieldsTaxi.classList.add('hidden');
                 }
             });
         });
@@ -517,6 +556,33 @@ document.addEventListener('DOMContentLoaded', () => {
         // Form Submit
         form.addEventListener('submit', handleFormSubmit);
         btnFormCancel.addEventListener('click', cancelEdit);
+
+        // Add Taxi Group button inside Taxi Board
+        const btnAddTaxi = document.getElementById('btn-add-taxi');
+        if (btnAddTaxi) {
+            btnAddTaxi.addEventListener('click', () => {
+                const taxis = state.participants.filter(p => p.role === 'taxi');
+                let nextNum = 1;
+                while (taxis.some(t => t.name === `Taxi #${nextNum}` || t.name === `計程車 ${nextNum}`)) {
+                    nextNum++;
+                }
+                const nameVal = currentLang === 'zh' ? `計程車 ${nextNum}` : `Taxi #${nextNum}`;
+                const newTaxi = {
+                    id: Date.now(),
+                    name: nameVal,
+                    role: 'taxi',
+                    capacity: 4,
+                    meetLocation: 'JianCheng',
+                    notes: '',
+                    group: '',
+                    foodBringing: 'no',
+                    foodDetails: ''
+                };
+                state.participants.push(newTaxi);
+                saveState();
+                render();
+            });
+        }
 
         // Action Buttons
         if (btnLang) {
@@ -603,6 +669,8 @@ document.addEventListener('DOMContentLoaded', () => {
         regName.classList.remove('invalid');
         regCarModel.classList.remove('invalid');
         regCarSeats.classList.remove('invalid');
+        const regTaxiSeats = document.getElementById('reg-taxi-seats');
+        if (regTaxiSeats) regTaxiSeats.classList.remove('invalid');
 
         const nameValue = regName.value.trim();
         const roleValue = document.querySelector('input[name="reg-role"]:checked').value;
@@ -647,6 +715,17 @@ document.addEventListener('DOMContentLoaded', () => {
             newParticipant.capacity = carSeatsValue;
             newParticipant.familyCount = carFamilyValue;
             newParticipant.licensePlate = carPlateValue;
+        } else if (roleValue === 'taxi') {
+            const taxiSeatsElement = document.getElementById('reg-taxi-seats');
+            const taxiSeatsValue = parseInt(taxiSeatsElement.value, 10);
+            if (isNaN(taxiSeatsValue) || taxiSeatsValue < 1 || taxiSeatsValue > 9) {
+                taxiSeatsElement.classList.add('invalid');
+                isValid = false;
+            }
+            newParticipant.capacity = taxiSeatsValue;
+            newParticipant.carModel = currentLang === 'zh' ? '計程車' : 'Taxi';
+            newParticipant.familyCount = 0;
+            newParticipant.licensePlate = '';
         } else {
             newParticipant.assignedCarId = null; // Unassigned initially
         }
@@ -671,6 +750,12 @@ document.addEventListener('DOMContentLoaded', () => {
                             updated.capacity = parseInt(regCarSeats.value, 10);
                             updated.familyCount = parseInt(regCarFamily.value, 10) || 0;
                             updated.licensePlate = regCarPlate.value.trim();
+                        } else if (roleValue === 'taxi') {
+                            updated.role = 'taxi';
+                            updated.carModel = currentLang === 'zh' ? '計程車' : 'Taxi';
+                            updated.capacity = parseInt(document.getElementById('reg-taxi-seats').value, 10);
+                            updated.familyCount = 0;
+                            updated.licensePlate = '';
                         } else {
                             updated.role = 'passenger';
                             delete updated.carModel;
@@ -698,6 +783,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 regCarSeats.value = '4';
                 regCarFamily.value = '0';
                 regCarPlate.value = '';
+                const taxiSeatsElement = document.getElementById('reg-taxi-seats');
+                if (taxiSeatsElement) taxiSeatsElement.value = '4';
                 regNotes.value = '';
                 regMeetLocation.value = 'JianCheng';
             }
@@ -721,11 +808,20 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function deleteParticipant(id) {
-        // Find if this is a driver
+        // Find if this is a driver or taxi
         const item = state.participants.find(p => p.id === id);
-        if (item && item.role === 'driver') {
-            if (confirm(`Deleting driver "${item.name}" will unassign all their passengers. Continue?`)) {
-                // Remove driver
+        if (item && (item.role === 'driver' || item.role === 'taxi')) {
+            const isDriver = item.role === 'driver';
+            const confirmMsg = isDriver 
+                ? `Deleting driver "${item.name}" will unassign all their passengers. Continue?`
+                : `Deleting taxi group "${item.name}" will unassign all their passengers. Continue?`;
+            
+            const confirmMsgZH = isDriver 
+                ? `刪除司機「${item.name}」將會取消分配其所有乘客，是否確定？`
+                : `刪除計程車組「${item.name}」將會取消分配其所有乘客，是否確定？`;
+
+            if (confirm(currentLang === 'zh' ? confirmMsgZH : confirmMsg)) {
+                // Remove driver/taxi
                 state.participants = state.participants.filter(p => p.id !== id);
                 // Unassign their passengers
                 state.participants.forEach(p => {
@@ -772,6 +868,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function render() {
         const drivers = state.participants.filter(p => p.role === 'driver');
+        const taxis = state.participants.filter(p => p.role === 'taxi');
         const passengers = state.participants.filter(p => p.role === 'passenger');
         const unassigned = passengers.filter(p => p.assignedCarId === null);
         
@@ -779,6 +876,9 @@ document.addEventListener('DOMContentLoaded', () => {
         let totalSeatsOpen = 0;
         drivers.forEach(d => {
             totalSeatsOpen += d.capacity;
+        });
+        taxis.forEach(t => {
+            totalSeatsOpen += t.capacity;
         });
 
         const totalPassengers = passengers.length;
@@ -807,6 +907,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // 3. Render Cars/Carpools Grid
         renderCarsGrid(drivers, passengers);
+
+        // 3b. Render Taxis Grid
+        renderTaxisGrid(taxis, passengers);
 
         // 4. Render Food Summary
         renderFoodSummary(state.participants);
@@ -882,6 +985,8 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        const taxis = state.participants.filter(p => p.role === 'taxi');
+
         unassigned.forEach(p => {
             const card = document.createElement('div');
             card.className = 'passenger-card';
@@ -900,12 +1005,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Quick Assign options HTML
             let optionsHTML = `<option value="" disabled selected>${TRANSLATIONS[currentLang].assignCarSelect}</option>`;
+            
+            // Add Drivers
             drivers.forEach(d => {
                 if (d.capacity === 0) return; // Skip solo drivers
                 // Check current passenger count for this driver
                 const curCount = state.participants.filter(item => item.role === 'passenger' && item.assignedCarId === d.id).length;
                 const remaining = d.capacity - curCount;
                 optionsHTML += `<option value="${d.id}">${d.name}${d.group ? ` (${d.group})` : ''} (${remaining} ${TRANSLATIONS[currentLang].seatsLeft})</option>`;
+            });
+
+            // Add Taxis
+            taxis.forEach(t => {
+                if (t.capacity === 0) return;
+                const curCount = state.participants.filter(item => item.role === 'passenger' && item.assignedCarId === t.id).length;
+                const remaining = t.capacity - curCount;
+                optionsHTML += `<option value="${t.id}">🚕 ${t.name}${t.group ? ` (${t.group})` : ''} (${remaining} ${TRANSLATIONS[currentLang].seatsLeft})</option>`;
             });
 
             card.innerHTML = `
@@ -971,7 +1086,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
         foodBringers.forEach(p => {
             const foodName = p.foodDetails ? escapeHTML(p.foodDetails) : (currentLang === 'zh' ? '有' : 'Yes');
-            const roleText = p.role === 'driver' ? TRANSLATIONS[currentLang].roleDriverLabel : TRANSLATIONS[currentLang].rolePassengerLabel;
+            
+            let roleText = '';
+            if (p.role === 'driver') {
+                roleText = TRANSLATIONS[currentLang].roleDriverLabel;
+            } else if (p.role === 'taxi') {
+                roleText = TRANSLATIONS[currentLang].roleTaxiLabel;
+            } else {
+                roleText = TRANSLATIONS[currentLang].rolePassengerLabel;
+            }
+
             const groupText = p.group ? ` (${escapeHTML(p.group)})` : '';
             const contributorText = `${escapeHTML(p.name)} [${roleText}${groupText}]`;
 
@@ -1003,13 +1127,23 @@ document.addEventListener('DOMContentLoaded', () => {
         participants.forEach(p => {
             const loc = p.meetLocation || 'JianCheng';
             if (groups[loc]) {
-                const roleText = p.role === 'driver' ? TRANSLATIONS[currentLang].roleDriverLabel : TRANSLATIONS[currentLang].rolePassengerLabel;
-                let displayName = `${escapeHTML(p.name)} (${roleText})`;
+                let roleText = '';
                 let pCount = 1;
+                if (p.role === 'driver') {
+                    roleText = TRANSLATIONS[currentLang].roleDriverLabel;
+                    if (p.familyCount > 0) {
+                        pCount += p.familyCount;
+                    }
+                } else if (p.role === 'taxi') {
+                    roleText = TRANSLATIONS[currentLang].roleTaxiLabel;
+                    pCount = 0; // Taxis themselves are vehicles, not travelers
+                } else {
+                    roleText = TRANSLATIONS[currentLang].rolePassengerLabel;
+                }
                 
+                let displayName = `${escapeHTML(p.name)} (${roleText})`;
                 if (p.role === 'driver' && p.familyCount > 0) {
                     displayName += ` + ${p.familyCount} ${TRANSLATIONS[currentLang].familyRiding}`;
-                    pCount += p.familyCount;
                 }
                 
                 groups[loc].members.push(displayName);
@@ -1255,12 +1389,179 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    function renderTaxisGrid(taxis, passengers) {
+        const taxisGrid = document.getElementById('taxis-grid');
+        if (!taxisGrid) return;
+        taxisGrid.innerHTML = '';
+
+        if (taxis.length === 0) {
+            taxisGrid.innerHTML = `
+                <div class="empty-state-large">
+                    <i class="fa-solid fa-taxi animate-float" style="color: var(--accent-amber); font-size: 3rem; margin-bottom: 1rem;"></i>
+                    <h3 data-i18n="noActiveTaxis">${TRANSLATIONS[currentLang].noActiveTaxis}</h3>
+                    <p data-i18n="noActiveTaxisDesc">${TRANSLATIONS[currentLang].noActiveTaxisDesc}</p>
+                </div>
+            `;
+            return;
+        }
+
+        taxis.forEach(t => {
+            const taxiCard = document.createElement('div');
+            taxiCard.className = 'car-card taxi-card';
+            taxiCard.dataset.driverId = t.id;
+
+            // Get passengers assigned to this taxi
+            const assignedPassengers = passengers.filter(p => p.assignedCarId === t.id);
+            const count = assignedPassengers.length;
+            
+            // Ratio capacity coloring
+            let capacityText = TRANSLATIONS[currentLang].seatsRatio.replace('{count}', count).replace('{capacity}', t.capacity);
+            let ratioClass = 'ratio-normal';
+            if (count === t.capacity) {
+                ratioClass = 'ratio-full';
+            } else if (count > t.capacity) {
+                ratioClass = 'ratio-overflow';
+            }
+
+            // Create Seat dots
+            let seatsDotsHTML = '';
+            for (let i = 0; i < Math.max(t.capacity, count); i++) {
+                if (i < count) {
+                    const isOverflow = i >= t.capacity;
+                    const dotTitle = isOverflow ? TRANSLATIONS[currentLang].overCapacity : TRANSLATIONS[currentLang].seatFilled;
+                    seatsDotsHTML += `<span class="seat-dot ${isOverflow ? 'overflow' : 'filled'}" title="${dotTitle}" data-index="${i}"></span>`;
+                } else {
+                    seatsDotsHTML += `<span class="seat-dot empty" title="${TRANSLATIONS[currentLang].emptySeatClick}" data-index="${i}"></span>`;
+                }
+            }
+
+            taxiCard.innerHTML = `
+                <div class="car-header">
+                    <div class="driver-info">
+                        <div class="driver-avatar"><i class="fa-solid fa-taxi"></i></div>
+                        <div class="driver-text">
+                            <span class="driver-name">${escapeHTML(t.name)} ${t.group ? `<span style="font-size: 0.75rem; color: var(--accent-blue); font-weight: 500; margin-left: 4px;">(${escapeHTML(t.group)})</span>` : ''} ${getMeetLocationBadgeHTML(t)} ${t.foodBringing === 'yes' ? `<span class="badge-tag" style="background-color: rgba(16, 185, 129, 0.08); color: var(--accent-emerald); border: 1px solid rgba(16, 185, 129, 0.2); padding: 0.15rem 0.5rem; border-radius: 4px; font-size: 0.75rem; font-weight: 500; display: inline-flex; align-items: center; gap: 4px; vertical-align: middle; margin-left: 6px; text-transform: none;" title="${TRANSLATIONS[currentLang].foodTitle}: ${escapeHTML(t.foodDetails)}"><i class="fa-solid fa-utensils"></i> ${escapeHTML(t.foodDetails)}</span>` : ''}</span>
+                            <span class="car-description">${currentLang === 'zh' ? '計程車共乘小組' : 'Taxi carpool group'}</span>
+                        </div>
+                    </div>
+                    <div class="car-actions">
+                        <span class="car-capacity-ratio ${ratioClass}">
+                            ${capacityText}
+                        </span>
+                        <button class="btn-card-action" data-action="edit-taxi" data-id="${t.id}" title="${TRANSLATIONS[currentLang].editTaxiDetails}" style="margin-left: 5px;">
+                            <i class="fa-solid fa-pen"></i>
+                        </button>
+                        <button class="btn-card-action danger-hover" data-action="delete-taxi" data-id="${t.id}" title="${TRANSLATIONS[currentLang].removeTaxi}" style="margin-left: 5px;">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                ${t.notes ? `<div style="font-size: 0.8rem; color: var(--text-secondary); background: rgba(255,255,255,0.02); padding: 5px 8px; border-radius: 4px; border-left: 3px solid var(--accent-amber); font-style: italic;">${TRANSLATIONS[currentLang].routeNotes.replace('{notes}', escapeHTML(t.notes))}</div>` : ''}
+
+                <div class="car-seats-visual">
+                    <span style="font-size: 0.75rem; color: var(--text-secondary); margin-right: 5px;">${TRANSLATIONS[currentLang].visualCapacity}</span> ${seatsDotsHTML}
+                </div>
+
+                <div class="car-passengers">
+                    <!-- Assigned Passenger Items -->
+                </div>
+            `;
+
+            // Append assigned passenger cards
+            const passengerListContainer = taxiCard.querySelector('.car-passengers');
+            if (assignedPassengers.length === 0) {
+                passengerListContainer.innerHTML = `<p style="font-size: 0.8rem; color: var(--text-muted); text-align: center; padding: 10px; font-style: italic;">${TRANSLATIONS[currentLang].noPassengersAssigned}</p>`;
+            } else {
+                passengerListContainer.innerHTML = '';
+                assignedPassengers.forEach(ap => {
+                    const item = document.createElement('div');
+                    item.className = 'assigned-passenger-item';
+                    item.setAttribute('draggable', 'true');
+                    item.dataset.id = ap.id;
+
+                    item.addEventListener('dragstart', (e) => {
+                        e.dataTransfer.setData('text/plain', ap.id);
+                        item.classList.add('dragging');
+                    });
+
+                    item.addEventListener('dragend', () => {
+                        item.classList.remove('dragging');
+                    });
+
+                    item.innerHTML = `
+                        <div class="assigned-passenger-info">
+                            <span class="bullet-dot" style="background-color: var(--accent-amber);"></span>
+                            <span class="assigned-passenger-name">${escapeHTML(ap.name)}</span>
+                            ${getMeetLocationBadgeHTML(ap)}
+                            ${ap.group ? `<span style="font-size: 0.7rem; color: var(--accent-blue); margin-left: 5px; font-weight: 600;">(${escapeHTML(ap.group)})</span>` : ''}
+                            ${ap.foodBringing === 'yes' ? `<span style="font-size: 0.7rem; color: var(--accent-emerald); font-weight: 600; margin-left: 5px;" title="${escapeHTML(ap.foodDetails)}"><i class="fa-solid fa-utensils"></i> (${escapeHTML(ap.foodDetails)})</span>` : ''}
+                            ${ap.notes ? `<span class="assigned-passenger-notes" title="${escapeHTML(ap.notes)}">(${escapeHTML(ap.notes)})</span>` : ''}
+                        </div>
+                        <div class="assigned-passenger-actions">
+                            <button class="btn-card-action" data-action="edit-passenger" data-id="${ap.id}" title="${TRANSLATIONS[currentLang].editPassengerDetails}">
+                                <i class="fa-solid fa-pen"></i>
+                            </button>
+                            <button class="btn-card-action danger-hover" data-action="unassign" data-id="${ap.id}" title="${TRANSLATIONS[currentLang].removePassengerFromCar}">
+                                <i class="fa-solid fa-user-minus"></i>
+                            </button>
+                        </div>
+                    `;
+
+                    item.querySelector('[data-action="edit-passenger"]').addEventListener('click', () => startEdit(ap.id));
+                    item.querySelector('[data-action="unassign"]').addEventListener('click', () => unassignPassenger(ap.id));
+
+                    passengerListContainer.appendChild(item);
+                });
+            }
+
+            // Drag & Drop handlers for Taxi Card
+            taxiCard.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                taxiCard.classList.add('drag-over');
+            });
+
+            taxiCard.addEventListener('dragleave', () => {
+                taxiCard.classList.remove('drag-over');
+            });
+
+            taxiCard.addEventListener('drop', (e) => {
+                e.preventDefault();
+                taxiCard.classList.remove('drag-over');
+                const passengerId = parseInt(e.dataTransfer.getData('text/plain'), 10);
+                if (passengerId) {
+                    if (passengerId === t.id) return;
+                    assignPassenger(passengerId, t.id);
+                }
+            });
+
+            // Edit & Delete actions for Taxis
+            taxiCard.querySelector('[data-action="edit-taxi"]').addEventListener('click', () => startEdit(t.id));
+            taxiCard.querySelector('[data-action="delete-taxi"]').addEventListener('click', () => deleteParticipant(t.id));
+
+            // Seat Dot Assign Click Handlers
+            taxiCard.querySelectorAll('.seat-dot.empty').forEach(dot => {
+                dot.addEventListener('click', () => {
+                    const unassignedList = state.participants.filter(p => p.role === 'passenger' && p.assignedCarId === null);
+                    if (unassignedList.length > 0) {
+                        assignPassenger(unassignedList[0].id, t.id);
+                    } else {
+                        alert(TRANSLATIONS[currentLang].allAssignedAlert);
+                    }
+                });
+            });
+
+            taxisGrid.appendChild(taxiCard);
+        });
+    }
+
     // ==========================================================================
     // EXPORT & PRINT HANDLERS
     // ==========================================================================
 
     function exportCSV() {
         const drivers = state.participants.filter(p => p.role === 'driver');
+        const taxis = state.participants.filter(p => p.role === 'taxi');
         const passengers = state.participants.filter(p => p.role === 'passenger');
         
         let csvLines = [];
@@ -1268,6 +1569,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Header
         csvLines.push(TRANSLATIONS[currentLang].csvHeader);
 
+        // Drivers
         drivers.forEach(d => {
             const assigned = passengers.filter(p => p.assignedCarId === d.id);
             const dLoc = d.meetLocation ? TRANSLATIONS[currentLang][`meetLocation${d.meetLocation}`] || d.meetLocation : '';
@@ -1278,6 +1580,21 @@ document.addEventListener('DOMContentLoaded', () => {
                 assigned.forEach(ap => {
                     const apLoc = ap.meetLocation ? TRANSLATIONS[currentLang][`meetLocation${ap.meetLocation}`] || ap.meetLocation : '';
                     csvLines.push(`"${cleanCSV(d.name)}","${cleanCSV(d.group || '')}","${cleanCSV(dLoc)}","${cleanCSV(d.foodBringing || 'no')}","${cleanCSV(d.foodDetails || '')}","${cleanCSV(d.carModel)}","${cleanCSV(d.licensePlate || '')}",${d.capacity},${d.familyCount || 0},"${cleanCSV(ap.name)}","${cleanCSV(ap.group || '')}","${cleanCSV(apLoc)}","${cleanCSV(ap.foodBringing || 'no')}","${cleanCSV(ap.foodDetails || '')}","${cleanCSV(ap.notes || '')}"`);
+                });
+            }
+        });
+
+        // Taxis
+        taxis.forEach(t => {
+            const assigned = passengers.filter(p => p.assignedCarId === t.id);
+            const tLoc = t.meetLocation ? TRANSLATIONS[currentLang][`meetLocation${t.meetLocation}`] || t.meetLocation : '';
+            const carModelName = currentLang === 'zh' ? '計程車' : 'Taxi';
+            if (assigned.length === 0) {
+                csvLines.push(`"${cleanCSV(t.name)}","${cleanCSV(t.group || '')}","${cleanCSV(tLoc)}","${cleanCSV(t.foodBringing || 'no')}","${cleanCSV(t.foodDetails || '')}","${cleanCSV(carModelName)}","",${t.capacity},0,"","","","","",""`);
+            } else {
+                assigned.forEach(ap => {
+                    const apLoc = ap.meetLocation ? TRANSLATIONS[currentLang][`meetLocation${ap.meetLocation}`] || ap.meetLocation : '';
+                    csvLines.push(`"${cleanCSV(t.name)}","${cleanCSV(t.group || '')}","${cleanCSV(tLoc)}","${cleanCSV(t.foodBringing || 'no')}","${cleanCSV(t.foodDetails || '')}","${cleanCSV(carModelName)}","",${t.capacity},0,"${cleanCSV(ap.name)}","${cleanCSV(ap.group || '')}","${cleanCSV(apLoc)}","${cleanCSV(ap.foodBringing || 'no')}","${cleanCSV(ap.foodDetails || '')}","${cleanCSV(ap.notes || '')}"`);
                 });
             }
         });
@@ -1316,15 +1633,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function triggerPrint() {
         const drivers = state.participants.filter(p => p.role === 'driver');
+        const taxis = state.participants.filter(p => p.role === 'taxi');
         const passengers = state.participants.filter(p => p.role === 'passenger');
         const unassigned = passengers.filter(p => p.assignedCarId === null);
 
         printDate.textContent = TRANSLATIONS[currentLang].printGenerated.replace('{date}', new Date().toLocaleDateString());
         printContent.innerHTML = '';
 
-        if (drivers.length === 0) {
+        if (drivers.length === 0 && taxis.length === 0) {
             printContent.innerHTML = `<p>${TRANSLATIONS[currentLang].printNoDrivers}</p>`;
         } else {
+            // Render Drivers
             drivers.forEach(d => {
                 const assigned = passengers.filter(p => p.assignedCarId === d.id);
                 
@@ -1371,6 +1690,47 @@ document.addEventListener('DOMContentLoaded', () => {
                             <span>${occupiedText}${printFamilyText}</span>
                         </div>
                         ${d.notes ? `<p style="margin-bottom: 8px; font-size: 10pt;"><strong>${TRANSLATIONS[currentLang].printRouteDetails.replace('{notes}', escapeHTML(d.notes))}</strong></p>` : ''}
+                        ${passengersHTML}
+                    </div>
+                `;
+            });
+
+            // Render Taxis
+            taxis.forEach(t => {
+                const assigned = passengers.filter(p => p.assignedCarId === t.id);
+                
+                let passengersHTML = '';
+                if (assigned.length === 0) {
+                    passengersHTML = `<p style="font-style: italic; color: #555;">${TRANSLATIONS[currentLang].noPassengersAssigned}</p>`;
+                } else {
+                    passengersHTML = `
+                        <ol class="print-passenger-list">
+                            ${assigned.map(ap => {
+                                const apLoc = ap.meetLocation ? TRANSLATIONS[currentLang][`meetLocation${ap.meetLocation}`] || ap.meetLocation : '';
+                                return `
+                                <li class="print-passenger-item">
+                                    <strong>${escapeHTML(ap.name)}</strong> 
+                                    ${ap.group ? `(${escapeHTML(ap.group)})` : ''}
+                                    [📍${escapeHTML(apLoc)}]
+                                    ${ap.notes ? `— <em>Notes: ${escapeHTML(ap.notes)}</em>` : ''} 
+                                    (${TRANSLATIONS[currentLang].foodTitle}: ${getFoodText(ap)})
+                                </li>
+                                `;
+                            }).join('')}
+                        </ol>
+                    `;
+                }
+
+                const occupiedText = TRANSLATIONS[currentLang].seatsRatio.replace('{count}', assigned.length).replace('{capacity}', t.capacity);
+                const tLoc = t.meetLocation ? TRANSLATIONS[currentLang][`meetLocation${t.meetLocation}`] || t.meetLocation : '';
+
+                printContent.innerHTML += `
+                    <div class="print-car-group" style="border-left: 3px solid var(--accent-amber, #f59e0b);">
+                        <div class="print-car-title">
+                            <span>🚕 ${TRANSLATIONS[currentLang].roleTaxiLabel}: ${escapeHTML(t.name)} ${t.group ? `(${escapeHTML(t.group)})` : ''} [📍${escapeHTML(tLoc)}]${t.foodBringing === 'yes' ? ` (${TRANSLATIONS[currentLang].foodTitle}: ${escapeHTML(t.foodDetails)})` : ''}</span>
+                            <span>${occupiedText}</span>
+                        </div>
+                        ${t.notes ? `<p style="margin-bottom: 8px; font-size: 10pt;"><strong>${TRANSLATIONS[currentLang].printRouteDetails.replace('{notes}', escapeHTML(t.notes))}</strong></p>` : ''}
                         ${passengersHTML}
                     </div>
                 `;
@@ -1424,13 +1784,21 @@ document.addEventListener('DOMContentLoaded', () => {
         if (p.role === 'driver') {
             fieldsPassenger.classList.add('hidden');
             fieldsDriver.classList.remove('hidden');
+            fieldsTaxi.classList.add('hidden');
             regCarModel.value = p.carModel || '';
             regCarSeats.value = p.capacity !== undefined ? p.capacity : '4';
             regCarFamily.value = p.familyCount !== undefined ? p.familyCount : '0';
             regCarPlate.value = p.licensePlate || '';
+        } else if (p.role === 'taxi') {
+            fieldsPassenger.classList.add('hidden');
+            fieldsDriver.classList.add('hidden');
+            fieldsTaxi.classList.remove('hidden');
+            const regTaxiSeats = document.getElementById('reg-taxi-seats');
+            if (regTaxiSeats) regTaxiSeats.value = p.capacity !== undefined ? p.capacity : '4';
         } else {
             fieldsPassenger.classList.remove('hidden');
             fieldsDriver.classList.add('hidden');
+            fieldsTaxi.classList.add('hidden');
         }
 
         // Populate common food fields (for both driver & passenger)
@@ -1466,6 +1834,8 @@ document.addEventListener('DOMContentLoaded', () => {
         regCarSeats.value = '4';
         regCarFamily.value = '0';
         regCarPlate.value = '';
+        const regTaxiSeats = document.getElementById('reg-taxi-seats');
+        if (regTaxiSeats) regTaxiSeats.value = '4';
         regFoodBringing.value = 'no';
         regFoodDetails.value = '';
         foodDetailsGroup.classList.add('hidden');
@@ -1475,6 +1845,13 @@ document.addEventListener('DOMContentLoaded', () => {
         formTitle.innerHTML = `<i class="fa-solid fa-user-plus"></i> Register Participant`;
         btnFormSubmit.innerHTML = `<i class="fa-solid fa-plus"></i> Add to List`;
         btnFormCancel.classList.add('hidden');
+
+        // Select passenger role by default and adjust form layout
+        const passengerRadio = document.querySelector('input[name="reg-role"][value="passenger"]');
+        if (passengerRadio) passengerRadio.checked = true;
+        fieldsPassenger.classList.remove('hidden');
+        fieldsDriver.classList.add('hidden');
+        fieldsTaxi.classList.add('hidden');
     }
 
     // ==========================================================================

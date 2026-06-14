@@ -1019,7 +1019,7 @@ input.invalid + .error-msg,
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
     gap: 1.25rem;
-    min-height: 400px;
+    min-height: 150px;
 }
 
 /* CAR GROUP CARD */
@@ -1245,7 +1245,7 @@ input.invalid + .error-msg,
     .dashboard-grid {
         display: grid;
         grid-template-columns: 1fr 1fr;
-        grid-template-rows: auto auto auto auto;
+        grid-template-rows: auto auto auto auto auto;
     }
     
     .form-section {
@@ -1262,15 +1262,20 @@ input.invalid + .error-msg,
         grid-column: 1 / span 2;
         grid-row: 2;
     }
+
+    .taxi-board-section {
+        grid-column: 1 / span 2;
+        grid-row: 3;
+    }
     
     .food-summary-section {
         grid-column: 1 / span 2;
-        grid-row: 3;
+        grid-row: 4;
     }
 
     .meet-summary-section {
         grid-column: 1 / span 2;
-        grid-row: 4;
+        grid-row: 5;
     }
 }
 
@@ -1304,21 +1309,27 @@ input.invalid + .error-msg,
         grid-column: auto;
         grid-row: auto;
     }
-    
-    .unassigned-section {
+
+    .taxi-board-section {
         order: 3 !important;
         grid-column: auto;
         grid-row: auto;
     }
     
-    .food-summary-section {
+    .unassigned-section {
         order: 4 !important;
         grid-column: auto;
         grid-row: auto;
     }
     
-    .meet-summary-section {
+    .food-summary-section {
         order: 5 !important;
+        grid-column: auto;
+        grid-row: auto;
+    }
+    
+    .meet-summary-section {
+        order: 6 !important;
         grid-column: auto;
         grid-row: auto;
     }

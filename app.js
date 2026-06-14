@@ -572,7 +572,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     name: nameVal,
                     role: 'taxi',
                     capacity: 4,
-                    meetLocation: 'JianCheng',
+                    meetLocation: 'QiDu',
                     notes: '',
                     group: '',
                     foodBringing: 'no',

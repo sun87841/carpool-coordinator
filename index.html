@@ -12,7 +12,7 @@
     <!-- FontAwesome for high-quality SVG icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Main stylesheet -->
-    <link rel="stylesheet" href="styles.css?v=24">
+    <link rel="stylesheet" href="styles.css?v=26">
 </head>
 <body>
     <!-- Top Decorative Glow -->
@@ -175,6 +175,13 @@
 
                         <!-- Passenger Conditional Fields -->
                         <div id="fields-passenger" class="conditional-fields">
+                            <div class="form-group">
+                                <label for="reg-passenger-family" data-i18n="lblCarFamily">Family Riding Along</label>
+                                <div class="input-wrapper">
+                                    <i class="fa-solid fa-people-roof input-icon"></i>
+                                    <input type="number" id="reg-passenger-family" min="0" max="9" value="0" placeholder="0 if none" data-i18n-placeholder="phCarFamily">
+                                </div>
+                            </div>
                         </div>
 
                         <!-- Driver Conditional Fields -->
@@ -339,7 +346,7 @@
                         </div>
                     </div>
 
-                    <div id="taxis-grid" class="cars-grid-container" style="min-height: auto;">
+                    <div id="taxis-grid" class="cars-grid-container">
                         <!-- Filled dynamically -->
                         <div class="empty-state-large">
                             <i class="fa-solid fa-taxi animate-float" style="color: var(--accent-amber); font-size: 3rem; margin-bottom: 1rem;"></i>
@@ -380,7 +387,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>
 
     <!-- MAIN APP SCRIPT -->
-    <script src="app.js?v=24"></script>
+    <script src="app.js?v=26"></script>
 
 </body>
 </html>

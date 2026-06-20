@@ -1183,7 +1183,7 @@ input.invalid + .error-msg,
     gap: 0.4rem;
 }
 
-.assigned-passenger-info .bullet-dot {
+.bullet-dot {
     width: 6px;
     height: 6px;
     background-color: var(--accent-emerald);
@@ -1191,15 +1191,61 @@ input.invalid + .error-msg,
     flex-shrink: 0;
 }
 
+.assigned-passenger-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    min-width: 0;
+    flex-grow: 1;
+}
+
+.assigned-passenger-header {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    min-width: 0;
+}
+
 .assigned-passenger-name {
-    font-weight: 500;
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex-shrink: 1;
+    min-width: 0;
+}
+
+.assigned-passenger-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+    align-items: center;
+    margin-left: 10px;
+}
+
+.assigned-passenger-meta span, 
+.assigned-passenger-meta .badge-tag {
+    font-size: 0.65rem !important;
+    padding: 1px 4px !important;
+    border-radius: 3px !important;
+    font-weight: 600;
+    text-transform: none; /* Keep casing */
 }
 
 .assigned-passenger-notes {
-    font-size: 0.7rem;
+    font-size: 0.65rem;
     color: var(--text-muted);
-    margin-left: 0.5rem;
     font-style: italic;
+}
+
+.assigned-passenger-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    flex-shrink: 0;
+    margin-left: 10px;
 }
 
 /* Quick selector drop-down */

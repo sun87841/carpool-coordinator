@@ -116,7 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
             emptySeatClick: "Empty Seat (Click to assign)",
             seatFilled: "Seat filled",
             overCapacity: "Over capacity!",
-            familyRiding: "Family Riding Along",
+            familyRiding: "Family",
             familyPeopleCount: "{count} People",
             noPassengersAssigned: "No passengers assigned",
             editPassengerDetails: "Edit passenger details",
@@ -239,7 +239,7 @@ document.addEventListener('DOMContentLoaded', () => {
             emptySeatClick: "空座位 (點擊直接分配)",
             seatFilled: "座位已佔用",
             overCapacity: "人數已超載！",
-            familyRiding: "隨行家屬",
+            familyRiding: "隨行",
             familyPeopleCount: "{count} 人",
             noPassengersAssigned: "目前無乘客分配",
             editPassengerDetails: "編輯乘客資料",
@@ -1343,14 +1343,18 @@ document.addEventListener('DOMContentLoaded', () => {
                     });
  
                     item.innerHTML = `
-                        <div class="assigned-passenger-info">
-                            <span class="bullet-dot"></span>
-                            <span class="assigned-passenger-name">${escapeHTML(ap.name)}</span>
-                            ${ap.familyCount > 0 ? `<span class="badge-tag badge-luggage" style="margin-left: 5px;">+ ${ap.familyCount} ${TRANSLATIONS[currentLang].familyRiding}</span>` : ''}
-                            ${getMeetLocationBadgeHTML(ap)}
-                            ${ap.group ? `<span style="font-size: 0.7rem; color: var(--accent-blue); margin-left: 5px; font-weight: 600;">(${escapeHTML(ap.group)})</span>` : ''}
-                            ${ap.foodBringing === 'yes' ? `<span style="font-size: 0.7rem; color: var(--accent-emerald); font-weight: 600; margin-left: 5px;" title="${escapeHTML(ap.foodDetails)}"><i class="fa-solid fa-utensils"></i> (${escapeHTML(ap.foodDetails)})</span>` : ''}
-                            ${ap.notes ? `<span class="assigned-passenger-notes" title="${escapeHTML(ap.notes)}">(${escapeHTML(ap.notes)})</span>` : ''}
+                        <div class="assigned-passenger-details">
+                            <div class="assigned-passenger-header">
+                                <span class="bullet-dot"></span>
+                                <span class="assigned-passenger-name" title="${escapeHTML(ap.name)}">${escapeHTML(ap.name)}</span>
+                                ${ap.familyCount > 0 ? `<span class="badge-tag badge-luggage">+ ${ap.familyCount} ${TRANSLATIONS[currentLang].familyRiding}</span>` : ''}
+                            </div>
+                            <div class="assigned-passenger-meta">
+                                ${getMeetLocationBadgeHTML(ap)}
+                                ${ap.group ? `<span style="color: var(--accent-blue); background: rgba(37,99,235,0.06);">${escapeHTML(ap.group)}</span>` : ''}
+                                ${ap.foodBringing === 'yes' ? `<span style="color: var(--accent-emerald); background: rgba(16,185,129,0.06);" title="${escapeHTML(ap.foodDetails)}"><i class="fa-solid fa-utensils"></i> ${escapeHTML(ap.foodDetails)}</span>` : ''}
+                                ${ap.notes ? `<span class="assigned-passenger-notes" title="${escapeHTML(ap.notes)}">${escapeHTML(ap.notes)}</span>` : ''}
+                            </div>
                         </div>
                         <div class="assigned-passenger-actions">
                             <button class="btn-card-action" data-action="edit-passenger" data-id="${ap.id}" title="${TRANSLATIONS[currentLang].editPassengerDetails}">
@@ -1518,14 +1522,18 @@ document.addEventListener('DOMContentLoaded', () => {
                     });
 
                     item.innerHTML = `
-                        <div class="assigned-passenger-info">
-                            <span class="bullet-dot" style="background-color: var(--accent-amber);"></span>
-                            <span class="assigned-passenger-name">${escapeHTML(ap.name)}</span>
-                            ${ap.familyCount > 0 ? `<span class="badge-tag badge-luggage" style="margin-left: 5px;">+ ${ap.familyCount} ${TRANSLATIONS[currentLang].familyRiding}</span>` : ''}
-                            ${getMeetLocationBadgeHTML(ap)}
-                            ${ap.group ? `<span style="font-size: 0.7rem; color: var(--accent-blue); margin-left: 5px; font-weight: 600;">(${escapeHTML(ap.group)})</span>` : ''}
-                            ${ap.foodBringing === 'yes' ? `<span style="font-size: 0.7rem; color: var(--accent-emerald); font-weight: 600; margin-left: 5px;" title="${escapeHTML(ap.foodDetails)}"><i class="fa-solid fa-utensils"></i> (${escapeHTML(ap.foodDetails)})</span>` : ''}
-                            ${ap.notes ? `<span class="assigned-passenger-notes" title="${escapeHTML(ap.notes)}">(${escapeHTML(ap.notes)})</span>` : ''}
+                        <div class="assigned-passenger-details">
+                            <div class="assigned-passenger-header">
+                                <span class="bullet-dot" style="background-color: var(--accent-amber);"></span>
+                                <span class="assigned-passenger-name" title="${escapeHTML(ap.name)}">${escapeHTML(ap.name)}</span>
+                                ${ap.familyCount > 0 ? `<span class="badge-tag badge-luggage">+ ${ap.familyCount} ${TRANSLATIONS[currentLang].familyRiding}</span>` : ''}
+                            </div>
+                            <div class="assigned-passenger-meta">
+                                ${getMeetLocationBadgeHTML(ap)}
+                                ${ap.group ? `<span style="color: var(--accent-blue); background: rgba(37,99,235,0.06);">${escapeHTML(ap.group)}</span>` : ''}
+                                ${ap.foodBringing === 'yes' ? `<span style="color: var(--accent-emerald); background: rgba(16,185,129,0.06);" title="${escapeHTML(ap.foodDetails)}"><i class="fa-solid fa-utensils"></i> ${escapeHTML(ap.foodDetails)}</span>` : ''}
+                                ${ap.notes ? `<span class="assigned-passenger-notes" title="${escapeHTML(ap.notes)}">${escapeHTML(ap.notes)}</span>` : ''}
+                            </div>
                         </div>
                         <div class="assigned-passenger-actions">
                             <button class="btn-card-action" data-action="edit-passenger" data-id="${ap.id}" title="${TRANSLATIONS[currentLang].editPassengerDetails}">

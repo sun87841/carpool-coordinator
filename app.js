@@ -201,7 +201,7 @@ document.addEventListener('DOMContentLoaded', () => {
             lblCarSeats: "可提供共乘座位數",
             phCarSeats: "若獨自駕駛則為 0",
             errCarSeats: "必須介於 0 到 9 之間",
-            lblCarFamily: "隨行家屬人數",
+            lblCarFamily: "同行家屬人數",
             phCarFamily: "無則填 0",
             lblCarPlate: "車牌號碼",
             phCarPlate: "例如：7XYZ123",
@@ -233,24 +233,24 @@ document.addEventListener('DOMContentLoaded', () => {
             editDriverDetails: "編輯司機與車輛資料",
             removeDriver: "移除此司機與車輛",
             routeNotes: "路線: {notes}",
-            drivingSoloFamily: "獨自駕駛，隨行家屬 {count} 人",
+            drivingSoloFamily: "獨自駕駛，同行家屬 {count} 人",
             drivingSoloNoPassengers: "獨自駕駛 (不載客)",
             visualCapacity: "車位數量與乘客:",
             emptySeatClick: "空座位 (點擊直接分配)",
             seatFilled: "座位已佔用",
             overCapacity: "人數已超載！",
-            familyRiding: "隨行",
+            familyRiding: "同行",
             familyPeopleCount: "{count} 人",
             noPassengersAssigned: "目前無乘客分配",
             editPassengerDetails: "編輯乘客資料",
             removePassengerFromCar: "將乘客從此車輛移出",
             allAssignedAlert: "所有乘客都已經分配到車輛了！請先註冊新乘客。",
-            csvHeader: "司機姓名,司機團體,司機集合地點,司機是否攜帶食物,司機攜帶食物詳情,車款描述,車牌號碼,座位容量,司機隨行家屬人數,乘客姓名,乘客團體,乘客集合地點,乘客是否攜帶食物,乘客攜帶食物詳情,乘客隨行家屬人數,乘客備註",
+            csvHeader: "司機姓名,司機團體,司機集合地點,司機是否攜帶食物,司機攜帶食物詳情,車款描述,車牌號碼,座位容量,司機同行家屬人數,乘客姓名,乘客團體,乘客集合地點,乘客是否攜帶食物,乘客攜帶食物詳情,乘客同行家屬人數,乘客備註",
             csvUnassigned: "未分配乘客名單",
             printTitle: "福彌寺交通乘車登記 - 最終配對圖表",
             printGenerated: "產生日期的: {date}",
             printNoDrivers: "無註冊司機。",
-            printFamilyRidingAlong: "隨行家屬: {count} 位家屬一同搭乘",
+            printFamilyRidingAlong: "同行家屬: {count} 位家屬一同搭乘",
             printDrivingSolo: "獨自駕駛 (無多餘座位)",
             printSeatsOccupied: "座位已佔用: {occupied}/{capacity}",
             printSeatsOccupiedSolo: "座位已佔用: 獨自駕駛",
@@ -370,7 +370,7 @@ document.addEventListener('DOMContentLoaded', () => {
         { id: 1, name: '馮老師', role: 'driver', carModel: '白色 Mazda', capacity: 3, notes: '開車走路線 A，預計早上 8:00 出發', group: '上師', licensePlate: 'MAZ-101', familyCount: 0, foodBringing: 'yes', foodDetails: '炒麵', meetLocation: 'JianCheng' },
         { id: 2, name: '吳上師', role: 'driver', carModel: '黑色 Lexus', capacity: 0, notes: '路途寬敞，可放大量行李', group: '上師', licensePlate: 'LEX-202', familyCount: 4, foodBringing: 'yes', foodDetails: '水果盤', meetLocation: 'JianCheng' },
         { id: 3, name: '施維尼', role: 'driver', carModel: '白色 Camry', capacity: 3, notes: '快速路線，行李空間有限', group: '社交', licensePlate: 'AUH-6852', familyCount: 0, foodBringing: 'no', foodDetails: '', meetLocation: 'JianCheng' },
-        { id: 4, name: '溫宜慧', role: 'driver', carModel: '灰色 SUV', capacity: 0, notes: '獨自駕駛隨行家屬，位置充足', group: '科大', licensePlate: 'RFH-2368', familyCount: 4, foodBringing: 'yes', foodDetails: '飲料', meetLocation: 'JianCheng' },
+        { id: 4, name: '溫宜慧', role: 'driver', carModel: '灰色 SUV', capacity: 0, notes: '獨自駕駛同行家屬，位置充足', group: '科大', licensePlate: 'RFH-2368', familyCount: 4, foodBringing: 'yes', foodDetails: '飲料', meetLocation: 'JianCheng' },
         { id: 15, name: '吳宜慧', role: 'driver', carModel: '銀色轎車', capacity: 5, notes: '直接在目的地會合', group: '科大', licensePlate: 'CAV-8288', familyCount: 0, foodBringing: 'no', foodDetails: '', meetLocation: 'JianCheng' },
 
         // 乘客
@@ -1044,7 +1044,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="passenger-details">
                     <div class="passenger-header">
                         <span class="passenger-name">${escapeHTML(p.name)}</span>
-                        ${p.familyCount > 0 ? `<span class="badge-tag badge-luggage" style="margin-left: auto;">+ ${p.familyCount} ${TRANSLATIONS[currentLang].familyRiding}</span>` : ''}
+                        ${p.familyCount > 0 ? `<span class="badge-tag badge-luggage" style="flex-shrink: 0; white-space: nowrap;">+ ${p.familyCount} ${TRANSLATIONS[currentLang].familyRiding}</span>` : ''}
                     </div>
                     <div class="passenger-meta" style="margin-top: 0.15rem; margin-bottom: 0.15rem;">
                         ${getMeetLocationBadgeHTML(p)}

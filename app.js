@@ -159,11 +159,13 @@ document.addEventListener('DOMContentLoaded', () => {
             lblTaxiSeats: "Taxi Seats Available",
             phTaxiSeats: "4",
             errTaxiSeats: "Must be 1 - 9",
-            roleTaxiLabel: "Taxi"
+            roleTaxiLabel: "Taxi",
+            eventSchedule: "Depart Taipei at 9:00 • Arrive at 10:30"
         },
         zh: {
             appName: "福彌寺交通乘車登記",
             appSubtitle: "互動式共乘與車輛安排儀表板",
+            eventSchedule: "台北 9:00 出發 • 10:30 抵達",
             btnDemo: "載入示範數據",
             btnImport: "匯入 JSON 檔",
             btnShareLink: "複製分享連結",

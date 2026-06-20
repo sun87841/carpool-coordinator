@@ -122,7 +122,7 @@ document.addEventListener('DOMContentLoaded', () => {
             editPassengerDetails: "Edit passenger details",
             removePassengerFromCar: "Remove passenger from this car",
             allAssignedAlert: "All passengers are already assigned to cars! Register new passengers first.",
-            csvHeader: "Driver Name,Driver Group,Driver Meeting Location,Driver Bringing Food,Driver Food Details,Car Model,License Plate,Seats Capacity,Family Members,Passenger Name,Passenger Group,Passenger Meeting Location,Passenger Bringing Food,Passenger Food Details,Passenger Notes",
+            csvHeader: "Driver Name,Driver Group,Driver Meeting Location,Driver Bringing Food,Driver Food Details,Car Model,License Plate,Seats Capacity,Driver Family Members,Passenger Name,Passenger Group,Passenger Meeting Location,Passenger Bringing Food,Passenger Food Details,Passenger Family Members,Passenger Notes",
             csvUnassigned: "UNASSIGNED PASSENGERS",
             printTitle: "RideShare Planner - Final Carpool Match Chart",
             printGenerated: "Generated on: {date}",
@@ -245,7 +245,7 @@ document.addEventListener('DOMContentLoaded', () => {
             editPassengerDetails: "編輯乘客資料",
             removePassengerFromCar: "將乘客從此車輛移出",
             allAssignedAlert: "所有乘客都已經分配到車輛了！請先註冊新乘客。",
-            csvHeader: "司機姓名,司機團體,司機集合地點,司機是否攜帶食物,司機攜帶食物詳情,車款描述,車牌號碼,座位容量,隨行家屬人數,乘客姓名,乘客團體,乘客集合地點,乘客是否攜帶食物,乘客攜帶食物詳情,乘客備註",
+            csvHeader: "司機姓名,司機團體,司機集合地點,司機是否攜帶食物,司機攜帶食物詳情,車款描述,車牌號碼,座位容量,司機隨行家屬人數,乘客姓名,乘客團體,乘客集合地點,乘客是否攜帶食物,乘客攜帶食物詳情,乘客隨行家屬人數,乘客備註",
             csvUnassigned: "未分配乘客名單",
             printTitle: "福彌寺交通乘車登記 - 最終配對圖表",
             printGenerated: "產生日期的: {date}",
@@ -320,6 +320,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const regCarModel = document.getElementById('reg-car-model');
     const regCarSeats = document.getElementById('reg-car-seats');
     const regCarFamily = document.getElementById('reg-car-family');
+    const regPassengerFamily = document.getElementById('reg-passenger-family');
     const regCarPlate = document.getElementById('reg-car-plate');
     const regGroup = document.getElementById('reg-group');
     const regNotes = document.getElementById('reg-notes');
@@ -728,6 +729,7 @@ document.addEventListener('DOMContentLoaded', () => {
             newParticipant.licensePlate = '';
         } else {
             newParticipant.assignedCarId = null; // Unassigned initially
+            newParticipant.familyCount = parseInt(regPassengerFamily.value, 10) || 0;
         }
 
         if (isValid) {
@@ -758,9 +760,9 @@ document.addEventListener('DOMContentLoaded', () => {
                             updated.licensePlate = '';
                         } else {
                             updated.role = 'passenger';
+                            updated.familyCount = parseInt(regPassengerFamily.value, 10) || 0;
                             delete updated.carModel;
                             delete updated.capacity;
-                            delete updated.familyCount;
                             delete updated.licensePlate;
                         }
                         return updated;
@@ -782,6 +784,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 regCarModel.value = '';
                 regCarSeats.value = '4';
                 regCarFamily.value = '0';
+                regPassengerFamily.value = '0';
                 regCarPlate.value = '';
                 const taxiSeatsElement = document.getElementById('reg-taxi-seats');
                 if (taxiSeatsElement) taxiSeatsElement.value = '4';
@@ -884,10 +887,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const totalPassengers = passengers.length;
         const assignedCount = totalPassengers - unassigned.length;
         
-        // Count family members riding with drivers
+        // Count family members riding with drivers and passengers
         let totalFamilyCount = 0;
         drivers.forEach(d => {
             totalFamilyCount += (d.familyCount || 0);
+        });
+        passengers.forEach(p => {
+            totalFamilyCount += (p.familyCount || 0);
         });
         const grandTotal = totalPassengers + drivers.length + totalFamilyCount;
         
@@ -1009,8 +1015,13 @@ document.addEventListener('DOMContentLoaded', () => {
             // Add Drivers
             drivers.forEach(d => {
                 if (d.capacity === 0) return; // Skip solo drivers
-                // Check current passenger count for this driver
-                const curCount = state.participants.filter(item => item.role === 'passenger' && item.assignedCarId === d.id).length;
+                // Check current passenger count for this driver (including family)
+                let curCount = 0;
+                state.participants.forEach(item => {
+                    if (item.role === 'passenger' && item.assignedCarId === d.id) {
+                        curCount += 1 + (item.familyCount || 0);
+                    }
+                });
                 const remaining = d.capacity - curCount;
                 optionsHTML += `<option value="${d.id}">${d.name}${d.group ? ` (${d.group})` : ''} (${remaining} ${TRANSLATIONS[currentLang].seatsLeft})</option>`;
             });
@@ -1018,7 +1029,13 @@ document.addEventListener('DOMContentLoaded', () => {
             // Add Taxis
             taxis.forEach(t => {
                 if (t.capacity === 0) return;
-                const curCount = state.participants.filter(item => item.role === 'passenger' && item.assignedCarId === t.id).length;
+                // Check current passenger count for this taxi (including family)
+                let curCount = 0;
+                state.participants.forEach(item => {
+                    if (item.role === 'passenger' && item.assignedCarId === t.id) {
+                        curCount += 1 + (item.familyCount || 0);
+                    }
+                });
                 const remaining = t.capacity - curCount;
                 optionsHTML += `<option value="${t.id}">🚕 ${t.name}${t.group ? ` (${t.group})` : ''} (${remaining} ${TRANSLATIONS[currentLang].seatsLeft})</option>`;
             });
@@ -1027,6 +1044,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="passenger-details">
                     <div class="passenger-header">
                         <span class="passenger-name">${escapeHTML(p.name)}</span>
+                        ${p.familyCount > 0 ? `<span class="badge-tag badge-luggage" style="margin-left: auto;">+ ${p.familyCount} ${TRANSLATIONS[currentLang].familyRiding}</span>` : ''}
                     </div>
                     <div class="passenger-meta" style="margin-top: 0.15rem; margin-bottom: 0.15rem;">
                         ${getMeetLocationBadgeHTML(p)}
@@ -1139,10 +1157,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     pCount = 0; // Taxis themselves are vehicles, not travelers
                 } else {
                     roleText = TRANSLATIONS[currentLang].rolePassengerLabel;
+                    if (p.familyCount > 0) {
+                        pCount += p.familyCount;
+                    }
                 }
                 
                 let displayName = `${escapeHTML(p.name)} (${roleText})`;
-                if (p.role === 'driver' && p.familyCount > 0) {
+                if ((p.role === 'driver' || p.role === 'passenger') && p.familyCount > 0) {
                     displayName += ` + ${p.familyCount} ${TRANSLATIONS[currentLang].familyRiding}`;
                 }
                 
@@ -1208,7 +1229,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Get passengers assigned to this driver
             const assignedPassengers = passengers.filter(p => p.assignedCarId === d.id);
-            const count = assignedPassengers.length;
+            let count = 0;
+            assignedPassengers.forEach(p => {
+                count += 1 + (p.familyCount || 0);
+            });
             
             // Ratio capacity coloring
             let capacityText = TRANSLATIONS[currentLang].seatsRatio.replace('{count}', count).replace('{capacity}', d.capacity);
@@ -1322,6 +1346,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <div class="assigned-passenger-info">
                             <span class="bullet-dot"></span>
                             <span class="assigned-passenger-name">${escapeHTML(ap.name)}</span>
+                            ${ap.familyCount > 0 ? `<span class="badge-tag badge-luggage" style="margin-left: 5px;">+ ${ap.familyCount} ${TRANSLATIONS[currentLang].familyRiding}</span>` : ''}
                             ${getMeetLocationBadgeHTML(ap)}
                             ${ap.group ? `<span style="font-size: 0.7rem; color: var(--accent-blue); margin-left: 5px; font-weight: 600;">(${escapeHTML(ap.group)})</span>` : ''}
                             ${ap.foodBringing === 'yes' ? `<span style="font-size: 0.7rem; color: var(--accent-emerald); font-weight: 600; margin-left: 5px;" title="${escapeHTML(ap.foodDetails)}"><i class="fa-solid fa-utensils"></i> (${escapeHTML(ap.foodDetails)})</span>` : ''}
@@ -1412,7 +1437,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Get passengers assigned to this taxi
             const assignedPassengers = passengers.filter(p => p.assignedCarId === t.id);
-            const count = assignedPassengers.length;
+            let count = 0;
+            assignedPassengers.forEach(p => {
+                count += 1 + (p.familyCount || 0);
+            });
             
             // Ratio capacity coloring
             let capacityText = TRANSLATIONS[currentLang].seatsRatio.replace('{count}', count).replace('{capacity}', t.capacity);
@@ -1493,6 +1521,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <div class="assigned-passenger-info">
                             <span class="bullet-dot" style="background-color: var(--accent-amber);"></span>
                             <span class="assigned-passenger-name">${escapeHTML(ap.name)}</span>
+                            ${ap.familyCount > 0 ? `<span class="badge-tag badge-luggage" style="margin-left: 5px;">+ ${ap.familyCount} ${TRANSLATIONS[currentLang].familyRiding}</span>` : ''}
                             ${getMeetLocationBadgeHTML(ap)}
                             ${ap.group ? `<span style="font-size: 0.7rem; color: var(--accent-blue); margin-left: 5px; font-weight: 600;">(${escapeHTML(ap.group)})</span>` : ''}
                             ${ap.foodBringing === 'yes' ? `<span style="font-size: 0.7rem; color: var(--accent-emerald); font-weight: 600; margin-left: 5px;" title="${escapeHTML(ap.foodDetails)}"><i class="fa-solid fa-utensils"></i> (${escapeHTML(ap.foodDetails)})</span>` : ''}
@@ -1575,11 +1604,11 @@ document.addEventListener('DOMContentLoaded', () => {
             const dLoc = d.meetLocation ? TRANSLATIONS[currentLang][`meetLocation${d.meetLocation}`] || d.meetLocation : '';
             if (assigned.length === 0) {
                 // Driver with no passengers
-                csvLines.push(`"${cleanCSV(d.name)}","${cleanCSV(d.group || '')}","${cleanCSV(dLoc)}","${cleanCSV(d.foodBringing || 'no')}","${cleanCSV(d.foodDetails || '')}","${cleanCSV(d.carModel)}","${cleanCSV(d.licensePlate || '')}",${d.capacity},${d.familyCount || 0},"","","","","",""`);
+                csvLines.push(`"${cleanCSV(d.name)}","${cleanCSV(d.group || '')}","${cleanCSV(dLoc)}","${cleanCSV(d.foodBringing || 'no')}","${cleanCSV(d.foodDetails || '')}","${cleanCSV(d.carModel)}","${cleanCSV(d.licensePlate || '')}",${d.capacity},${d.familyCount || 0},"","","","","","",""`);
             } else {
                 assigned.forEach(ap => {
                     const apLoc = ap.meetLocation ? TRANSLATIONS[currentLang][`meetLocation${ap.meetLocation}`] || ap.meetLocation : '';
-                    csvLines.push(`"${cleanCSV(d.name)}","${cleanCSV(d.group || '')}","${cleanCSV(dLoc)}","${cleanCSV(d.foodBringing || 'no')}","${cleanCSV(d.foodDetails || '')}","${cleanCSV(d.carModel)}","${cleanCSV(d.licensePlate || '')}",${d.capacity},${d.familyCount || 0},"${cleanCSV(ap.name)}","${cleanCSV(ap.group || '')}","${cleanCSV(apLoc)}","${cleanCSV(ap.foodBringing || 'no')}","${cleanCSV(ap.foodDetails || '')}","${cleanCSV(ap.notes || '')}"`);
+                    csvLines.push(`"${cleanCSV(d.name)}","${cleanCSV(d.group || '')}","${cleanCSV(dLoc)}","${cleanCSV(d.foodBringing || 'no')}","${cleanCSV(d.foodDetails || '')}","${cleanCSV(d.carModel)}","${cleanCSV(d.licensePlate || '')}",${d.capacity},${d.familyCount || 0},"${cleanCSV(ap.name)}","${cleanCSV(ap.group || '')}","${cleanCSV(apLoc)}","${cleanCSV(ap.foodBringing || 'no')}","${cleanCSV(ap.foodDetails || '')}",${ap.familyCount || 0},"${cleanCSV(ap.notes || '')}"`);
                 });
             }
         });
@@ -1590,11 +1619,11 @@ document.addEventListener('DOMContentLoaded', () => {
             const tLoc = t.meetLocation ? TRANSLATIONS[currentLang][`meetLocation${t.meetLocation}`] || t.meetLocation : '';
             const carModelName = currentLang === 'zh' ? '計程車' : 'Taxi';
             if (assigned.length === 0) {
-                csvLines.push(`"${cleanCSV(t.name)}","${cleanCSV(t.group || '')}","${cleanCSV(tLoc)}","${cleanCSV(t.foodBringing || 'no')}","${cleanCSV(t.foodDetails || '')}","${cleanCSV(carModelName)}","",${t.capacity},0,"","","","","",""`);
+                csvLines.push(`"${cleanCSV(t.name)}","${cleanCSV(t.group || '')}","${cleanCSV(tLoc)}","${cleanCSV(t.foodBringing || 'no')}","${cleanCSV(t.foodDetails || '')}","${cleanCSV(carModelName)}","",${t.capacity},0,"","","","","","",""`);
             } else {
                 assigned.forEach(ap => {
                     const apLoc = ap.meetLocation ? TRANSLATIONS[currentLang][`meetLocation${ap.meetLocation}`] || ap.meetLocation : '';
-                    csvLines.push(`"${cleanCSV(t.name)}","${cleanCSV(t.group || '')}","${cleanCSV(tLoc)}","${cleanCSV(t.foodBringing || 'no')}","${cleanCSV(t.foodDetails || '')}","${cleanCSV(carModelName)}","",${t.capacity},0,"${cleanCSV(ap.name)}","${cleanCSV(ap.group || '')}","${cleanCSV(apLoc)}","${cleanCSV(ap.foodBringing || 'no')}","${cleanCSV(ap.foodDetails || '')}","${cleanCSV(ap.notes || '')}"`);
+                    csvLines.push(`"${cleanCSV(t.name)}","${cleanCSV(t.group || '')}","${cleanCSV(tLoc)}","${cleanCSV(t.foodBringing || 'no')}","${cleanCSV(t.foodDetails || '')}","${cleanCSV(carModelName)}","",${t.capacity},0,"${cleanCSV(ap.name)}","${cleanCSV(ap.group || '')}","${cleanCSV(apLoc)}","${cleanCSV(ap.foodBringing || 'no')}","${cleanCSV(ap.foodDetails || '')}",${ap.familyCount || 0},"${cleanCSV(ap.notes || '')}"`);
                 });
             }
         });
@@ -1602,11 +1631,11 @@ document.addEventListener('DOMContentLoaded', () => {
         // Add unassigned passengers at the bottom
         const unassigned = passengers.filter(p => p.assignedCarId === null);
         if (unassigned.length > 0) {
-            csvLines.push(',,,,,,,,,,,,,,'); // spacer
-            csvLines.push(`${TRANSLATIONS[currentLang].csvUnassigned},,,,,,,,,,,,,,`);
+            csvLines.push(',,,,,,,,,,,,,,,'); // spacer
+            csvLines.push(`${TRANSLATIONS[currentLang].csvUnassigned},,,,,,,,,,,,,,,`);
             unassigned.forEach(p => {
                 const pLoc = p.meetLocation ? TRANSLATIONS[currentLang][`meetLocation${p.meetLocation}`] || p.meetLocation : '';
-                csvLines.push(`"","","","","","","",0,0,"${cleanCSV(p.name)}","${cleanCSV(p.group || '')}","${cleanCSV(pLoc)}","${cleanCSV(p.foodBringing || 'no')}","${cleanCSV(p.foodDetails || '')}","${cleanCSV(p.notes || '')}"`);
+                csvLines.push(`"","","","","","","",0,0,"${cleanCSV(p.name)}","${cleanCSV(p.group || '')}","${cleanCSV(pLoc)}","${cleanCSV(p.foodBringing || 'no')}","${cleanCSV(p.foodDetails || '')}",${p.familyCount || 0},"${cleanCSV(p.notes || '')}"`);
             });
         }
 
@@ -1667,6 +1696,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                 return `
                                 <li class="print-passenger-item">
                                     <strong>${escapeHTML(ap.name)}</strong> 
+                                    ${ap.familyCount > 0 ? ` + ${ap.familyCount} ${TRANSLATIONS[currentLang].familyRiding}` : ''}
                                     ${ap.group ? `(${escapeHTML(ap.group)})` : ''}
                                     [📍${escapeHTML(apLoc)}]
                                     ${ap.notes ? `— <em>Notes: ${escapeHTML(ap.notes)}</em>` : ''} 
@@ -1679,7 +1709,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     `;
                 }
 
-                const occupiedText = d.capacity === 0 ? TRANSLATIONS[currentLang].printSeatsOccupiedSolo : TRANSLATIONS[currentLang].printSeatsOccupied.replace('{occupied}', assigned.length).replace('{capacity}', d.capacity);
+                let occupiedCount = 0;
+                assigned.forEach(ap => {
+                    occupiedCount += 1 + (ap.familyCount || 0);
+                });
+                const occupiedText = d.capacity === 0 ? TRANSLATIONS[currentLang].printSeatsOccupiedSolo : TRANSLATIONS[currentLang].printSeatsOccupied.replace('{occupied}', occupiedCount).replace('{capacity}', d.capacity);
                 const printFamilyText = d.familyCount > 0 ? TRANSLATIONS[currentLang].printSeatsOccupiedFamily.replace('{count}', d.familyCount) : '';
                 const dLoc = d.meetLocation ? TRANSLATIONS[currentLang][`meetLocation${d.meetLocation}`] || d.meetLocation : '';
 
@@ -1710,6 +1744,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                 return `
                                 <li class="print-passenger-item">
                                     <strong>${escapeHTML(ap.name)}</strong> 
+                                    ${ap.familyCount > 0 ? ` + ${ap.familyCount} ${TRANSLATIONS[currentLang].familyRiding}` : ''}
                                     ${ap.group ? `(${escapeHTML(ap.group)})` : ''}
                                     [📍${escapeHTML(apLoc)}]
                                     ${ap.notes ? `— <em>Notes: ${escapeHTML(ap.notes)}</em>` : ''} 
@@ -1721,7 +1756,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     `;
                 }
 
-                const occupiedText = TRANSLATIONS[currentLang].seatsRatio.replace('{count}', assigned.length).replace('{capacity}', t.capacity);
+                let occupiedCount = 0;
+                assigned.forEach(ap => {
+                    occupiedCount += 1 + (ap.familyCount || 0);
+                });
+                const occupiedText = TRANSLATIONS[currentLang].seatsRatio.replace('{count}', occupiedCount).replace('{capacity}', t.capacity);
                 const tLoc = t.meetLocation ? TRANSLATIONS[currentLang][`meetLocation${t.meetLocation}`] || t.meetLocation : '';
 
                 printContent.innerHTML += `
@@ -1747,6 +1786,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             return `
                             <li>
                                 <strong>${escapeHTML(up.name)}</strong> 
+                                ${up.familyCount > 0 ? ` + ${up.familyCount} ${TRANSLATIONS[currentLang].familyRiding}` : ''}
                                 ${up.group ? `(${escapeHTML(up.group)})` : ''}
                                 [📍${escapeHTML(upLoc)}]
                                 (${TRANSLATIONS[currentLang].foodTitle}: ${getFoodText(up)}) 
@@ -1799,6 +1839,7 @@ document.addEventListener('DOMContentLoaded', () => {
             fieldsPassenger.classList.remove('hidden');
             fieldsDriver.classList.add('hidden');
             fieldsTaxi.classList.add('hidden');
+            regPassengerFamily.value = p.familyCount !== undefined ? p.familyCount : '0';
         }
 
         // Populate common food fields (for both driver & passenger)
@@ -1833,6 +1874,7 @@ document.addEventListener('DOMContentLoaded', () => {
         regCarModel.value = '';
         regCarSeats.value = '4';
         regCarFamily.value = '0';
+        regPassengerFamily.value = '0';
         regCarPlate.value = '';
         const regTaxiSeats = document.getElementById('reg-taxi-seats');
         if (regTaxiSeats) regTaxiSeats.value = '4';

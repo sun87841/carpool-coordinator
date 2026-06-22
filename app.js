@@ -110,6 +110,7 @@ document.addEventListener('DOMContentLoaded', () => {
             seatsRatio: "{count}/{capacity} Seats",
             editDriverDetails: "Edit driver and car details",
             removeDriver: "Remove driver and car",
+            dragToReorder: "Drag to reorder card",
             routeNotes: "Notes: {notes}",
             drivingSoloFamily: "Driving Solo with {count} family member(s)",
             drivingSoloNoPassengers: "Driving Solo (No passengers)",
@@ -235,6 +236,7 @@ document.addEventListener('DOMContentLoaded', () => {
             seatsRatio: "座位 {count}/{capacity}",
             editDriverDetails: "編輯司機與車輛資料",
             removeDriver: "移除此司機與車輛",
+            dragToReorder: "拖曳以調整順序",
             routeNotes: "備註: {notes}",
             drivingSoloFamily: "獨自駕駛，同行家屬 {count} 人",
             drivingSoloNoPassengers: "獨自駕駛 (不載客)",
@@ -1324,6 +1326,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="car-passengers">
                     <!-- Assigned Passenger Items -->
                 </div>
+                ${editingId === d.id ? `<div class="card-drag-handle" title="${TRANSLATIONS[currentLang].dragToReorder || 'Drag to reorder card'}"><i class="fa-solid fa-grip-vertical"></i></div>` : ''}
             `;
  
             // Append assigned passenger cards
@@ -1396,7 +1399,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // --- DRAG & DROP HANDLERS FOR THE CAR CARD ---
             
-            // Double-click to enable drag
+            // Card drag handle to enable dragging
+            const cardDragHandle = carCard.querySelector('.card-drag-handle');
+            if (cardDragHandle) {
+                cardDragHandle.addEventListener('mousedown', () => {
+                    carCard.setAttribute('draggable', 'true');
+                    carCard.classList.add('ready-to-drag');
+                });
+                cardDragHandle.addEventListener('mouseup', () => {
+                    carCard.removeAttribute('draggable');
+                    carCard.classList.remove('ready-to-drag');
+                });
+            }
+
+            // Double-click to enable drag (as a fallback)
             carCard.addEventListener('dblclick', (e) => {
                 if (e.target.closest('.btn-card-action, .seat-dot, .assigned-passenger-item, .car-passengers')) {
                     return;
@@ -1569,6 +1585,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="car-passengers">
                     <!-- Assigned Passenger Items -->
                 </div>
+                ${editingId === t.id ? `<div class="card-drag-handle" title="${TRANSLATIONS[currentLang].dragToReorder || 'Drag to reorder card'}"><i class="fa-solid fa-grip-vertical"></i></div>` : ''}
             `;
 
             // Append assigned passenger cards
@@ -1625,7 +1642,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // --- DRAG & DROP HANDLERS FOR THE TAXI CARD ---
             
-            // Double-click to enable drag
+            // Card drag handle to enable dragging
+            const cardDragHandle = taxiCard.querySelector('.card-drag-handle');
+            if (cardDragHandle) {
+                cardDragHandle.addEventListener('mousedown', () => {
+                    taxiCard.setAttribute('draggable', 'true');
+                    taxiCard.classList.add('ready-to-drag');
+                });
+                cardDragHandle.addEventListener('mouseup', () => {
+                    taxiCard.removeAttribute('draggable');
+                    taxiCard.classList.remove('ready-to-drag');
+                });
+            }
+
+            // Double-click to enable drag (as a fallback)
             taxiCard.addEventListener('dblclick', (e) => {
                 if (e.target.closest('.btn-card-action, .seat-dot, .assigned-passenger-item, .car-passengers')) {
                     return;
@@ -1989,6 +2019,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Scroll form card into view smoothly
         document.querySelector('.form-section').scrollIntoView({ behavior: 'smooth' });
+        render();
     }
 
     function cancelEdit() {
@@ -2021,6 +2052,7 @@ document.addEventListener('DOMContentLoaded', () => {
         fieldsPassenger.classList.remove('hidden');
         fieldsDriver.classList.add('hidden');
         fieldsTaxi.classList.add('hidden');
+        render();
     }
 
     // ==========================================================================

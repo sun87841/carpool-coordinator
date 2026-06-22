@@ -1633,3 +1633,42 @@ input.invalid + .error-msg,
     box-shadow: 0 0 10px rgba(245, 158, 11, 0.2);
 }
 
+.card-drag-handle {
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(139, 92, 246, 0.08);
+    color: var(--accent-purple);
+    border: 1px solid rgba(139, 92, 246, 0.25);
+    border-radius: 6px;
+    cursor: grab;
+    z-index: 10;
+    transition: background-color var(--transition-fast), transform var(--transition-fast);
+    box-shadow: var(--shadow-sm);
+}
+
+.card-drag-handle:hover {
+    background-color: rgba(139, 92, 246, 0.15);
+    transform: scale(1.05);
+}
+
+.card-drag-handle:active {
+    cursor: grabbing;
+}
+
+.taxi-card .card-drag-handle {
+    background: rgba(245, 158, 11, 0.08);
+    color: var(--accent-amber);
+    border: 1px solid rgba(245, 158, 11, 0.25);
+}
+
+.taxi-card .card-drag-handle:hover {
+    background-color: rgba(245, 158, 11, 0.15);
+}
+
+

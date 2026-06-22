@@ -147,21 +147,21 @@ document.addEventListener('DOMContentLoaded', () => {
             meetLocationSelf: "Self-departure",
             meetSummaryTitle: "Meeting Locations Summary",
             meetSummaryDesc: "Count of travelers at each waiting category.",
-            roleTaxi: "Self-travel Group",
-            roleTaxiSub: "Going on their own",
-            taxiBoardTitle: "Self-travel Board",
-            taxiBoardDesc: "Drag passengers onto self-travel groups or click to assign.",
-            noActiveTaxis: "No Self-travel Groups Created",
-            noActiveTaxisDesc: "Click **Add Self-travel Group** to set up a group for those traveling independently.",
-            btnAddTaxi: "Add Self-travel Group",
-            taxiName: "Self-travel Group",
-            editTaxiDetails: "Edit Self-travel Group Details",
-            removeTaxi: "Remove Self-travel Group",
-            taxiLabel: "Self-travel",
-            lblTaxiSeats: "Group Capacity",
+            roleTaxi: "Taxi Group",
+            roleTaxiSub: "Carpool by taxi",
+            taxiBoardTitle: "Taxi Carpool Board",
+            taxiBoardDesc: "Drag passengers onto taxi groups or click to assign.",
+            noActiveTaxis: "No Taxi Groups Created",
+            noActiveTaxisDesc: "Click **Add Taxi Group** to set up a taxi carpool group.",
+            btnAddTaxi: "Add Taxi Group",
+            taxiName: "Taxi",
+            editTaxiDetails: "Edit Taxi Details",
+            removeTaxi: "Remove Taxi Group",
+            taxiLabel: "Taxi",
+            lblTaxiSeats: "Taxi Seats Available",
             phTaxiSeats: "4",
             errTaxiSeats: "Must be 1 - 9",
-            roleTaxiLabel: "Self-travel",
+            roleTaxiLabel: "Taxi",
             eventNoteTitle: "Event Schedule Note",
             eventNoteText: "Leave from Taipei at 9:00 AM, arrive before 10:00 AM."
         },
@@ -270,24 +270,24 @@ document.addEventListener('DOMContentLoaded', () => {
             lblMeetLocation: "集合地點",
             meetLocationJianCheng: "建成國中",
             meetLocationQiDu: "七堵車站",
-            meetLocationSelf: "自行出發（無開車）",
+            meetLocationSelf: "自行出發",
             meetSummaryTitle: "集合地點總覽",
             meetSummaryDesc: "各等待類別的乘車/出發人數與名單。",
-            roleTaxi: "自行前往組",
-            roleTaxiSub: "自行前往",
-            taxiBoardTitle: "自行前往看板",
-            taxiBoardDesc: "將乘客拖曳至自行前往組，或點擊以分配。",
-            noActiveTaxis: "尚未建立任何自行前往組",
-            noActiveTaxisDesc: "點擊 **建立自行前往組** 開始規劃自行前往名單。",
-            btnAddTaxi: "建立自行前往組",
-            taxiName: "自行前往組",
-            editTaxiDetails: "編輯自行前往組資料",
-            removeTaxi: "移除此自行前往組",
-            taxiLabel: "自行前往",
-            lblTaxiSeats: "乘員容量上限",
+            roleTaxi: "計程車組",
+            roleTaxiSub: "共乘計程車",
+            taxiBoardTitle: "計程車共乘看板",
+            taxiBoardDesc: "將乘客拖曳到計程車組上，或點擊車位進行分配。",
+            noActiveTaxis: "尚未建立任何計程車組",
+            noActiveTaxisDesc: "點擊 **建立計程車組** 開始規劃計程車共乘。",
+            btnAddTaxi: "建立計程車組",
+            taxiName: "計程車",
+            editTaxiDetails: "編輯計程車資料",
+            removeTaxi: "移除此計程車組",
+            taxiLabel: "計程車",
+            lblTaxiSeats: "計程車乘座位數",
             phTaxiSeats: "4",
             errTaxiSeats: "必須介於 1 到 9 之間",
-            roleTaxiLabel: "自行前往",
+            roleTaxiLabel: "計程車",
             eventNoteTitle: "活動行程備註",
             eventNoteText: "上午 9:00 從台北出發，10:00 前抵達。"
         }
@@ -369,7 +369,7 @@ document.addEventListener('DOMContentLoaded', () => {
         { id: 12, name: 'Clark Kent', role: 'passenger', foodBringing: 'yes', foodDetails: 'Sandwiches', notes: 'Wearing glasses, very polite passenger', assignedCarId: null, group: 'Daily Bugle', meetLocation: 'JianCheng' },
         { id: 13, name: 'Bruce Banner', role: 'passenger', foodBringing: 'no', foodDetails: '', notes: 'Enjoys quiet carpools, plays classical music', assignedCarId: null, group: 'Stark Industries', meetLocation: 'Self' },
         { id: 14, name: 'Selina Kyle', role: 'passenger', foodBringing: 'no', foodDetails: '', notes: 'Needs a pickup near downtown core', assignedCarId: 16, group: 'Cat Burglar Co.', meetLocation: 'QiDu' },
-        { id: 16, name: 'Self-travel #1', role: 'taxi', capacity: 4, notes: 'Going on their own', group: '', licensePlate: '', familyCount: 0, foodBringing: 'no', foodDetails: '', meetLocation: 'QiDu' }
+        { id: 16, name: 'Taxi #1', role: 'taxi', capacity: 4, notes: 'Fare split equally', group: '', licensePlate: '', familyCount: 0, foodBringing: 'no', foodDetails: '', meetLocation: 'QiDu' }
     ];
 
     const DEMO_PARTICIPANTS_ZH = [
@@ -391,7 +391,7 @@ document.addEventListener('DOMContentLoaded', () => {
         { id: 12, name: '趙六', role: 'passenger', foodBringing: 'no', foodDetails: '', notes: '帶瓶裝水', assignedCarId: null, group: '社交', meetLocation: 'Self' },
         { id: 13, name: '錢七', role: 'passenger', foodBringing: 'yes', foodDetails: '餅乾', notes: '安靜的乘客', assignedCarId: null, group: '科大', meetLocation: 'QiDu' },
         { id: 14, name: '孫八', role: 'passenger', foodBringing: 'no', foodDetails: '', notes: '在火車站附近上車', assignedCarId: 16, group: '社交', meetLocation: 'QiDu' },
-        { id: 16, name: '自行前往 1', role: 'taxi', capacity: 4, notes: '自行前往', group: '', licensePlate: '', familyCount: 0, foodBringing: 'no', foodDetails: '', meetLocation: 'QiDu' }
+        { id: 16, name: '計程車 1', role: 'taxi', capacity: 4, notes: '車資平分', group: '', licensePlate: '', familyCount: 0, foodBringing: 'no', foodDetails: '', meetLocation: 'QiDu' }
     ];
 
     // ==========================================================================
@@ -437,7 +437,6 @@ document.addEventListener('DOMContentLoaded', () => {
             db.collection('carpools').doc('active_trip').onSnapshot((doc) => {
                 if (doc.exists) {
                     state = doc.data();
-                    sanitizeState();
                     // Update local storage as offline backup
                     localStorage.setItem('rideShareState', JSON.stringify(state));
                     render();
@@ -466,58 +465,11 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    function sanitizeState() {
-        if (!state || !Array.isArray(state.participants)) {
-            state = { participants: [] };
-            return;
-        }
-        state.participants = state.participants.map(p => {
-            if (p.id) p.id = parseInt(p.id, 10) || p.id;
-            
-            // Coerce role to valid strings
-            if (p.role !== 'driver' && p.role !== 'passenger' && p.role !== 'taxi') {
-                p.role = 'passenger';
-            }
-            
-            if (p.capacity !== undefined) {
-                p.capacity = Math.max(0, Math.min(9, parseInt(p.capacity, 10) || 0));
-            } else if (p.role === 'driver' || p.role === 'taxi') {
-                p.capacity = 4;
-            }
-            
-            if (p.familyCount !== undefined) {
-                p.familyCount = Math.max(0, Math.min(9, parseInt(p.familyCount, 10) || 0));
-            } else {
-                p.familyCount = 0;
-            }
-            
-            if (p.assignedCarId !== undefined && p.assignedCarId !== null) {
-                p.assignedCarId = parseInt(p.assignedCarId, 10) || p.assignedCarId;
-            } else {
-                p.assignedCarId = null;
-            }
-            return p;
-        });
-
-        // Resolve dangling assignedCarId
-        const validVehicleIds = new Set(state.participants.filter(x => x.role === 'driver' || x.role === 'taxi').map(x => x.id));
-        state.participants.forEach(p => {
-            if (p.role === 'passenger') {
-                if (p.assignedCarId !== null && !validVehicleIds.has(p.assignedCarId)) {
-                    p.assignedCarId = null;
-                }
-            } else {
-                delete p.assignedCarId;
-            }
-        });
-    }
-
     function loadState() {
         const saved = localStorage.getItem('rideShareState');
         if (saved) {
             try {
                 state = JSON.parse(saved);
-                sanitizeState();
             } catch (e) {
                 console.error("Failed to parse saved state, starting fresh", e);
                 state = { participants: [] };
@@ -619,10 +571,10 @@ document.addEventListener('DOMContentLoaded', () => {
             btnAddTaxi.addEventListener('click', () => {
                 const taxis = state.participants.filter(p => p.role === 'taxi');
                 let nextNum = 1;
-                while (taxis.some(t => t.name === `Self-travel #${nextNum}` || t.name === `自行前往 ${nextNum}`)) {
+                while (taxis.some(t => t.name === `Taxi #${nextNum}` || t.name === `計程車 ${nextNum}`)) {
                     nextNum++;
                 }
-                const nameVal = currentLang === 'zh' ? `自行前往 ${nextNum}` : `Self-travel #${nextNum}`;
+                const nameVal = currentLang === 'zh' ? `計程車 ${nextNum}` : `Taxi #${nextNum}`;
                 const newTaxi = {
                     id: Date.now(),
                     name: nameVal,
@@ -755,7 +707,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (roleValue === 'driver') {
             const carModelValue = regCarModel.value.trim();
             const carSeatsValue = parseInt(regCarSeats.value, 10);
-            const carFamilyValue = Math.max(0, Math.min(9, parseInt(regCarFamily.value, 10) || 0));
+            const carFamilyValue = parseInt(regCarFamily.value, 10) || 0;
             const carPlateValue = regCarPlate.value.trim();
 
             if (!carModelValue) {
@@ -779,20 +731,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 isValid = false;
             }
             newParticipant.capacity = taxiSeatsValue;
-            newParticipant.carModel = currentLang === 'zh' ? '自行前往' : 'Self-travel';
+            newParticipant.carModel = currentLang === 'zh' ? '計程車' : 'Taxi';
             newParticipant.familyCount = 0;
             newParticipant.licensePlate = '';
         } else {
             newParticipant.assignedCarId = null; // Unassigned initially
-            newParticipant.familyCount = Math.max(0, Math.min(9, parseInt(regPassengerFamily.value, 10) || 0));
+            newParticipant.familyCount = parseInt(regPassengerFamily.value, 10) || 0;
         }
 
         if (isValid) {
             if (editingId !== null) {
-                // Find old role of the edited participant
-                const originalParticipant = state.participants.find(p => p.id === editingId);
-                const oldRole = originalParticipant ? originalParticipant.role : '';
-
                 // Update existing participant
                 state.participants = state.participants.map(p => {
                     if (p.id === editingId) {
@@ -809,17 +757,17 @@ document.addEventListener('DOMContentLoaded', () => {
                             updated.role = 'driver';
                             updated.carModel = regCarModel.value.trim();
                             updated.capacity = parseInt(regCarSeats.value, 10);
-                            updated.familyCount = Math.max(0, Math.min(9, parseInt(regCarFamily.value, 10) || 0));
+                            updated.familyCount = parseInt(regCarFamily.value, 10) || 0;
                             updated.licensePlate = regCarPlate.value.trim();
                         } else if (roleValue === 'taxi') {
                             updated.role = 'taxi';
-                            updated.carModel = currentLang === 'zh' ? '自行前往' : 'Self-travel';
+                            updated.carModel = currentLang === 'zh' ? '計程車' : 'Taxi';
                             updated.capacity = parseInt(document.getElementById('reg-taxi-seats').value, 10);
                             updated.familyCount = 0;
                             updated.licensePlate = '';
                         } else {
                             updated.role = 'passenger';
-                            updated.familyCount = Math.max(0, Math.min(9, parseInt(regPassengerFamily.value, 10) || 0));
+                            updated.familyCount = parseInt(regPassengerFamily.value, 10) || 0;
                             delete updated.carModel;
                             delete updated.capacity;
                             delete updated.licensePlate;
@@ -828,17 +776,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                     return p;
                 });
-
-                // If role changed from driver/taxi to passenger, unassign any assigned passengers
-                if ((oldRole === 'driver' || oldRole === 'taxi') && roleValue === 'passenger') {
-                    state.participants = state.participants.map(p => {
-                        if (p.role === 'passenger' && p.assignedCarId === editingId) {
-                            return { ...p, assignedCarId: null };
-                        }
-                        return p;
-                    });
-                }
-
                 cancelEdit();
             } else {
                 state.participants.push(newParticipant);
@@ -887,11 +824,11 @@ document.addEventListener('DOMContentLoaded', () => {
             const isDriver = item.role === 'driver';
             const confirmMsg = isDriver 
                 ? `Deleting driver "${item.name}" will unassign all their passengers. Continue?`
-                : `Deleting self-travel group "${item.name}" will unassign all their passengers. Continue?`;
+                : `Deleting taxi group "${item.name}" will unassign all their passengers. Continue?`;
             
             const confirmMsgZH = isDriver 
                 ? `刪除司機「${item.name}」將會取消分配其所有乘客，是否確定？`
-                : `刪除自行前往組「${item.name}」將會取消分配其所有乘客，是否確定？`;
+                : `刪除計程車組「${item.name}」將會取消分配其所有乘客，是否確定？`;
 
             if (confirm(currentLang === 'zh' ? confirmMsgZH : confirmMsg)) {
                 // Remove driver/taxi
@@ -950,29 +887,51 @@ document.addEventListener('DOMContentLoaded', () => {
     // RENDERING LOGIC
     // ==========================================================================
 
+    function sanitizeState() {
+        if (!state || !state.participants) return;
+        state.participants = state.participants.map(p => {
+            if (p.familyCount !== undefined && p.familyCount !== null) {
+                p.familyCount = parseInt(p.familyCount, 10) || 0;
+            } else {
+                p.familyCount = 0;
+            }
+            if (p.capacity !== undefined && p.capacity !== null) {
+                p.capacity = parseInt(p.capacity, 10) || 0;
+            }
+            return p;
+        });
+    }
+
     function render() {
+        sanitizeState();
         const drivers = state.participants.filter(p => p.role === 'driver');
         const taxis = state.participants.filter(p => p.role === 'taxi');
         const passengers = state.participants.filter(p => p.role === 'passenger');
         const unassigned = passengers.filter(p => p.assignedCarId === null);
         
-        // Calculate Seat availability
+        // Calculate Seat availability (remaining empty seats)
         let totalSeatsOpen = 0;
         drivers.forEach(d => {
-            let occupiedCount = (d.familyCount || 0);
-            const assigned = passengers.filter(p => p.assignedCarId === d.id);
-            assigned.forEach(ap => {
-                occupiedCount += 1 + (ap.familyCount || 0);
-            });
-            totalSeatsOpen += Math.max(0, d.capacity - occupiedCount);
+            if (d.capacity > 0) {
+                let occupied = d.familyCount || 0;
+                passengers.forEach(p => {
+                    if (p.assignedCarId === d.id) {
+                        occupied += 1 + (p.familyCount || 0);
+                    }
+                });
+                totalSeatsOpen += Math.max(0, d.capacity - occupied);
+            }
         });
         taxis.forEach(t => {
-            let occupiedCount = 0;
-            const assigned = passengers.filter(p => p.assignedCarId === t.id);
-            assigned.forEach(ap => {
-                occupiedCount += 1 + (ap.familyCount || 0);
-            });
-            totalSeatsOpen += Math.max(0, t.capacity - occupiedCount);
+            if (t.capacity > 0) {
+                let occupied = 0;
+                passengers.forEach(p => {
+                    if (p.assignedCarId === t.id) {
+                        occupied += 1 + (p.familyCount || 0);
+                    }
+                });
+                totalSeatsOpen += Math.max(0, t.capacity - occupied);
+            }
         });
 
         const totalPassengers = passengers.length;
@@ -981,10 +940,10 @@ document.addEventListener('DOMContentLoaded', () => {
         // Count family members riding with drivers and passengers
         let totalFamilyCount = 0;
         drivers.forEach(d => {
-            totalFamilyCount += (d.familyCount || 0);
+            totalFamilyCount += parseInt(d.familyCount, 10) || 0;
         });
         passengers.forEach(p => {
-            totalFamilyCount += (p.familyCount || 0);
+            totalFamilyCount += parseInt(p.familyCount, 10) || 0;
         });
         const grandTotal = totalPassengers + drivers.length + totalFamilyCount;
         
@@ -1107,7 +1066,7 @@ document.addEventListener('DOMContentLoaded', () => {
             drivers.forEach(d => {
                 if (d.capacity === 0) return; // Skip solo drivers
                 // Check current passenger count for this driver (including family)
-                let curCount = d.familyCount || 0;
+                let curCount = 0;
                 state.participants.forEach(item => {
                     if (item.role === 'passenger' && item.assignedCarId === d.id) {
                         curCount += 1 + (item.familyCount || 0);
@@ -1230,7 +1189,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const groups = {
             JianCheng: { nameEn: 'Jian Cheng Jr. High', nameZh: '建成國中', icon: 'fa-school', class: 'blue', members: [], count: 0 },
             QiDu: { nameEn: 'Qidu Station', nameZh: '七堵車站', icon: 'fa-train-subway', class: 'purple', members: [], count: 0 },
-            Self: { nameEn: 'Self-departure', nameZh: '自行出發（無開車）', icon: 'fa-street-view', class: 'orange', members: [], count: 0 }
+            Self: { nameEn: 'Self-departure', nameZh: '自行出發', icon: 'fa-street-view', class: 'orange', members: [], count: 0 }
         };
 
         participants.forEach(p => {
@@ -1253,14 +1212,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 }
                 
-                if (p.role !== 'taxi') {
-                    let displayName = `${escapeHTML(p.name)} (${roleText})`;
-                    if ((p.role === 'driver' || p.role === 'passenger') && p.familyCount > 0) {
-                        displayName += ` + ${p.familyCount} ${TRANSLATIONS[currentLang].familyRiding}`;
-                    }
-                    groups[loc].members.push(displayName);
-                    groups[loc].count += pCount;
+                let displayName = `${escapeHTML(p.name)} (${roleText})`;
+                if ((p.role === 'driver' || p.role === 'passenger') && p.familyCount > 0) {
+                    displayName += ` + ${p.familyCount} ${TRANSLATIONS[currentLang].familyRiding}`;
                 }
+                
+                groups[loc].members.push(displayName);
+                groups[loc].count += pCount;
             }
         });
 
@@ -1585,7 +1543,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (taxis.length === 0) {
             taxisGrid.innerHTML = `
                 <div class="empty-state-large">
-                    <i class="fa-solid fa-route animate-float" style="color: var(--accent-amber); font-size: 3rem; margin-bottom: 1rem;"></i>
+                    <i class="fa-solid fa-taxi animate-float" style="color: var(--accent-amber); font-size: 3rem; margin-bottom: 1rem;"></i>
                     <h3 data-i18n="noActiveTaxis">${TRANSLATIONS[currentLang].noActiveTaxis}</h3>
                     <p data-i18n="noActiveTaxisDesc">${TRANSLATIONS[currentLang].noActiveTaxisDesc}</p>
                 </div>
@@ -1629,10 +1587,10 @@ document.addEventListener('DOMContentLoaded', () => {
             taxiCard.innerHTML = `
                 <div class="car-header">
                     <div class="driver-info">
-                        <div class="driver-avatar"><i class="fa-solid fa-route"></i></div>
+                        <div class="driver-avatar"><i class="fa-solid fa-taxi"></i></div>
                         <div class="driver-text">
                             <span class="driver-name">${escapeHTML(t.name)}${t.group ? ` <span class="driver-group">(${escapeHTML(t.group)})</span>` : ''}</span>
-                            <span class="car-description">${currentLang === 'zh' ? '自行前往組' : 'Self-travel Group'}</span>
+                            <span class="car-description">${currentLang === 'zh' ? '計程車共乘小組' : 'Taxi carpool group'}</span>
                             <div class="driver-meta-badges">
                                 ${getMeetLocationBadgeHTML(t)}
                                 ${t.foodBringing === 'yes' ? `<span class="badge-tag driver-food-badge" title="${TRANSLATIONS[currentLang].foodTitle}: ${escapeHTML(t.foodDetails)}"><i class="fa-solid fa-utensils"></i> ${escapeHTML(t.foodDetails)}</span>` : ''}
@@ -1852,7 +1810,7 @@ document.addEventListener('DOMContentLoaded', () => {
         taxis.forEach(t => {
             const assigned = passengers.filter(p => p.assignedCarId === t.id);
             const tLoc = t.meetLocation ? TRANSLATIONS[currentLang][`meetLocation${t.meetLocation}`] || t.meetLocation : '';
-            const carModelName = currentLang === 'zh' ? '自行前往' : 'Self-travel';
+            const carModelName = currentLang === 'zh' ? '計程車' : 'Taxi';
             if (assigned.length === 0) {
                 csvLines.push(`"${cleanCSV(t.name)}","${cleanCSV(t.group || '')}","${cleanCSV(tLoc)}","${cleanCSV(t.foodBringing || 'no')}","${cleanCSV(t.foodDetails || '')}","${cleanCSV(carModelName)}","",${t.capacity},0,"","","","","","",""`);
             } else {
@@ -1944,19 +1902,19 @@ document.addEventListener('DOMContentLoaded', () => {
                     `;
                 }
 
-                let occupiedCount = d.familyCount || 0;
+                let occupiedCount = 0;
                 assigned.forEach(ap => {
                     occupiedCount += 1 + (ap.familyCount || 0);
                 });
                 const occupiedText = d.capacity === 0 ? TRANSLATIONS[currentLang].printSeatsOccupiedSolo : TRANSLATIONS[currentLang].printSeatsOccupied.replace('{occupied}', occupiedCount).replace('{capacity}', d.capacity);
-                const printFamilyText = '';
+                const printFamilyText = d.familyCount > 0 ? TRANSLATIONS[currentLang].printSeatsOccupiedFamily.replace('{count}', d.familyCount) : '';
                 const dLoc = d.meetLocation ? TRANSLATIONS[currentLang][`meetLocation${d.meetLocation}`] || d.meetLocation : '';
 
                 printContent.innerHTML += `
                     <div class="print-car-group">
                         <div class="print-car-title">
                             <span>${TRANSLATIONS[currentLang].lblDriverName}: ${escapeHTML(d.name)} ${d.group ? `(${escapeHTML(d.group)})` : ''} [📍${escapeHTML(dLoc)}]${d.foodBringing === 'yes' ? ` (${TRANSLATIONS[currentLang].foodTitle}: ${escapeHTML(d.foodDetails)})` : ''} — (${escapeHTML(d.carModel)})${d.licensePlate ? ` [${TRANSLATIONS[currentLang].lblCarPlate}: ${escapeHTML(d.licensePlate)}]` : ''}</span>
-                            <span>${occupiedText}</span>
+                            <span>${occupiedText}${printFamilyText}</span>
                         </div>
                         ${d.notes ? `<p style="margin-bottom: 8px; font-size: 10pt;"><strong>${TRANSLATIONS[currentLang].printRouteDetails.replace('{notes}', escapeHTML(d.notes))}</strong></p>` : ''}
                         ${passengersHTML}
@@ -2001,7 +1959,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 printContent.innerHTML += `
                     <div class="print-car-group" style="border-left: 3px solid var(--accent-amber, #f59e0b);">
                         <div class="print-car-title">
-                            <span>🚶 ${TRANSLATIONS[currentLang].roleTaxiLabel}: ${escapeHTML(t.name)} ${t.group ? `(${escapeHTML(t.group)})` : ''} [📍${escapeHTML(tLoc)}]${t.foodBringing === 'yes' ? ` (${TRANSLATIONS[currentLang].foodTitle}: ${escapeHTML(t.foodDetails)})` : ''}</span>
+                            <span>🚕 ${TRANSLATIONS[currentLang].roleTaxiLabel}: ${escapeHTML(t.name)} ${t.group ? `(${escapeHTML(t.group)})` : ''} [📍${escapeHTML(tLoc)}]${t.foodBringing === 'yes' ? ` (${TRANSLATIONS[currentLang].foodTitle}: ${escapeHTML(t.foodDetails)})` : ''}</span>
                             <span>${occupiedText}</span>
                         </div>
                         ${t.notes ? `<p style="margin-bottom: 8px; font-size: 10pt;"><strong>${TRANSLATIONS[currentLang].printRouteDetails.replace('{notes}', escapeHTML(t.notes))}</strong></p>` : ''}
@@ -2214,7 +2172,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 const remoteStr = JSON.stringify(remoteState.participants);
                 if (localStr !== remoteStr) {
                     state = remoteState;
-                    sanitizeState();
                     localStorage.setItem('rideShareState', JSON.stringify(state));
                     render();
                     console.log("State synced from KVdb remote database.");

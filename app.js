@@ -270,7 +270,7 @@ document.addEventListener('DOMContentLoaded', () => {
             lblMeetLocation: "集合地點",
             meetLocationJianCheng: "建成國中",
             meetLocationQiDu: "七堵車站",
-            meetLocationSelf: "自行出發（無開車）",
+            meetLocationSelf: "自行出發",
             meetSummaryTitle: "集合地點總覽",
             meetSummaryDesc: "各等待類別的乘車/出發人數與名單。",
             roleTaxi: "自行前往組",
@@ -1157,7 +1157,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const groups = {
             JianCheng: { nameEn: 'Jian Cheng Jr. High', nameZh: '建成國中', icon: 'fa-school', class: 'blue', members: [], count: 0 },
             QiDu: { nameEn: 'Qidu Station', nameZh: '七堵車站', icon: 'fa-train-subway', class: 'purple', members: [], count: 0 },
-            Self: { nameEn: 'Self-departure', nameZh: '自行出發（無開車）', icon: 'fa-street-view', class: 'orange', members: [], count: 0 }
+            Self: { nameEn: 'Self-departure', nameZh: '自行出發', icon: 'fa-street-view', class: 'orange', members: [], count: 0 }
         };
 
         participants.forEach(p => {

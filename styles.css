@@ -1064,7 +1064,7 @@ input.invalid + .error-msg,
 
 .driver-info {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: 0.75rem;
 }
 
@@ -1086,6 +1086,7 @@ input.invalid + .error-msg,
 .driver-text {
     display: flex;
     flex-direction: column;
+    gap: 0.3rem;
 }
 
 .driver-name {
@@ -1588,7 +1589,6 @@ input.invalid + .error-msg,
     flex-wrap: wrap;
     gap: 0.35rem;
     align-items: center;
-    margin-top: -0.25rem; /* pull closer to header */
 }
 
 .driver-food-badge {
@@ -1608,18 +1608,32 @@ input.invalid + .error-msg,
 .driver-notes-box {
     font-size: 0.8rem;
     color: var(--text-secondary);
-    background: rgba(255, 255, 255, 0.015);
-    padding: 5px 8px;
+    background: rgba(139, 92, 246, 0.025);
+    padding: 6px 10px;
     border-radius: var(--radius-sm);
     border-left: 3px solid var(--accent-purple);
     font-style: italic;
     line-height: 1.4;
-    margin-top: -0.25rem; /* pull closer to badges */
+    margin-top: 0.25rem;
 }
 
 .driver-notes-box.taxi-notes-box {
     border-left-color: var(--accent-amber);
-    background: rgba(245, 158, 11, 0.02);
+    background: rgba(245, 158, 11, 0.035);
+}
+
+.car-card-divider {
+    border: 0;
+    height: 1px;
+    background: linear-gradient(to right, rgba(0, 0, 0, 0.02), rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0.02));
+    margin: 0.25rem 0;
+}
+
+.car-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    flex-shrink: 0;
 }
 
 .car-card.ready-to-drag {

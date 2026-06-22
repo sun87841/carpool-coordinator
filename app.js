@@ -1301,16 +1301,18 @@ document.addEventListener('DOMContentLoaded', () => {
                         <span class="car-capacity-ratio ${ratioClass}">
                             ${capacityText}
                         </span>
-                        <button class="btn-card-action" data-action="edit-driver" data-id="${d.id}" title="${TRANSLATIONS[currentLang].editDriverDetails}" style="margin-left: 5px;">
+                        <button class="btn-card-action" data-action="edit-driver" data-id="${d.id}" title="${TRANSLATIONS[currentLang].editDriverDetails}">
                             <i class="fa-solid fa-pen"></i>
                         </button>
-                        <button class="btn-card-action danger-hover" data-action="delete-driver" data-id="${d.id}" title="${TRANSLATIONS[currentLang].removeDriver}" style="margin-left: 5px;">
+                        <button class="btn-card-action danger-hover" data-action="delete-driver" data-id="${d.id}" title="${TRANSLATIONS[currentLang].removeDriver}">
                             <i class="fa-solid fa-trash-can"></i>
                         </button>
                     </div>
                 </div>
                 
                 ${d.notes ? `<div class="driver-notes-box">${TRANSLATIONS[currentLang].routeNotes.replace('{notes}', escapeHTML(d.notes))}</div>` : ''}
+                
+                <hr class="car-card-divider">
  
                 <div class="car-seats-visual">
                     ${d.capacity === 0 
@@ -1567,16 +1569,18 @@ document.addEventListener('DOMContentLoaded', () => {
                         <span class="car-capacity-ratio ${ratioClass}">
                             ${capacityText}
                         </span>
-                        <button class="btn-card-action" data-action="edit-taxi" data-id="${t.id}" title="${TRANSLATIONS[currentLang].editTaxiDetails}" style="margin-left: 5px;">
+                        <button class="btn-card-action" data-action="edit-taxi" data-id="${t.id}" title="${TRANSLATIONS[currentLang].editTaxiDetails}">
                             <i class="fa-solid fa-pen"></i>
                         </button>
-                        <button class="btn-card-action danger-hover" data-action="delete-taxi" data-id="${t.id}" title="${TRANSLATIONS[currentLang].removeTaxi}" style="margin-left: 5px;">
+                        <button class="btn-card-action danger-hover" data-action="delete-taxi" data-id="${t.id}" title="${TRANSLATIONS[currentLang].removeTaxi}">
                             <i class="fa-solid fa-trash-can"></i>
                         </button>
                     </div>
                 </div>
                 
                 ${t.notes ? `<div class="driver-notes-box taxi-notes-box">${TRANSLATIONS[currentLang].routeNotes.replace('{notes}', escapeHTML(t.notes))}</div>` : ''}
+                
+                <hr class="car-card-divider">
 
                 <div class="car-seats-visual">
                     <span style="font-size: 0.75rem; color: var(--text-secondary); margin-right: 5px;">${TRANSLATIONS[currentLang].visualCapacity}</span> ${seatsDotsHTML}

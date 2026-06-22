@@ -735,7 +735,7 @@ document.addEventListener('DOMContentLoaded', () => {
             newParticipant.familyCount = 0;
             newParticipant.licensePlate = '';
         } else {
-            newParticipant.assignedCarId = null; // Unassigned initially
+            newParticipant.assignedCarId = meetLocationValue === 'Self' ? 'self' : null;
             newParticipant.familyCount = parseInt(regPassengerFamily.value, 10) || 0;
         }
 
@@ -771,6 +771,11 @@ document.addEventListener('DOMContentLoaded', () => {
                             delete updated.carModel;
                             delete updated.capacity;
                             delete updated.licensePlate;
+                            if (meetLocationValue === 'Self') {
+                                updated.assignedCarId = 'self';
+                            } else if (p.assignedCarId === 'self') {
+                                updated.assignedCarId = null;
+                            }
                         }
                         return updated;
                     }
@@ -805,6 +810,12 @@ document.addEventListener('DOMContentLoaded', () => {
         // Deep clone demo data depending on current language
         const demoData = currentLang === 'zh' ? DEMO_PARTICIPANTS_ZH : DEMO_PARTICIPANTS_EN;
         state.participants = JSON.parse(JSON.stringify(demoData));
+        state.participants = state.participants.map(p => {
+            if (p.role === 'passenger' && p.meetLocation === 'Self' && p.assignedCarId === null) {
+                return { ...p, assignedCarId: 'self' };
+            }
+            return p;
+        });
         saveState();
         render();
     }
@@ -851,9 +862,18 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function assignPassenger(passengerId, driverId) {
+        const vehicle = driverId === 'self' ? null : state.participants.find(p => p.id === driverId);
+        const vehicleLoc = vehicle ? (vehicle.meetLocation || 'JianCheng') : 'JianCheng';
+
         state.participants = state.participants.map(p => {
             if (p.id === passengerId) {
-                return { ...p, assignedCarId: driverId };
+                const updated = { ...p, assignedCarId: driverId };
+                if (driverId === 'self') {
+                    updated.meetLocation = 'Self';
+                } else {
+                    updated.meetLocation = vehicleLoc;
+                }
+                return updated;
             }
             return p;
         });
@@ -1058,6 +1078,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 optionsHTML += `<option value="${t.id}">🚕 ${t.name}${t.group ? ` (${t.group})` : ''} (${remaining} ${TRANSLATIONS[currentLang].seatsLeft})</option>`;
             });
 
+            // Add Self-departure option
+            optionsHTML += `<option value="self">🚶 ${TRANSLATIONS[currentLang].meetLocationSelf}</option>`;
+
             card.innerHTML = `
                 <div class="passenger-details">
                     <div class="passenger-header">
@@ -1087,7 +1110,8 @@ document.addEventListener('DOMContentLoaded', () => {
             // Listen to select box changes (quick click assignment)
             const select = card.querySelector('.select-quick-assign');
             select.addEventListener('change', (e) => {
-                const driverId = parseInt(e.target.value, 10);
+                const val = e.target.value;
+                const driverId = val === 'self' ? 'self' : parseInt(val, 10);
                 assignPassenger(p.id, driverId);
             });
 
@@ -1510,13 +1534,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (taxis.length === 0) {
             taxisGrid.innerHTML = `
-                <div class="empty-state-large">
-                    <i class="fa-solid fa-taxi animate-float" style="color: var(--accent-amber); font-size: 3rem; margin-bottom: 1rem;"></i>
-                    <h3 data-i18n="noActiveTaxis">${TRANSLATIONS[currentLang].noActiveTaxis}</h3>
-                    <p data-i18n="noActiveTaxisDesc">${TRANSLATIONS[currentLang].noActiveTaxisDesc}</p>
+                <div class="empty-state-large" style="padding: 1.5rem; margin-bottom: 1rem;">
+                    <i class="fa-solid fa-taxi animate-float" style="color: var(--accent-amber); font-size: 2rem; margin-bottom: 0.5rem;"></i>
+                    <h4 style="font-size: 0.9rem; margin-bottom: 0.25rem;" data-i18n="noActiveTaxis">${TRANSLATIONS[currentLang].noActiveTaxis}</h4>
+                    <p style="font-size: 0.75rem;" data-i18n="noActiveTaxisDesc">${TRANSLATIONS[currentLang].noActiveTaxisDesc}</p>
                 </div>
             `;
-            return;
         }
 
         taxis.forEach(t => {
@@ -1743,6 +1766,125 @@ document.addEventListener('DOMContentLoaded', () => {
 
             taxisGrid.appendChild(taxiCard);
         });
+
+        // Always append the Self-departure card!
+        const selfPassengers = passengers.filter(p => p.assignedCarId === 'self');
+        let selfCount = 0;
+        selfPassengers.forEach(p => {
+            selfCount += 1 + (p.familyCount || 0);
+        });
+
+        const selfCard = document.createElement('div');
+        selfCard.className = 'car-card self-departure-card';
+
+        const selfTitle = currentLang === 'zh' ? '自行前往' : 'Self-Departure';
+        const selfDesc = currentLang === 'zh' ? '自行開車前往或獨立出發（免配車）' : 'Independent travel / self-departure';
+        const selfCapacityText = currentLang === 'zh' ? `${selfCount} 人` : `${selfCount} People`;
+
+        selfCard.innerHTML = `
+            <div class="car-header">
+                <div class="driver-info">
+                    <div class="driver-avatar" style="background: linear-gradient(135deg, var(--accent-orange), #ea580c); color: #ffffff;"><i class="fa-solid fa-street-view"></i></div>
+                    <div class="driver-text">
+                        <span class="driver-name">${selfTitle}</span>
+                        <span class="car-description">${selfDesc}</span>
+                    </div>
+                </div>
+                <div class="car-actions">
+                    <span class="car-capacity-ratio ratio-normal" style="background-color: rgba(234, 88, 12, 0.1); color: var(--accent-orange); font-weight: 700;">
+                        ${selfCapacityText}
+                    </span>
+                </div>
+            </div>
+            
+            <hr class="car-card-divider">
+
+            <div class="car-passengers">
+                <!-- Self passengers items -->
+            </div>
+        `;
+
+        const selfPassengerListContainer = selfCard.querySelector('.car-passengers');
+        if (selfPassengers.length === 0) {
+            selfPassengerListContainer.innerHTML = `<p style="font-size: 0.8rem; color: var(--text-muted); text-align: center; padding: 10px; font-style: italic;">${TRANSLATIONS[currentLang].noPassengersAssigned}</p>`;
+        } else {
+            selfPassengerListContainer.innerHTML = '';
+            selfPassengers.forEach(ap => {
+                const item = document.createElement('div');
+                item.className = 'assigned-passenger-item';
+                item.setAttribute('draggable', 'true');
+                item.dataset.id = ap.id;
+
+                item.addEventListener('dragstart', (e) => {
+                    e.dataTransfer.setData('text/plain', ap.id);
+                    item.classList.add('dragging');
+                });
+
+                item.addEventListener('dragend', () => {
+                    item.classList.remove('dragging');
+                });
+
+                item.innerHTML = `
+                    <div class="assigned-passenger-details">
+                        <div class="assigned-passenger-header">
+                            <span class="bullet-dot" style="background-color: var(--accent-orange);"></span>
+                            <span class="assigned-passenger-name" title="${escapeHTML(ap.name)}">${escapeHTML(ap.name)}</span>
+                            ${ap.familyCount > 0 ? `<span class="badge-tag badge-luggage" style="flex-shrink: 0; white-space: nowrap;">+ ${ap.familyCount} ${TRANSLATIONS[currentLang].familyRiding}</span>` : ''}
+                        </div>
+                        <div class="assigned-passenger-meta">
+                            ${getMeetLocationBadgeHTML(ap)}
+                            ${ap.group ? `<span style="color: var(--accent-blue); background: rgba(37,99,235,0.06);">${escapeHTML(ap.group)}</span>` : ''}
+                            ${ap.foodBringing === 'yes' ? `<span style="color: var(--accent-emerald); background: rgba(16,185,129,0.06);" title="${escapeHTML(ap.foodDetails)}"><i class="fa-solid fa-utensils"></i> ${escapeHTML(ap.foodDetails)}</span>` : ''}
+                            ${ap.notes ? `<span class="assigned-passenger-notes" title="${escapeHTML(ap.notes)}">${escapeHTML(ap.notes)}</span>` : ''}
+                        </div>
+                    </div>
+                    <div class="assigned-passenger-actions">
+                        <button class="btn-card-action" data-action="edit-passenger" data-id="${ap.id}" title="${TRANSLATIONS[currentLang].editPassengerDetails}">
+                            <i class="fa-solid fa-pen"></i>
+                        </button>
+                        <button class="btn-card-action danger-hover" data-action="unassign" data-id="${ap.id}" title="${TRANSLATIONS[currentLang].removePassengerFromCar}">
+                            <i class="fa-solid fa-user-minus"></i>
+                        </button>
+                    </div>
+                `;
+
+                item.querySelector('[data-action="edit-passenger"]').addEventListener('click', () => startEdit(ap.id));
+                item.querySelector('[data-action="unassign"]').addEventListener('click', () => {
+                    state.participants = state.participants.map(p => {
+                        if (p.id === ap.id) {
+                            return { ...p, assignedCarId: null, meetLocation: 'JianCheng' };
+                        }
+                        return p;
+                    });
+                    saveState();
+                    render();
+                });
+
+                selfPassengerListContainer.appendChild(item);
+            });
+        }
+
+        // Drag & Drop handlers for selfCard
+        selfCard.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            selfCard.classList.add('drag-over');
+        });
+
+        selfCard.addEventListener('dragleave', () => {
+            selfCard.classList.remove('drag-over');
+        });
+
+        selfCard.addEventListener('drop', (e) => {
+            e.preventDefault();
+            selfCard.classList.remove('drag-over');
+
+            const passengerId = parseInt(e.dataTransfer.getData('text/plain'), 10);
+            if (passengerId) {
+                assignPassenger(passengerId, 'self');
+            }
+        });
+
+        taxisGrid.appendChild(selfCard);
     }
 
     // ==========================================================================
@@ -1935,6 +2077,46 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                 `;
             });
+
+            // Render Self-departure
+            const selfPassengers = passengers.filter(p => p.assignedCarId === 'self');
+            if (selfPassengers.length > 0) {
+                let occupiedCount = 0;
+                selfPassengers.forEach(ap => {
+                    occupiedCount += 1 + (ap.familyCount || 0);
+                });
+                
+                const selfTitle = currentLang === 'zh' ? '自行前往' : 'Self-Departure';
+                const selfCountText = currentLang === 'zh' ? `${occupiedCount} 人` : `${occupiedCount} People`;
+
+                const passengersHTML = `
+                    <ol class="print-passenger-list">
+                        ${selfPassengers.map(ap => {
+                            const apLoc = ap.meetLocation ? TRANSLATIONS[currentLang][`meetLocation${ap.meetLocation}`] || ap.meetLocation : '';
+                            return `
+                            <li class="print-passenger-item">
+                                <strong>${escapeHTML(ap.name)}</strong> 
+                                ${ap.familyCount > 0 ? ` + ${ap.familyCount} ${TRANSLATIONS[currentLang].familyRiding}` : ''}
+                                ${ap.group ? `(${escapeHTML(ap.group)})` : ''}
+                                [📍${escapeHTML(apLoc)}]
+                                ${ap.notes ? `— <em>Notes: ${escapeHTML(ap.notes)}</em>` : ''} 
+                                (${TRANSLATIONS[currentLang].foodTitle}: ${getFoodText(ap)})
+                            </li>
+                            `;
+                        }).join('')}
+                    </ol>
+                `;
+
+                printContent.innerHTML += `
+                    <div class="print-car-group" style="border-left: 3px solid var(--accent-orange, #ea580c);">
+                        <div class="print-car-title">
+                            <span>🚶 ${selfTitle}</span>
+                            <span>${selfCountText}</span>
+                        </div>
+                        ${passengersHTML}
+                    </div>
+                `;
+            }
         }
 
         if (unassigned.length > 0) {

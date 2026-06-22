@@ -437,6 +437,7 @@ document.addEventListener('DOMContentLoaded', () => {
             db.collection('carpools').doc('active_trip').onSnapshot((doc) => {
                 if (doc.exists) {
                     state = doc.data();
+                    sanitizeState();
                     // Update local storage as offline backup
                     localStorage.setItem('rideShareState', JSON.stringify(state));
                     render();
@@ -465,11 +466,58 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    function sanitizeState() {
+        if (!state || !Array.isArray(state.participants)) {
+            state = { participants: [] };
+            return;
+        }
+        state.participants = state.participants.map(p => {
+            if (p.id) p.id = parseInt(p.id, 10) || p.id;
+            
+            // Coerce role to valid strings
+            if (p.role !== 'driver' && p.role !== 'passenger' && p.role !== 'taxi') {
+                p.role = 'passenger';
+            }
+            
+            if (p.capacity !== undefined) {
+                p.capacity = Math.max(0, Math.min(9, parseInt(p.capacity, 10) || 0));
+            } else if (p.role === 'driver' || p.role === 'taxi') {
+                p.capacity = 4;
+            }
+            
+            if (p.familyCount !== undefined) {
+                p.familyCount = Math.max(0, Math.min(9, parseInt(p.familyCount, 10) || 0));
+            } else {
+                p.familyCount = 0;
+            }
+            
+            if (p.assignedCarId !== undefined && p.assignedCarId !== null) {
+                p.assignedCarId = parseInt(p.assignedCarId, 10) || p.assignedCarId;
+            } else {
+                p.assignedCarId = null;
+            }
+            return p;
+        });
+
+        // Resolve dangling assignedCarId
+        const validVehicleIds = new Set(state.participants.filter(x => x.role === 'driver' || x.role === 'taxi').map(x => x.id));
+        state.participants.forEach(p => {
+            if (p.role === 'passenger') {
+                if (p.assignedCarId !== null && !validVehicleIds.has(p.assignedCarId)) {
+                    p.assignedCarId = null;
+                }
+            } else {
+                delete p.assignedCarId;
+            }
+        });
+    }
+
     function loadState() {
         const saved = localStorage.getItem('rideShareState');
         if (saved) {
             try {
                 state = JSON.parse(saved);
+                sanitizeState();
             } catch (e) {
                 console.error("Failed to parse saved state, starting fresh", e);
                 state = { participants: [] };
@@ -707,7 +755,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (roleValue === 'driver') {
             const carModelValue = regCarModel.value.trim();
             const carSeatsValue = parseInt(regCarSeats.value, 10);
-            const carFamilyValue = parseInt(regCarFamily.value, 10) || 0;
+            const carFamilyValue = Math.max(0, Math.min(9, parseInt(regCarFamily.value, 10) || 0));
             const carPlateValue = regCarPlate.value.trim();
 
             if (!carModelValue) {
@@ -736,11 +784,15 @@ document.addEventListener('DOMContentLoaded', () => {
             newParticipant.licensePlate = '';
         } else {
             newParticipant.assignedCarId = null; // Unassigned initially
-            newParticipant.familyCount = parseInt(regPassengerFamily.value, 10) || 0;
+            newParticipant.familyCount = Math.max(0, Math.min(9, parseInt(regPassengerFamily.value, 10) || 0));
         }
 
         if (isValid) {
             if (editingId !== null) {
+                // Find old role of the edited participant
+                const originalParticipant = state.participants.find(p => p.id === editingId);
+                const oldRole = originalParticipant ? originalParticipant.role : '';
+
                 // Update existing participant
                 state.participants = state.participants.map(p => {
                     if (p.id === editingId) {
@@ -757,7 +809,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             updated.role = 'driver';
                             updated.carModel = regCarModel.value.trim();
                             updated.capacity = parseInt(regCarSeats.value, 10);
-                            updated.familyCount = parseInt(regCarFamily.value, 10) || 0;
+                            updated.familyCount = Math.max(0, Math.min(9, parseInt(regCarFamily.value, 10) || 0));
                             updated.licensePlate = regCarPlate.value.trim();
                         } else if (roleValue === 'taxi') {
                             updated.role = 'taxi';
@@ -767,7 +819,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             updated.licensePlate = '';
                         } else {
                             updated.role = 'passenger';
-                            updated.familyCount = parseInt(regPassengerFamily.value, 10) || 0;
+                            updated.familyCount = Math.max(0, Math.min(9, parseInt(regPassengerFamily.value, 10) || 0));
                             delete updated.carModel;
                             delete updated.capacity;
                             delete updated.licensePlate;
@@ -776,6 +828,17 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                     return p;
                 });
+
+                // If role changed from driver/taxi to passenger, unassign any assigned passengers
+                if ((oldRole === 'driver' || oldRole === 'taxi') && roleValue === 'passenger') {
+                    state.participants = state.participants.map(p => {
+                        if (p.role === 'passenger' && p.assignedCarId === editingId) {
+                            return { ...p, assignedCarId: null };
+                        }
+                        return p;
+                    });
+                }
+
                 cancelEdit();
             } else {
                 state.participants.push(newParticipant);
@@ -1190,13 +1253,14 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 }
                 
-                let displayName = `${escapeHTML(p.name)} (${roleText})`;
-                if ((p.role === 'driver' || p.role === 'passenger') && p.familyCount > 0) {
-                    displayName += ` + ${p.familyCount} ${TRANSLATIONS[currentLang].familyRiding}`;
+                if (p.role !== 'taxi') {
+                    let displayName = `${escapeHTML(p.name)} (${roleText})`;
+                    if ((p.role === 'driver' || p.role === 'passenger') && p.familyCount > 0) {
+                        displayName += ` + ${p.familyCount} ${TRANSLATIONS[currentLang].familyRiding}`;
+                    }
+                    groups[loc].members.push(displayName);
+                    groups[loc].count += pCount;
                 }
-                
-                groups[loc].members.push(displayName);
-                groups[loc].count += pCount;
             }
         });
 
@@ -2150,6 +2214,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const remoteStr = JSON.stringify(remoteState.participants);
                 if (localStr !== remoteStr) {
                     state = remoteState;
+                    sanitizeState();
                     localStorage.setItem('rideShareState', JSON.stringify(state));
                     render();
                     console.log("State synced from KVdb remote database.");

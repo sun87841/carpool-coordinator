@@ -36,6 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     let editingId = null;
     let currentLang = 'en';
+    let draggedVehicleId = null;
 
     const TRANSLATIONS = {
         en: {
@@ -109,7 +110,7 @@ document.addEventListener('DOMContentLoaded', () => {
             seatsRatio: "{count}/{capacity} Seats",
             editDriverDetails: "Edit driver and car details",
             removeDriver: "Remove driver and car",
-            routeNotes: "Route: {notes}",
+            routeNotes: "Notes: {notes}",
             drivingSoloFamily: "Driving Solo with {count} family member(s)",
             drivingSoloNoPassengers: "Driving Solo (No passengers)",
             visualCapacity: "Visual Capacity:",
@@ -132,7 +133,7 @@ document.addEventListener('DOMContentLoaded', () => {
             printSeatsOccupied: "Seats Occupied: {occupied}/{capacity}",
             printSeatsOccupiedSolo: "Seats Occupied: Solo",
             printSeatsOccupiedFamily: " (+ {count} Family)",
-            printRouteDetails: "Route details: {notes}",
+            printRouteDetails: "Notes: {notes}",
             lblDriverName: "Driver",
             foodSummaryTitle: "Food Summary",
             foodSummaryDesc: "A consolidated registry of who is bringing what food.",
@@ -234,7 +235,7 @@ document.addEventListener('DOMContentLoaded', () => {
             seatsRatio: "座位 {count}/{capacity}",
             editDriverDetails: "編輯司機與車輛資料",
             removeDriver: "移除此司機與車輛",
-            routeNotes: "路線: {notes}",
+            routeNotes: "備註: {notes}",
             drivingSoloFamily: "獨自駕駛，同行家屬 {count} 人",
             drivingSoloNoPassengers: "獨自駕駛 (不載客)",
             visualCapacity: "車位數量與乘客:",
@@ -257,7 +258,7 @@ document.addEventListener('DOMContentLoaded', () => {
             printSeatsOccupied: "座位已佔用: {occupied}/{capacity}",
             printSeatsOccupiedSolo: "座位已佔用: 獨自駕駛",
             printSeatsOccupiedFamily: " (+ {count} 位家屬)",
-            printRouteDetails: "路線詳情: {notes}",
+            printRouteDetails: "備註: {notes}",
             lblDriverName: "司機",
             foodSummaryTitle: "攜帶食物總覽",
             foodSummaryDesc: "整合所有司機與乘客已登記攜帶的食物清單。",
@@ -869,6 +870,17 @@ document.addEventListener('DOMContentLoaded', () => {
         render();
     }
 
+    function reorderParticipants(sourceId, targetId) {
+        const sourceIndex = state.participants.findIndex(p => p.id === sourceId);
+        const targetIndex = state.participants.findIndex(p => p.id === targetId);
+        if (sourceIndex !== -1 && targetIndex !== -1) {
+            const [moved] = state.participants.splice(sourceIndex, 1);
+            state.participants.splice(targetIndex, 0, moved);
+            saveState();
+            render();
+        }
+    }
+
     // ==========================================================================
     // RENDERING LOGIC
     // ==========================================================================
@@ -1275,8 +1287,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="driver-info">
                         <div class="driver-avatar">${escapeHTML(initials)}</div>
                         <div class="driver-text">
-                            <span class="driver-name">${escapeHTML(d.name)} ${d.group ? `<span style="font-size: 0.75rem; color: var(--accent-blue); font-weight: 500; margin-left: 4px;">(${escapeHTML(d.group)})</span>` : ''} ${getMeetLocationBadgeHTML(d)} ${d.foodBringing === 'yes' ? `<span class="badge-tag" style="background-color: rgba(16, 185, 129, 0.08); color: var(--accent-emerald); border: 1px solid rgba(16, 185, 129, 0.2); padding: 0.15rem 0.5rem; border-radius: 4px; font-size: 0.75rem; font-weight: 500; display: inline-flex; align-items: center; gap: 4px; vertical-align: middle; margin-left: 6px; text-transform: none;" title="${TRANSLATIONS[currentLang].foodTitle}: ${escapeHTML(d.foodDetails)}"><i class="fa-solid fa-utensils"></i> ${escapeHTML(d.foodDetails)}</span>` : ''}</span>
+                            <span class="driver-name">${escapeHTML(d.name)}${d.group ? ` <span class="driver-group">(${escapeHTML(d.group)})</span>` : ''}</span>
                             <span class="car-description">${escapeHTML(d.carModel)} ${d.licensePlate ? `• [${escapeHTML(d.licensePlate)}]` : ''}</span>
+                            <div class="driver-meta-badges">
+                                ${getMeetLocationBadgeHTML(d)}
+                                ${d.foodBringing === 'yes' ? `<span class="badge-tag driver-food-badge" title="${TRANSLATIONS[currentLang].foodTitle}: ${escapeHTML(d.foodDetails)}"><i class="fa-solid fa-utensils"></i> ${escapeHTML(d.foodDetails)}</span>` : ''}
+                            </div>
                         </div>
                     </div>
                     <div class="car-actions">
@@ -1292,7 +1308,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                 </div>
                 
-                ${d.notes ? `<div style="font-size: 0.8rem; color: var(--text-secondary); background: rgba(255,255,255,0.02); padding: 5px 8px; border-radius: 4px; border-left: 3px solid var(--accent-purple); font-style: italic;">${TRANSLATIONS[currentLang].routeNotes.replace('{notes}', escapeHTML(d.notes))}</div>` : ''}
+                ${d.notes ? `<div class="driver-notes-box">${TRANSLATIONS[currentLang].routeNotes.replace('{notes}', escapeHTML(d.notes))}</div>` : ''}
  
                 <div class="car-seats-visual">
                     ${d.capacity === 0 
@@ -1379,25 +1395,72 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             // --- DRAG & DROP HANDLERS FOR THE CAR CARD ---
+            
+            // Double-click to enable drag
+            carCard.addEventListener('dblclick', (e) => {
+                if (e.target.closest('.btn-card-action, .seat-dot, .assigned-passenger-item, .car-passengers')) {
+                    return;
+                }
+                carCard.setAttribute('draggable', 'true');
+                carCard.classList.add('ready-to-drag');
+            });
+
+            carCard.addEventListener('mouseleave', () => {
+                carCard.removeAttribute('draggable');
+                carCard.classList.remove('ready-to-drag');
+            });
+            
+            carCard.addEventListener('dragstart', (e) => {
+                draggedVehicleId = d.id;
+                e.dataTransfer.setData('text/vehicle-id', d.id);
+                e.dataTransfer.effectAllowed = 'move';
+                carCard.classList.add('dragging-card');
+            });
+            
+            carCard.addEventListener('dragend', () => {
+                carCard.classList.remove('dragging-card');
+                carCard.classList.remove('ready-to-drag');
+                carCard.removeAttribute('draggable');
+                draggedVehicleId = null;
+            });
+
             carCard.addEventListener('dragover', (e) => {
-                if (d.capacity === 0) return; // Prevent dragover for solo drivers
-                e.preventDefault();
-                carCard.classList.add('drag-over');
+                if (draggedVehicleId !== null) {
+                    const sourceParticipant = state.participants.find(p => p.id === draggedVehicleId);
+                    if (sourceParticipant && sourceParticipant.role === d.role && draggedVehicleId !== d.id) {
+                        e.preventDefault();
+                        e.dataTransfer.dropEffect = 'move';
+                        carCard.classList.add('card-drag-over');
+                    }
+                } else {
+                    if (d.capacity === 0) return; // Prevent dragover for solo drivers
+                    e.preventDefault();
+                    carCard.classList.add('drag-over');
+                }
             });
 
             carCard.addEventListener('dragleave', () => {
                 carCard.classList.remove('drag-over');
+                carCard.classList.remove('card-drag-over');
             });
 
             carCard.addEventListener('drop', (e) => {
                 e.preventDefault();
                 carCard.classList.remove('drag-over');
-                if (d.capacity === 0) return; // Prevent passenger dropping on solo drivers
-                const passengerId = parseInt(e.dataTransfer.getData('text/plain'), 10);
-                if (passengerId) {
-                    // Do not let driver assign to themselves
-                    if (passengerId === d.id) return;
-                    assignPassenger(passengerId, d.id);
+                carCard.classList.remove('card-drag-over');
+
+                if (draggedVehicleId !== null) {
+                    const sourceParticipant = state.participants.find(p => p.id === draggedVehicleId);
+                    if (sourceParticipant && sourceParticipant.role === d.role && draggedVehicleId !== d.id) {
+                        reorderParticipants(draggedVehicleId, d.id);
+                    }
+                } else {
+                    if (d.capacity === 0) return; // Prevent passenger dropping on solo drivers
+                    const passengerId = parseInt(e.dataTransfer.getData('text/plain'), 10);
+                    if (passengerId) {
+                        if (passengerId === d.id) return;
+                        assignPassenger(passengerId, d.id);
+                    }
                 }
             });
 
@@ -1476,8 +1539,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="driver-info">
                         <div class="driver-avatar"><i class="fa-solid fa-taxi"></i></div>
                         <div class="driver-text">
-                            <span class="driver-name">${escapeHTML(t.name)} ${t.group ? `<span style="font-size: 0.75rem; color: var(--accent-blue); font-weight: 500; margin-left: 4px;">(${escapeHTML(t.group)})</span>` : ''} ${getMeetLocationBadgeHTML(t)} ${t.foodBringing === 'yes' ? `<span class="badge-tag" style="background-color: rgba(16, 185, 129, 0.08); color: var(--accent-emerald); border: 1px solid rgba(16, 185, 129, 0.2); padding: 0.15rem 0.5rem; border-radius: 4px; font-size: 0.75rem; font-weight: 500; display: inline-flex; align-items: center; gap: 4px; vertical-align: middle; margin-left: 6px; text-transform: none;" title="${TRANSLATIONS[currentLang].foodTitle}: ${escapeHTML(t.foodDetails)}"><i class="fa-solid fa-utensils"></i> ${escapeHTML(t.foodDetails)}</span>` : ''}</span>
+                            <span class="driver-name">${escapeHTML(t.name)}${t.group ? ` <span class="driver-group">(${escapeHTML(t.group)})</span>` : ''}</span>
                             <span class="car-description">${currentLang === 'zh' ? '計程車共乘小組' : 'Taxi carpool group'}</span>
+                            <div class="driver-meta-badges">
+                                ${getMeetLocationBadgeHTML(t)}
+                                ${t.foodBringing === 'yes' ? `<span class="badge-tag driver-food-badge" title="${TRANSLATIONS[currentLang].foodTitle}: ${escapeHTML(t.foodDetails)}"><i class="fa-solid fa-utensils"></i> ${escapeHTML(t.foodDetails)}</span>` : ''}
+                            </div>
                         </div>
                     </div>
                     <div class="car-actions">
@@ -1493,7 +1560,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                 </div>
                 
-                ${t.notes ? `<div style="font-size: 0.8rem; color: var(--text-secondary); background: rgba(255,255,255,0.02); padding: 5px 8px; border-radius: 4px; border-left: 3px solid var(--accent-amber); font-style: italic;">${TRANSLATIONS[currentLang].routeNotes.replace('{notes}', escapeHTML(t.notes))}</div>` : ''}
+                ${t.notes ? `<div class="driver-notes-box taxi-notes-box">${TRANSLATIONS[currentLang].routeNotes.replace('{notes}', escapeHTML(t.notes))}</div>` : ''}
 
                 <div class="car-seats-visual">
                     <span style="font-size: 0.75rem; color: var(--text-secondary); margin-right: 5px;">${TRANSLATIONS[currentLang].visualCapacity}</span> ${seatsDotsHTML}
@@ -1556,23 +1623,71 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
             }
 
-            // Drag & Drop handlers for Taxi Card
+            // --- DRAG & DROP HANDLERS FOR THE TAXI CARD ---
+            
+            // Double-click to enable drag
+            taxiCard.addEventListener('dblclick', (e) => {
+                if (e.target.closest('.btn-card-action, .seat-dot, .assigned-passenger-item, .car-passengers')) {
+                    return;
+                }
+                taxiCard.setAttribute('draggable', 'true');
+                taxiCard.classList.add('ready-to-drag');
+            });
+
+            taxiCard.addEventListener('mouseleave', () => {
+                taxiCard.removeAttribute('draggable');
+                taxiCard.classList.remove('ready-to-drag');
+            });
+            
+            taxiCard.addEventListener('dragstart', (e) => {
+                draggedVehicleId = t.id;
+                e.dataTransfer.setData('text/vehicle-id', t.id);
+                e.dataTransfer.effectAllowed = 'move';
+                taxiCard.classList.add('dragging-card');
+            });
+            
+            taxiCard.addEventListener('dragend', () => {
+                taxiCard.classList.remove('dragging-card');
+                taxiCard.classList.remove('ready-to-drag');
+                taxiCard.removeAttribute('draggable');
+                draggedVehicleId = null;
+            });
+
             taxiCard.addEventListener('dragover', (e) => {
-                e.preventDefault();
-                taxiCard.classList.add('drag-over');
+                if (draggedVehicleId !== null) {
+                    const sourceParticipant = state.participants.find(p => p.id === draggedVehicleId);
+                    if (sourceParticipant && sourceParticipant.role === t.role && draggedVehicleId !== t.id) {
+                        e.preventDefault();
+                        e.dataTransfer.dropEffect = 'move';
+                        taxiCard.classList.add('card-drag-over');
+                    }
+                } else {
+                    e.preventDefault();
+                    taxiCard.classList.add('drag-over');
+                }
             });
 
             taxiCard.addEventListener('dragleave', () => {
                 taxiCard.classList.remove('drag-over');
+                taxiCard.classList.remove('card-drag-over');
             });
 
             taxiCard.addEventListener('drop', (e) => {
                 e.preventDefault();
                 taxiCard.classList.remove('drag-over');
-                const passengerId = parseInt(e.dataTransfer.getData('text/plain'), 10);
-                if (passengerId) {
-                    if (passengerId === t.id) return;
-                    assignPassenger(passengerId, t.id);
+                taxiCard.classList.remove('card-drag-over');
+
+                if (draggedVehicleId !== null) {
+                    const sourceParticipant = state.participants.find(p => p.id === draggedVehicleId);
+                    if (sourceParticipant && sourceParticipant.role === t.role && draggedVehicleId !== t.id) {
+                        reorderParticipants(draggedVehicleId, t.id);
+                    }
+                } else {
+                    const passengerId = parseInt(e.dataTransfer.getData('text/plain'), 10);
+                    if (passengerId) {
+                        if (passengerId === t.id) return;
+                        assignPassenger(passengerId, t.id);
+                    }
                 }
             });
 

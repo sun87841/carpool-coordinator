@@ -1574,3 +1574,62 @@ input.invalid + .error-msg,
     color: var(--text-secondary);
     line-height: 1.4;
 }
+
+/* DRIVER CARD METADATA */
+.driver-group {
+    font-size: 0.75rem;
+    color: var(--accent-blue);
+    font-weight: 500;
+    margin-left: 4px;
+}
+
+.driver-meta-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    align-items: center;
+    margin-top: -0.25rem; /* pull closer to header */
+}
+
+.driver-food-badge {
+    background-color: rgba(16, 185, 129, 0.08);
+    color: var(--accent-emerald);
+    border: 1px solid rgba(16, 185, 129, 0.2);
+    padding: 0.15rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    text-transform: none;
+}
+
+.driver-notes-box {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    background: rgba(255, 255, 255, 0.015);
+    padding: 5px 8px;
+    border-radius: var(--radius-sm);
+    border-left: 3px solid var(--accent-purple);
+    font-style: italic;
+    line-height: 1.4;
+    margin-top: -0.25rem; /* pull closer to badges */
+}
+
+.driver-notes-box.taxi-notes-box {
+    border-left-color: var(--accent-amber);
+    background: rgba(245, 158, 11, 0.02);
+}
+
+.car-card.ready-to-drag {
+    cursor: grab !important;
+    border-color: var(--accent-purple) !important;
+    box-shadow: 0 0 10px rgba(139, 92, 246, 0.2);
+}
+
+.car-card.taxi-card.ready-to-drag {
+    border-color: var(--accent-amber) !important;
+    box-shadow: 0 0 10px rgba(245, 158, 11, 0.2);
+}
+

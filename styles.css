@@ -1685,4 +1685,31 @@ input.invalid + .error-msg,
     background-color: rgba(245, 158, 11, 0.15);
 }
 
+/* Self-Transportation Card Stylings */
+.car-card.self-transport-card {
+    border: 1px dashed var(--text-muted);
+    background: rgba(100, 116, 139, 0.04);
+}
+
+.car-card.self-transport-card:hover {
+    border-color: var(--text-secondary);
+    background: rgba(100, 116, 139, 0.08);
+}
+
+.self-transport-card .driver-avatar {
+    background-color: var(--border-color);
+    color: var(--text-secondary);
+}
+
+.self-transport-card .car-capacity-ratio {
+    background-color: rgba(100, 116, 139, 0.1);
+    color: var(--text-secondary);
+}
+
+.car-card.self-transport-card.drag-over {
+    border-color: var(--text-secondary);
+    background-color: rgba(100, 116, 139, 0.12);
+}
+
+
 

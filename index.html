@@ -12,7 +12,7 @@
     <!-- FontAwesome for high-quality SVG icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Main stylesheet -->
-    <link rel="stylesheet" href="styles.css?v=29">
+    <link rel="stylesheet" href="styles.css?v=36">
 </head>
 <body>
     <!-- Top Decorative Glow -->
@@ -147,8 +147,8 @@
                                     <input type="radio" name="reg-role" value="taxi">
                                     <span class="role-box">
                                         <i class="fa-solid fa-taxi"></i>
-                                        <strong data-i18n="roleTaxi">Taxi Group</strong>
-                                        <small data-i18n="roleTaxiSub">Carpool by taxi</small>
+                                        <strong data-i18n="roleTaxi">Carpool Group</strong>
+                                        <small data-i18n="roleTaxiSub">Shared carpool / Public transport</small>
                                     </span>
                                 </label>
                             </div>
@@ -223,7 +223,7 @@
                         <!-- Taxi Conditional Fields -->
                         <div id="fields-taxi" class="conditional-fields hidden">
                             <div class="form-group">
-                                <label for="reg-taxi-seats" data-i18n="lblTaxiSeats">Taxi Seats Available</label>
+                                <label for="reg-taxi-seats" data-i18n="lblTaxiSeats">Carpool Seats Available</label>
                                 <div class="input-wrapper">
                                     <i class="fa-solid fa-circle-nodes input-icon"></i>
                                     <input type="number" id="reg-taxi-seats" min="1" max="9" value="4" placeholder="4" data-i18n-placeholder="phTaxiSeats">
@@ -303,6 +303,32 @@
                     <div class="food-summary-list" id="food-summary-list">
                         <!-- Filled dynamically -->
                     </div>
+
+                    <!-- Event Note Box -->
+                    <div class="event-note-box">
+                        <div class="event-note-icon">
+                            <i class="fa-solid fa-clock"></i>
+                        </div>
+                        <div class="event-note-content">
+                            <div class="event-note-title" data-i18n="eventNoteTitle">Event Schedule</div>
+                            <div class="event-note-text" data-i18n="eventNoteText">Leave from Taipei at 9:00 AM, arrive before 10:00 AM.</div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Vehicle & License Plate Registry Summary Section -->
+                <section class="card glass-card vehicle-summary-section" aria-labelledby="vehicle-summary-title">
+                    <div class="section-header">
+                        <h2 id="vehicle-summary-title" class="section-title">
+                            <i class="fa-solid fa-car-rear"></i> <span data-i18n="vehicleSummaryTitle">Vehicle & License Plates</span>
+                        </h2>
+                        <span class="count-badge" id="badge-vehicle-summary">0</span>
+                    </div>
+                    <p class="section-desc" data-i18n="vehicleSummaryDesc">Quick reference of drivers, car models, and plate numbers.</p>
+                    
+                    <div class="vehicle-summary-list" id="vehicle-summary-list">
+                        <!-- Filled dynamically -->
+                    </div>
                 </section>
             </div>
 
@@ -336,12 +362,12 @@
                 <section class="card glass-card taxi-board-section" aria-labelledby="taxi-board-title">
                     <div class="board-header">
                         <div>
-                            <h2 id="taxi-board-title" class="section-title"><i class="fa-solid fa-taxi"></i> <span data-i18n="taxiBoardTitle">Taxi Carpool Board</span></h2>
-                            <p class="board-desc" data-i18n="taxiBoardDesc">Drag passengers onto taxi groups or click to assign.</p>
+                            <h2 id="taxi-board-title" class="section-title"><i class="fa-solid fa-taxi"></i> <span data-i18n="taxiBoardTitle">Shared Carpool Board</span></h2>
+                            <p class="board-desc" data-i18n="taxiBoardDesc">Drag passengers onto carpool groups or click to assign.</p>
                         </div>
                         <div class="board-controls">
-                            <button id="btn-add-taxi" class="btn btn-secondary btn-sm" type="button" title="Create a new Taxi Group">
-                                <i class="fa-solid fa-circle-plus"></i> <span data-i18n="btnAddTaxi">Add Taxi Group</span>
+                            <button id="btn-add-taxi" class="btn btn-secondary btn-sm" type="button" title="Create a new Carpool Group">
+                                <i class="fa-solid fa-circle-plus"></i> <span data-i18n="btnAddTaxi">Add Carpool Group</span>
                             </button>
                         </div>
                     </div>
@@ -350,8 +376,8 @@
                         <!-- Filled dynamically -->
                         <div class="empty-state-large">
                             <i class="fa-solid fa-taxi animate-float" style="color: var(--accent-amber); font-size: 3rem; margin-bottom: 1rem;"></i>
-                            <h3 data-i18n="noActiveTaxis">No Taxi Groups Created</h3>
-                            <p data-i18n="noActiveTaxisDesc">Click **Add Taxi Group** to set up a taxi carpool group.</p>
+                            <h3 data-i18n="noActiveTaxis">No Carpool Groups Created</h3>
+                            <p data-i18n="noActiveTaxisDesc">Click **Add Carpool Group** to set up a carpool group.</p>
                         </div>
                     </div>
                 </section>
@@ -387,7 +413,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>
 
     <!-- MAIN APP SCRIPT -->
-    <script src="app.js?v=29"></script>
+    <script src="app.js?v=38"></script>
 
 </body>
 </html>

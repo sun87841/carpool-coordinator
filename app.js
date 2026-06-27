@@ -1218,6 +1218,7 @@ document.addEventListener('DOMContentLoaded', () => {
         };
 
         participants.forEach(p => {
+            if (p.role === 'taxi') return; // Skip taxis in meeting location summary
             const loc = p.meetLocation || 'JianCheng';
             if (groups[loc]) {
                 let roleText = '';
@@ -1227,9 +1228,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (p.familyCount > 0) {
                         pCount += p.familyCount;
                     }
-                } else if (p.role === 'taxi') {
-                    roleText = TRANSLATIONS[currentLang].roleTaxiLabel;
-                    pCount = 0; // Taxis themselves are vehicles, not travelers
                 } else {
                     roleText = TRANSLATIONS[currentLang].rolePassengerLabel;
                     if (p.familyCount > 0) {
@@ -1238,7 +1236,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 
                 let displayName = `${escapeHTML(p.name)} (${roleText})`;
-                if ((p.role === 'driver' || p.role === 'passenger') && p.familyCount > 0) {
+                if (p.familyCount > 0) {
                     displayName += ` + ${p.familyCount} ${TRANSLATIONS[currentLang].familyRiding}`;
                 }
                 

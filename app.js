@@ -169,7 +169,10 @@ document.addEventListener('DOMContentLoaded', () => {
             selfTransportOption: "Self-Transportation (No carpool)",
             csvSelfTransport: "SELF-TRANSPORT PASSENGERS",
             eventNoteTitle: "Event Schedule Note",
-            eventNoteText: "Leave from Taipei at 9:00 AM, arrive before 10:00 AM."
+            eventNoteText: "Leave from Taipei at 9:00 AM, arrive before 10:00 AM.",
+            vehicleSummaryTitle: "Vehicle & License Plates",
+            vehicleSummaryDesc: "Quick reference of drivers, car models, and plate numbers.",
+            noVehicleSummary: "No vehicle details registered yet."
         },
         zh: {
             appName: "福彌寺交通乘車登記",
@@ -301,7 +304,10 @@ document.addEventListener('DOMContentLoaded', () => {
             selfTransportOption: "自行出發 / 自備交通",
             csvSelfTransport: "自行出發 / 自備交通名單",
             eventNoteTitle: "活動行程備註",
-            eventNoteText: "上午 9:00 從台北出發，10:00 前抵達。"
+            eventNoteText: "上午 9:00 從台北出發，10:00 前抵達。",
+            vehicleSummaryTitle: "車輛與車牌登記",
+            vehicleSummaryDesc: "已登記車輛、司機與車牌號碼快速對照表。",
+            noVehicleSummary: "目前尚無登記車輛與車牌。"
         }
     };
 
@@ -984,6 +990,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // 5. Render Meeting Locations Summary
         renderMeetSummary(state.participants);
+
+        // 6. Render Vehicle Registry Summary
+        renderVehicleSummary(state.participants);
     }
 
     function getFoodBadgeHTML(p) {
@@ -1271,6 +1280,50 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
             `;
             meetSummaryContainer.appendChild(groupEl);
+        });
+    }
+
+    function renderVehicleSummary(participants) {
+        const vehicleSummaryList = document.getElementById('vehicle-summary-list');
+        const badgeVehicleSummary = document.getElementById('badge-vehicle-summary');
+        
+        if (!vehicleSummaryList || !badgeVehicleSummary) return;
+
+        const drivers = participants.filter(p => p.role === 'driver');
+        badgeVehicleSummary.textContent = drivers.length;
+
+        vehicleSummaryList.innerHTML = '';
+
+        if (drivers.length === 0) {
+            vehicleSummaryList.innerHTML = `
+                <div class="empty-state">
+                    <i class="fa-solid fa-car-side"></i>
+                    <p data-i18n="noVehicleSummary">${TRANSLATIONS[currentLang].noVehicleSummary}</p>
+                </div>
+            `;
+            return;
+        }
+
+        drivers.forEach(d => {
+            const carModelName = d.carModel ? escapeHTML(d.carModel) : '';
+            const plate = d.licensePlate ? d.licensePlate.trim() : '';
+            
+            const groupText = d.group ? ` (${escapeHTML(d.group)})` : '';
+            const driverInfoText = `${escapeHTML(d.name)}${groupText}`;
+
+            const row = document.createElement('div');
+            row.className = 'vehicle-item-row';
+            row.innerHTML = `
+                <div class="vehicle-item-icon">
+                    <i class="fa-solid fa-car-side"></i>
+                </div>
+                <div class="vehicle-item-details">
+                    <span class="vehicle-car-model">${carModelName}</span>
+                    <span class="vehicle-driver-info">${driverInfoText}</span>
+                </div>
+                ${plate ? `<span class="vehicle-plate-badge">${escapeHTML(plate)}</span>` : ''}
+            `;
+            vehicleSummaryList.appendChild(row);
         });
     }
 

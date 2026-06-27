@@ -1711,5 +1711,98 @@ input.invalid + .error-msg,
     background-color: rgba(100, 116, 139, 0.12);
 }
 
+/* VEHICLE REGISTRY SUMMARY */
+.vehicle-summary-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-top: 1rem;
+    max-height: 400px;
+    overflow-y: auto;
+    padding-right: 4px;
+}
+
+.vehicle-summary-list::-webkit-scrollbar {
+    width: 6px;
+}
+.vehicle-summary-list::-webkit-scrollbar-track {
+    background: transparent;
+}
+.vehicle-summary-list::-webkit-scrollbar-thumb {
+    background: rgba(100, 116, 139, 0.2);
+    border-radius: 3px;
+}
+.vehicle-summary-list::-webkit-scrollbar-thumb:hover {
+    background: rgba(100, 116, 139, 0.4);
+}
+
+.vehicle-item-row {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    padding: 0.75rem 1rem;
+    background-color: rgba(255, 255, 255, 0.02);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    transition: transform var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.vehicle-item-row:hover {
+    transform: translateX(4px);
+    background-color: rgba(37, 99, 235, 0.03);
+    border-color: rgba(37, 99, 235, 0.2);
+}
+
+.vehicle-item-icon {
+    font-size: 1rem;
+    color: var(--accent-blue);
+    background-color: rgba(37, 99, 235, 0.08);
+    border: 1px solid rgba(37, 99, 235, 0.15);
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.vehicle-item-details {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    min-width: 0;
+}
+
+.vehicle-car-model {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.vehicle-driver-info {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.vehicle-plate-badge {
+    background-color: rgba(124, 58, 237, 0.08);
+    color: var(--accent-purple);
+    border: 1px solid rgba(124, 58, 237, 0.2);
+    padding: 0.15rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    white-space: nowrap;
+    text-transform: uppercase;
+}
+
+
 
 

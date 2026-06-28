@@ -926,7 +926,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 p.capacity = parseInt(p.capacity, 10) || 0;
             }
             if (p.role === 'passenger') {
-                if (p.assignedCarId === undefined) {
+                if (p.assignedCarId === undefined || p.assignedCarId === 'self') {
                     p.assignedCarId = null;
                 }
             }
@@ -1136,8 +1136,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 optionsHTML += `<option value="${t.id}">🚕 ${t.name}${t.group ? ` (${t.group})` : ''} (${remaining} ${TRANSLATIONS[currentLang].seatsLeft})</option>`;
             });
 
-            // Add Self-Transportation Option
-            optionsHTML += `<option value="self">${TRANSLATIONS[currentLang].selfTransportOption}</option>`;
+
 
             card.innerHTML = `
                 <div class="passenger-details">
@@ -1169,7 +1168,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const select = card.querySelector('.select-quick-assign');
             select.addEventListener('change', (e) => {
                 const val = e.target.value;
-                const driverId = val === 'self' ? 'self' : parseInt(val, 10);
+                const driverId = parseInt(val, 10);
                 assignPassenger(p.id, driverId);
             });
 
@@ -1272,7 +1271,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         meetSummaryContainer.innerHTML = '';
 
-        const locs = ['JianCheng', 'QiDu', 'Self'];
+        const locs = ['JianCheng', 'QiDu'];
         locs.forEach(key => {
             const group = groups[key];
             const groupTitle = currentLang === 'zh' ? group.nameZh : group.nameEn;
@@ -1629,116 +1628,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
             carsGrid.appendChild(carCard);
         });
-
-        // Render Self-Transportation Virtual Card
-        const selfPassengers = passengers.filter(p => p.assignedCarId === 'self');
-        let selfCount = 0;
-        selfPassengers.forEach(p => {
-            selfCount += 1 + (p.familyCount || 0);
-        });
-
-        const selfCard = document.createElement('div');
-        selfCard.className = 'car-card self-transport-card';
-        selfCard.dataset.driverId = 'self';
-
-        selfCard.innerHTML = `
-            <div class="car-header">
-                <div class="driver-info">
-                    <div class="driver-avatar" style="background-color: rgba(100, 116, 139, 0.1); color: var(--text-muted);"><i class="fa-solid fa-street-view"></i></div>
-                    <div class="driver-text">
-                        <span class="driver-name">${TRANSLATIONS[currentLang].selfTransportTitle}</span>
-                        <span class="car-description">${TRANSLATIONS[currentLang].selfTransportDesc}</span>
-                    </div>
-                </div>
-                <div class="car-actions">
-                    <span class="car-capacity-ratio ratio-normal">
-                        ${TRANSLATIONS[currentLang].selfTransportCount.replace('{count}', selfCount)}
-                    </span>
-                </div>
-            </div>
-            <hr class="car-card-divider">
-            <div class="car-passengers">
-                <!-- Self-transportation Passenger Items -->
-            </div>
-        `;
-
-        const passengerListContainer = selfCard.querySelector('.car-passengers');
-        if (selfPassengers.length === 0) {
-            passengerListContainer.innerHTML = `<p style="font-size: 0.8rem; color: var(--text-muted); text-align: center; padding: 10px; font-style: italic;">${TRANSLATIONS[currentLang].noSelfPassengers}</p>`;
-        } else {
-            passengerListContainer.innerHTML = '';
-            selfPassengers.forEach(ap => {
-                const item = document.createElement('div');
-                item.className = 'assigned-passenger-item';
-                item.setAttribute('draggable', 'true');
-                item.dataset.id = ap.id;
-
-                item.addEventListener('dragstart', (e) => {
-                    e.dataTransfer.setData('text/plain', ap.id);
-                    item.classList.add('dragging');
-                });
-
-                item.addEventListener('dragend', () => {
-                    item.classList.remove('dragging');
-                });
-
-                item.innerHTML = `
-                    <div class="assigned-passenger-details">
-                        <div class="assigned-passenger-header">
-                            <span class="bullet-dot" style="background-color: var(--text-muted);"></span>
-                            <span class="assigned-passenger-name" title="${escapeHTML(ap.name)}">${escapeHTML(ap.name)}</span>
-                            ${ap.familyCount > 0 ? `<span class="badge-tag badge-luggage">+ ${ap.familyCount} ${TRANSLATIONS[currentLang].familyRiding}</span>` : ''}
-                        </div>
-                        <div class="assigned-passenger-meta">
-                            ${getMeetLocationBadgeHTML(ap)}
-                            ${ap.group ? `<span style="color: var(--accent-blue); background: rgba(37,99,235,0.06);">${escapeHTML(ap.group)}</span>` : ''}
-                            ${ap.foodBringing === 'yes' ? `<span style="color: var(--accent-emerald); background: rgba(16,185,129,0.06);" title="${escapeHTML(ap.foodDetails)}"><i class="fa-solid fa-utensils"></i> ${escapeHTML(ap.foodDetails)}</span>` : ''}
-                            ${ap.notes ? `<span class="assigned-passenger-notes" title="${escapeHTML(ap.notes)}">${escapeHTML(ap.notes)}</span>` : ''}
-                        </div>
-                    </div>
-                    <div class="assigned-passenger-actions">
-                        <button class="btn-card-action" data-action="edit-passenger" data-id="${ap.id}" title="${TRANSLATIONS[currentLang].editPassengerDetails}">
-                            <i class="fa-solid fa-pen"></i>
-                        </button>
-                        <button class="btn-card-action" data-action="unassign" data-id="${ap.id}" title="${TRANSLATIONS[currentLang].removePassengerFromCar}">
-                            <i class="fa-solid fa-user-minus"></i>
-                        </button>
-                        <button class="btn-card-action danger-hover" data-action="delete-passenger" data-id="${ap.id}" title="${TRANSLATIONS[currentLang].removeRegistration}">
-                            <i class="fa-solid fa-trash"></i>
-                        </button>
-                    </div>
-                `;
-
-                item.querySelector('[data-action="edit-passenger"]').addEventListener('click', () => startEdit(ap.id));
-                item.querySelector('[data-action="unassign"]').addEventListener('click', () => unassignPassenger(ap.id));
-                item.querySelector('[data-action="delete-passenger"]').addEventListener('click', () => deleteParticipant(ap.id));
-
-                passengerListContainer.appendChild(item);
-            });
-        }
-
-        // Drag & Drop handlers for Self-Transportation Card
-        selfCard.addEventListener('dragover', (e) => {
-            if (draggedVehicleId !== null) return;
-            e.preventDefault();
-            selfCard.classList.add('drag-over');
-        });
-
-        selfCard.addEventListener('dragleave', () => {
-            selfCard.classList.remove('drag-over');
-        });
-
-        selfCard.addEventListener('drop', (e) => {
-            e.preventDefault();
-            selfCard.classList.remove('drag-over');
-            if (draggedVehicleId !== null) return;
-            const passengerId = parseInt(e.dataTransfer.getData('text/plain'), 10);
-            if (passengerId) {
-                assignPassenger(passengerId, 'self');
-            }
-        });
-
-        carsGrid.appendChild(selfCard);
     }
 
     function renderTaxisGrid(taxis, passengers) {

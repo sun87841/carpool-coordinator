@@ -1136,8 +1136,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 optionsHTML += `<option value="${t.id}">🚕 ${t.name}${t.group ? ` (${t.group})` : ''} (${remaining} ${TRANSLATIONS[currentLang].seatsLeft})</option>`;
             });
 
-
-
             card.innerHTML = `
                 <div class="passenger-details">
                     <div class="passenger-header">
@@ -1271,7 +1269,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         meetSummaryContainer.innerHTML = '';
 
-        const locs = ['JianCheng', 'QiDu'];
+        const locs = ['JianCheng', 'QiDu', 'Self'];
         locs.forEach(key => {
             const group = groups[key];
             const groupTitle = currentLang === 'zh' ? group.nameZh : group.nameEn;
@@ -1628,6 +1626,48 @@ document.addEventListener('DOMContentLoaded', () => {
 
             carsGrid.appendChild(carCard);
         });
+                        <button class="btn-card-action" data-action="edit-passenger" data-id="${ap.id}" title="${TRANSLATIONS[currentLang].editPassengerDetails}">
+                            <i class="fa-solid fa-pen"></i>
+                        </button>
+                        <button class="btn-card-action" data-action="unassign" data-id="${ap.id}" title="${TRANSLATIONS[currentLang].removePassengerFromCar}">
+                            <i class="fa-solid fa-user-minus"></i>
+                        </button>
+                        <button class="btn-card-action danger-hover" data-action="delete-passenger" data-id="${ap.id}" title="${TRANSLATIONS[currentLang].removeRegistration}">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </div>
+                `;
+
+                item.querySelector('[data-action="edit-passenger"]').addEventListener('click', () => startEdit(ap.id));
+                item.querySelector('[data-action="unassign"]').addEventListener('click', () => unassignPassenger(ap.id));
+                item.querySelector('[data-action="delete-passenger"]').addEventListener('click', () => deleteParticipant(ap.id));
+
+                passengerListContainer.appendChild(item);
+            });
+        }
+
+        // Drag & Drop handlers for Self-Transportation Card
+        selfCard.addEventListener('dragover', (e) => {
+            if (draggedVehicleId !== null) return;
+            e.preventDefault();
+            selfCard.classList.add('drag-over');
+        });
+
+        selfCard.addEventListener('dragleave', () => {
+            selfCard.classList.remove('drag-over');
+        });
+
+        selfCard.addEventListener('drop', (e) => {
+            e.preventDefault();
+            selfCard.classList.remove('drag-over');
+            if (draggedVehicleId !== null) return;
+            const passengerId = parseInt(e.dataTransfer.getData('text/plain'), 10);
+            if (passengerId) {
+                assignPassenger(passengerId, 'self');
+            }
+        });
+
+        carsGrid.appendChild(selfCard);
     }
 
     function renderTaxisGrid(taxis, passengers) {
@@ -1922,14 +1962,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Self-Transportation
         const selfPassengers = passengers.filter(p => p.assignedCarId === 'self');
-        if (selfPassengers.length > 0) {
-            csvLines.push(',,,,,,,,,,,,,,,'); // spacer
-            csvLines.push(`${TRANSLATIONS[currentLang].csvSelfTransport},,,,,,,,,,,,,,,`);
-            selfPassengers.forEach(p => {
-                const pLoc = p.meetLocation ? TRANSLATIONS[currentLang][`meetLocation${p.meetLocation}`] || p.meetLocation : '';
-                csvLines.push(`"","","","","","","",0,0,"${cleanCSV(p.name)}","${cleanCSV(p.group || '')}","${cleanCSV(pLoc)}","${cleanCSV(p.foodBringing || 'no')}","${cleanCSV(p.foodDetails || '')}",${p.familyCount || 0},"${cleanCSV(p.notes || '')}"`);
-            });
-        }
+
 
         // Add unassigned passengers at the bottom
         const unassigned = passengers.filter(p => !p.assignedCarId);
@@ -2079,37 +2112,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
-        // Render Self-Transportation in print
-        const selfPassengers = passengers.filter(p => p.assignedCarId === 'self');
-        if (selfPassengers.length > 0) {
-            let totalSelfCount = 0;
-            selfPassengers.forEach(p => {
-                totalSelfCount += 1 + (p.familyCount || 0);
-            });
-            printContent.innerHTML += `
-                <div class="print-car-group" style="border-left: 3px solid var(--text-muted, #64748b);">
-                    <div class="print-car-title">
-                        <span>🚶 ${TRANSLATIONS[currentLang].selfTransportTitle}</span>
-                        <span>${TRANSLATIONS[currentLang].selfTransportCount.replace('{count}', totalSelfCount)}</span>
-                    </div>
-                    <ol class="print-passenger-list">
-                        ${selfPassengers.map(sp => {
-                            const spLoc = sp.meetLocation ? TRANSLATIONS[currentLang][`meetLocation${sp.meetLocation}`] || sp.meetLocation : '';
-                            return `
-                            <li class="print-passenger-item">
-                                <strong>${escapeHTML(sp.name)}</strong> 
-                                ${sp.familyCount > 0 ? ` + ${sp.familyCount} ${TRANSLATIONS[currentLang].familyRiding}` : ''}
-                                ${sp.group ? `(${escapeHTML(sp.group)})` : ''}
-                                [📍${escapeHTML(spLoc)}]
-                                ${sp.notes ? `— <em>Notes: ${escapeHTML(sp.notes)}</em>` : ''} 
-                                (${TRANSLATIONS[currentLang].foodTitle}: ${getFoodText(sp)})
-                            </li>
-                            `;
-                        }).join('')}
-                    </ol>
-                </div>
-            `;
-        }
+
 
         if (unassigned.length > 0) {
             printContent.innerHTML += `

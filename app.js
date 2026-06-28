@@ -1626,48 +1626,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
             carsGrid.appendChild(carCard);
         });
-                        <button class="btn-card-action" data-action="edit-passenger" data-id="${ap.id}" title="${TRANSLATIONS[currentLang].editPassengerDetails}">
-                            <i class="fa-solid fa-pen"></i>
-                        </button>
-                        <button class="btn-card-action" data-action="unassign" data-id="${ap.id}" title="${TRANSLATIONS[currentLang].removePassengerFromCar}">
-                            <i class="fa-solid fa-user-minus"></i>
-                        </button>
-                        <button class="btn-card-action danger-hover" data-action="delete-passenger" data-id="${ap.id}" title="${TRANSLATIONS[currentLang].removeRegistration}">
-                            <i class="fa-solid fa-trash"></i>
-                        </button>
-                    </div>
-                `;
-
-                item.querySelector('[data-action="edit-passenger"]').addEventListener('click', () => startEdit(ap.id));
-                item.querySelector('[data-action="unassign"]').addEventListener('click', () => unassignPassenger(ap.id));
-                item.querySelector('[data-action="delete-passenger"]').addEventListener('click', () => deleteParticipant(ap.id));
-
-                passengerListContainer.appendChild(item);
-            });
-        }
-
-        // Drag & Drop handlers for Self-Transportation Card
-        selfCard.addEventListener('dragover', (e) => {
-            if (draggedVehicleId !== null) return;
-            e.preventDefault();
-            selfCard.classList.add('drag-over');
-        });
-
-        selfCard.addEventListener('dragleave', () => {
-            selfCard.classList.remove('drag-over');
-        });
-
-        selfCard.addEventListener('drop', (e) => {
-            e.preventDefault();
-            selfCard.classList.remove('drag-over');
-            if (draggedVehicleId !== null) return;
-            const passengerId = parseInt(e.dataTransfer.getData('text/plain'), 10);
-            if (passengerId) {
-                assignPassenger(passengerId, 'self');
-            }
-        });
-
-        carsGrid.appendChild(selfCard);
     }
 
     function renderTaxisGrid(taxis, passengers) {

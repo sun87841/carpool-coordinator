@@ -952,8 +952,19 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        const totalPassengers = passengers.length;
-        const assignedCount = totalPassengers - unassigned.length;
+        // Calculate total passenger travelers (including family members)
+        let totalPassengerTravelers = 0;
+        passengers.forEach(p => {
+            totalPassengerTravelers += 1 + (p.familyCount || 0);
+        });
+
+        // Calculate unassigned passenger travelers (including family members)
+        let unassignedTravelers = 0;
+        unassigned.forEach(p => {
+            unassignedTravelers += 1 + (p.familyCount || 0);
+        });
+
+        const assignedTravelers = totalPassengerTravelers - unassignedTravelers;
         
         // Count family members riding with drivers and passengers
         let totalFamilyCount = 0;
@@ -963,18 +974,18 @@ document.addEventListener('DOMContentLoaded', () => {
         passengers.forEach(p => {
             totalFamilyCount += parseInt(p.familyCount, 10) || 0;
         });
-        const grandTotal = totalPassengers + drivers.length + totalFamilyCount;
+        const grandTotal = passengers.length + drivers.length + totalFamilyCount;
         
         // 1. Render Stats Panel
         statTotal.textContent = grandTotal;
         statDrivers.textContent = drivers.length;
         statSeats.textContent = totalSeatsOpen;
-        statUnassigned.textContent = unassigned.length;
+        statUnassigned.textContent = unassignedTravelers;
         
-        const matchPct = totalPassengers > 0 ? Math.round((assignedCount / totalPassengers) * 100) : 0;
+        const matchPct = totalPassengerTravelers > 0 ? Math.round((assignedTravelers / totalPassengerTravelers) * 100) : 0;
         statMatchPct.textContent = `${matchPct}%`;
         statProgressFill.style.width = `${matchPct}%`;
-        badgeUnassigned.textContent = unassigned.length;
+        badgeUnassigned.textContent = unassignedTravelers;
 
         // 2. Render Unassigned Passengers Column
         renderUnassignedList(unassigned, drivers);

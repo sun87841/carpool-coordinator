@@ -860,8 +860,17 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 return;
             }
+        } else if (item) {
+            // Passenger confirmation
+            const confirmMsg = `Are you sure you want to delete passenger "${item.name}"?`;
+            const confirmMsgZH = `確定要刪除乘客「${item.name}」嗎？`;
+            if (confirm(currentLang === 'zh' ? confirmMsgZH : confirmMsg)) {
+                state.participants = state.participants.filter(p => p.id !== id);
+            } else {
+                return;
+            }
         } else {
-            // Passenger simply deleted
+            // Fallback
             state.participants = state.participants.filter(p => p.id !== id);
         }
         saveState();
@@ -916,6 +925,11 @@ document.addEventListener('DOMContentLoaded', () => {
             if (p.capacity !== undefined && p.capacity !== null) {
                 p.capacity = parseInt(p.capacity, 10) || 0;
             }
+            if (p.role === 'passenger') {
+                if (p.assignedCarId === undefined) {
+                    p.assignedCarId = null;
+                }
+            }
             return p;
         });
     }
@@ -925,7 +939,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const drivers = state.participants.filter(p => p.role === 'driver');
         const taxis = state.participants.filter(p => p.role === 'taxi');
         const passengers = state.participants.filter(p => p.role === 'passenger');
-        const unassigned = passengers.filter(p => p.assignedCarId === null);
+        const unassigned = passengers.filter(p => !p.assignedCarId);
         
         // Calculate Seat availability (remaining empty seats)
         let totalSeatsOpen = 0;
@@ -1495,15 +1509,19 @@ document.addEventListener('DOMContentLoaded', () => {
                             <button class="btn-card-action" data-action="edit-passenger" data-id="${ap.id}" title="${TRANSLATIONS[currentLang].editPassengerDetails}">
                                 <i class="fa-solid fa-pen"></i>
                             </button>
-                            <button class="btn-card-action danger-hover" data-action="unassign" data-id="${ap.id}" title="${TRANSLATIONS[currentLang].removePassengerFromCar}">
+                            <button class="btn-card-action" data-action="unassign" data-id="${ap.id}" title="${TRANSLATIONS[currentLang].removePassengerFromCar}">
                                 <i class="fa-solid fa-user-minus"></i>
+                            </button>
+                            <button class="btn-card-action danger-hover" data-action="delete-passenger" data-id="${ap.id}" title="${TRANSLATIONS[currentLang].removeRegistration}">
+                                <i class="fa-solid fa-trash"></i>
                             </button>
                         </div>
                     `;
 
-                    // Edit & Remove/unassign action listeners
+                    // Edit, Remove/unassign & Delete action listeners
                     item.querySelector('[data-action="edit-passenger"]').addEventListener('click', () => startEdit(ap.id));
                     item.querySelector('[data-action="unassign"]').addEventListener('click', () => unassignPassenger(ap.id));
+                    item.querySelector('[data-action="delete-passenger"]').addEventListener('click', () => deleteParticipant(ap.id));
 
                     passengerListContainer.appendChild(item);
                 });
@@ -1600,7 +1618,7 @@ document.addEventListener('DOMContentLoaded', () => {
             carCard.querySelectorAll('.seat-dot.empty').forEach(dot => {
                 dot.addEventListener('click', () => {
                     // Find first unassigned passenger and assign them to this driver
-                    const unassignedList = state.participants.filter(p => p.role === 'passenger' && p.assignedCarId === null);
+                    const unassignedList = state.participants.filter(p => p.role === 'passenger' && !p.assignedCarId);
                     if (unassignedList.length > 0) {
                         assignPassenger(unassignedList[0].id, d.id);
                     } else {
@@ -1682,14 +1700,18 @@ document.addEventListener('DOMContentLoaded', () => {
                         <button class="btn-card-action" data-action="edit-passenger" data-id="${ap.id}" title="${TRANSLATIONS[currentLang].editPassengerDetails}">
                             <i class="fa-solid fa-pen"></i>
                         </button>
-                        <button class="btn-card-action danger-hover" data-action="unassign" data-id="${ap.id}" title="${TRANSLATIONS[currentLang].removePassengerFromCar}">
+                        <button class="btn-card-action" data-action="unassign" data-id="${ap.id}" title="${TRANSLATIONS[currentLang].removePassengerFromCar}">
                             <i class="fa-solid fa-user-minus"></i>
+                        </button>
+                        <button class="btn-card-action danger-hover" data-action="delete-passenger" data-id="${ap.id}" title="${TRANSLATIONS[currentLang].removeRegistration}">
+                            <i class="fa-solid fa-trash"></i>
                         </button>
                     </div>
                 `;
 
                 item.querySelector('[data-action="edit-passenger"]').addEventListener('click', () => startEdit(ap.id));
                 item.querySelector('[data-action="unassign"]').addEventListener('click', () => unassignPassenger(ap.id));
+                item.querySelector('[data-action="delete-passenger"]').addEventListener('click', () => deleteParticipant(ap.id));
 
                 passengerListContainer.appendChild(item);
             });
@@ -1847,14 +1869,18 @@ document.addEventListener('DOMContentLoaded', () => {
                             <button class="btn-card-action" data-action="edit-passenger" data-id="${ap.id}" title="${TRANSLATIONS[currentLang].editPassengerDetails}">
                                 <i class="fa-solid fa-pen"></i>
                             </button>
-                            <button class="btn-card-action danger-hover" data-action="unassign" data-id="${ap.id}" title="${TRANSLATIONS[currentLang].removePassengerFromCar}">
+                            <button class="btn-card-action" data-action="unassign" data-id="${ap.id}" title="${TRANSLATIONS[currentLang].removePassengerFromCar}">
                                 <i class="fa-solid fa-user-minus"></i>
+                            </button>
+                            <button class="btn-card-action danger-hover" data-action="delete-passenger" data-id="${ap.id}" title="${TRANSLATIONS[currentLang].removeRegistration}">
+                                <i class="fa-solid fa-trash"></i>
                             </button>
                         </div>
                     `;
 
                     item.querySelector('[data-action="edit-passenger"]').addEventListener('click', () => startEdit(ap.id));
                     item.querySelector('[data-action="unassign"]').addEventListener('click', () => unassignPassenger(ap.id));
+                    item.querySelector('[data-action="delete-passenger"]').addEventListener('click', () => deleteParticipant(ap.id));
 
                     passengerListContainer.appendChild(item);
                 });
@@ -1948,7 +1974,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // Seat Dot Assign Click Handlers
             taxiCard.querySelectorAll('.seat-dot.empty').forEach(dot => {
                 dot.addEventListener('click', () => {
-                    const unassignedList = state.participants.filter(p => p.role === 'passenger' && p.assignedCarId === null);
+                    const unassignedList = state.participants.filter(p => p.role === 'passenger' && !p.assignedCarId);
                     if (unassignedList.length > 0) {
                         assignPassenger(unassignedList[0].id, t.id);
                     } else {
@@ -2017,7 +2043,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // Add unassigned passengers at the bottom
-        const unassigned = passengers.filter(p => p.assignedCarId === null);
+        const unassigned = passengers.filter(p => !p.assignedCarId);
         if (unassigned.length > 0) {
             csvLines.push(',,,,,,,,,,,,,,,'); // spacer
             csvLines.push(`${TRANSLATIONS[currentLang].csvUnassigned},,,,,,,,,,,,,,,`);
@@ -2052,7 +2078,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const drivers = state.participants.filter(p => p.role === 'driver');
         const taxis = state.participants.filter(p => p.role === 'taxi');
         const passengers = state.participants.filter(p => p.role === 'passenger');
-        const unassigned = passengers.filter(p => p.assignedCarId === null);
+        const unassigned = passengers.filter(p => !p.assignedCarId);
 
         printDate.textContent = TRANSLATIONS[currentLang].printGenerated.replace('{date}', new Date().toLocaleDateString());
         printContent.innerHTML = '';
